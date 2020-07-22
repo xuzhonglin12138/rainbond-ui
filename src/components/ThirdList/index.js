@@ -1,8 +1,6 @@
 /* eslint-disable react/sort-comp */
 /* eslint-disable camelcase */
 
-import { connect } from "dva";
-import React from "react";
 import {
   Avatar,
   Button,
@@ -19,6 +17,8 @@ import {
   Spin,
   Tooltip
 } from "antd";
+import { connect } from "dva";
+import { default as React } from "react";
 import App from "../../../public/images/app.svg";
 import globalUtil from "../../utils/global";
 import ThirForm from "./form.js";
@@ -243,35 +243,35 @@ class Index extends React.Component {
             footer={
               !this.state.create_status
                 ? [
-                  <Button key="back" onClick={this.handleDetection}>
-                    关闭
-                  </Button>,
-                  <Button
-                    key="submit"
-                    type="primary"
-                    loading={create_loading}
-                    onClick={this.handleTestCode}
-                  >
-                    检测
-                  </Button>
+                    <Button key="back" onClick={this.handleDetection}>
+                      关闭
+                    </Button>,
+                    <Button
+                      key="submit"
+                      type="primary"
+                      loading={create_loading}
+                      onClick={this.handleTestCode}
+                    >
+                      检测
+                    </Button>
                   ]
                 : this.state.create_status == "Success"
                 ? [
-                  <Button key="back" onClick={this.handleDetection}>
-                    关闭
-                  </Button>,
-                  <Button
-                    key="submit"
-                    type="primary"
-                    onClick={this.handleDetection}
-                  >
-                    确认
-                  </Button>
+                    <Button key="back" onClick={this.handleDetection}>
+                      关闭
+                    </Button>,
+                    <Button
+                      key="submit"
+                      type="primary"
+                      onClick={this.handleDetection}
+                    >
+                      确认
+                    </Button>
                   ]
                 : [
-                  <Button key="back" onClick={this.handleDetection}>
-                    关闭
-                  </Button>
+                    <Button key="back" onClick={this.handleDetection}>
+                      关闭
+                    </Button>
                   ]
             }
           >

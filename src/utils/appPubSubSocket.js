@@ -8,7 +8,7 @@
 	本类依赖TimerQueue工具类
 */
 
-import TimerQueue from './timerQueue';
+import TimerQueue from "./timerQueue";
 
 function noop() {}
 

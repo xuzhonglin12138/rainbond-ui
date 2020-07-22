@@ -1,8 +1,5 @@
 /* eslint-disable no-nested-ternary */
 
-import React, { PureComponent } from "react";
-import { connect } from "dva";
-import moment from "moment";
 import {
   Card,
   Col,
@@ -13,6 +10,9 @@ import {
   Row,
   Tooltip
 } from "antd";
+import { connect } from "dva";
+import moment from "moment";
+import React, { PureComponent } from "react";
 import globalUtil from "../../../../utils/global";
 import styles from "../../Index.less";
 import LogShow from "../LogShow";
@@ -140,7 +140,9 @@ class Index extends PureComponent {
                             className={`${styles.rowRtem} ${styles.buildInfo}`}
                           >
                             <div
-                              className={` ${styles.alcen}  ${styles.rowBranch}`}
+                              className={` ${styles.alcen}  ${
+                                styles.rowBranch
+                              }`}
                             >
                               <span className={`${styles.statusIcon} `}>
                                 {status === "success" ? (
@@ -162,7 +164,9 @@ class Index extends PureComponent {
                                 )}
                               </span>
                               <a
-                                className={` ${styles.alcen} ${styles.passeda} `}
+                                className={` ${styles.alcen} ${
+                                  styles.passeda
+                                } `}
                               >
                                 <font
                                   className={styles.nowarpCorolText}
@@ -186,7 +190,9 @@ class Index extends PureComponent {
                               </a>
                             </div>
                             <div
-                              className={` ${styles.alcen} ${styles.rowMessage} `}
+                              className={` ${styles.alcen} ${
+                                styles.rowMessage
+                              } `}
                             >
                               <Tooltip
                                 title={
@@ -226,7 +232,9 @@ class Index extends PureComponent {
                           </div>
 
                           <div
-                            className={`${styles.rowRtem} ${styles.buildCommitter} ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${
+                              styles.buildCommitter
+                            } ${styles.alcen}`}
                           >
                             <div
                               style={{
@@ -310,7 +318,9 @@ class Index extends PureComponent {
                                   }
                                 >
                                   <span
-                                    className={` ${styles.alcen} ${styles.buildwidth} `}
+                                    className={` ${styles.alcen} ${
+                                      styles.buildwidth
+                                    } `}
                                     style={{ color: "rgba(0, 0, 0, 0.65)" }}
                                   >
                                     {kind &&
@@ -358,12 +368,17 @@ class Index extends PureComponent {
                             >
                               {globalUtil.fetchSvg(
                                 "logState",
-                                status === "failure" ? "#db4545" : "#39AA56"
+                                status === "failure"
+                                  ? "#39AA56#db4545"
+                                  : "#39AA56"
                               )}
                               <font
                                 style={{
                                   fontSize: "14px",
-                                  color:status === "failure" ? "#db4545" : "#39AA56"
+                                  color:
+                                    status === "failure"
+                                      ? "#39AA56#db4545"
+                                      : "#39AA56"
                                 }}
                               >
                                 {this.showStatus(status)}
@@ -374,7 +389,9 @@ class Index extends PureComponent {
                         </div>
                         <div className={`${styles.linestree}`}>
                           <div
-                            className={`${styles.rowRtem} ${styles.rowDuration}`}
+                            className={`${styles.rowRtem} ${
+                              styles.rowDuration
+                            }`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="运行时间">
@@ -400,7 +417,9 @@ class Index extends PureComponent {
                             </div>
                           </div>
                           <div
-                            className={`${styles.rowRtem} ${styles.rowCalendar} ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${
+                              styles.rowCalendar
+                            } ${styles.alcen}`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="创建时间">
@@ -451,17 +470,17 @@ class Index extends PureComponent {
                             build_version != current_version &&
                             isRollback &&
                             current_version ? (
-                              <Popconfirm
-                                title="确定要回滚到此版本吗?"
-                                onConfirm={() => {
+                            <Popconfirm
+                              title="确定要回滚到此版本吗?"
+                              onConfirm={() => {
                                 this.handleRolback(item);
                               }}
-                              >
-                                <span>
-                                  <Divider type="vertical" />
-                                  <a style={{ fontSize: "12px" }}>回滚</a>
-                                </span>
-                              </Popconfirm>
+                            >
+                              <span>
+                                <Divider type="vertical" />
+                                <a style={{ fontSize: "12px" }}>回滚</a>
+                              </span>
+                            </Popconfirm>
                           ) : (
                             ""
                           )}

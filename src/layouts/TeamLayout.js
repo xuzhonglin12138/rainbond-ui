@@ -3,7 +3,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-nested-ternary */
-import { Icon, Layout, notification, Tooltip } from "antd";
+import { Icon, Layout, notification } from "antd";
 import classNames from "classnames";
 import { connect } from "dva";
 import { Redirect, routerRedux } from "dva/router";
@@ -13,7 +13,6 @@ import PropTypes from "prop-types";
 import { Fragment, PureComponent } from "react";
 import { ContainerQuery } from "react-container-query";
 import DocumentTitle from "react-document-title";
-import logo from "../../public/logo.png";
 import { getAppMenuData } from "../common/appMenu";
 import { getMenuData } from "../common/teamMenu";
 import AuthCompany from "../components/AuthCompany";
@@ -303,7 +302,7 @@ class TeamLayout extends PureComponent {
     if (!eid) {
       return null;
     }
-    this.fetchEnterpriseService(eid);
+    // this.fetchEnterpriseService(eid);
     const { dispatch } = this.props;
     dispatch({
       type: "global/fetchEnterpriseInfo",
@@ -364,7 +363,7 @@ class TeamLayout extends PureComponent {
   render() {
     const {
       currentUser,
-      enterpriseServiceInfo,
+      // enterpriseServiceInfo,
       collapsed,
       children,
       location: { pathname },
@@ -396,7 +395,6 @@ class TeamLayout extends PureComponent {
       !ready ||
       !currentEnterprise ||
       !currentTeam ||
-      !enterpriseServiceInfo ||
       !currentTeamPermissionsInfo
     ) {
       return <PageLoading />;
@@ -413,6 +411,7 @@ class TeamLayout extends PureComponent {
     cookie.set("team_name", teamName);
     cookie.set("region_name", regionName);
     const componentID = globalUtil.getComponentID();
+    const BillingFunction = rainbondUtil.isEnableBillingFunction();
     let appID = globalUtil.getAppID();
     // currentComponent is exit and id is current componentID
     if (currentComponent && currentComponent.service_alias == componentID) {
@@ -426,23 +425,23 @@ class TeamLayout extends PureComponent {
     }
 
     const mode = this.getMode(appID || componentID);
-    const nobleIcon = (
-      <Tooltip
-        title={
-          enterpriseServiceInfo.type === "vip"
-            ? "尊贵的付费企业用户"
-            : "免费用户"
-        }
-      >
-        {globalUtil.fetchSvg(enterpriseServiceInfo.type)}
-      </Tooltip>
-    );
+    // const nobleIcon = (
+    //   <Tooltip
+    //     title={
+    //       enterpriseServiceInfo.type === "vip"
+    //         ? "尊贵的付费企业用户"
+    //         : "免费用户"
+    //     }
+    //   >
+    //     {globalUtil.fetchSvg(enterpriseServiceInfo.type)}
+    //   </Tooltip>
+    // );
 
     const customHeader = () => {
       if (mode == "team") {
         return (
           <TeamHeader
-            nobleIcon={nobleIcon}
+            nobleIcon={BillingFunction}
             teamName={teamName}
             currentEnterprise={currentEnterprise}
             currentTeam={currentTeam}
@@ -460,7 +459,7 @@ class TeamLayout extends PureComponent {
           currentRegion={currentRegion}
           regionName={regionName}
           appID={appID}
-          nobleIcon={nobleIcon}
+          nobleIcon={BillingFunction}
           currentComponent={currentComponent}
           componentID={componentID}
           upDataHeader={upDataHeader}
@@ -480,7 +479,7 @@ class TeamLayout extends PureComponent {
         currentTeam.tenant_actions
       );
     }
-    const fetchLogo = rainbondUtil.fetchLogo(rainbondInfo, enterprise) || logo;
+    const fetchLogo = rainbondUtil.fetchLogo(rainbondInfo, enterprise) || '';
     const layout = () => {
       const team = userUtil.getTeamByTeamName(currentUser, teamName);
       const hasRegion =
@@ -635,9 +634,9 @@ class TeamLayout extends PureComponent {
             }}
           />
         )}
-        {orders && (
+        {orders && BillingFunction && (
           <ServiceOrder
-            enterpriseServiceInfo={enterpriseServiceInfo}
+            // enterpriseServiceInfo={enterpriseServiceInfo}
             eid={currentEnterprise && currentEnterprise.enterprise_id}
             orders={orders}
           />
@@ -664,7 +663,7 @@ export default connect(
     nouse: global.nouse,
     enterprise: global.enterprise,
     orders: global.orders,
-    enterpriseServiceInfo: order.enterpriseServiceInfo,
+    // enterpriseServiceInfo: order.enterpriseServiceInfo,
     upDataHeader: global.upDataHeader,
     currentTeamPermissionsInfo: teamControl.currentTeamPermissionsInfo
   })

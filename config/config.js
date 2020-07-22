@@ -3,6 +3,7 @@ import routerConfig from "./router.config";
 
 export default {
   history: "hash",
+  // publicPath: "/static/dists/",
   publicPath: "/",
   hash: true,
   plugins: [
