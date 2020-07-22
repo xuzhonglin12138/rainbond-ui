@@ -1,10 +1,10 @@
 /*
    快速复制
 */
-import { Button, Checkbox, Col, Form, Input, Modal, notification, Row, Select, Spin, Tooltip } from 'antd';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import React, { PureComponent } from 'react';
+import { Button, Checkbox, Col, Form, Input, Modal, notification, Row, Select, Spin, Tooltip } from 'antd';
 import appUtil from '../../utils/app';
 import globalUtil from '../../utils/global';
 import AddGroup from '../AddOrEditGroup';

@@ -32,7 +32,7 @@ function checkStatus(response) {
   }
   const errortext = codeMessage[response.status] || response.statusText;
   notification.warning({
-    message: `请求错误 : ${response.url}`,
+    message: `警告 : ${response.url}`,
     description: errortext
   });
 
@@ -194,14 +194,14 @@ export default function request(url, options) {
 
           return;
         }
-        if (resData.code === 10407) {
-          cookie.setGuide("appStore", "true");
-          window.g_app._store.dispatch({
-            type: "global/showAuthCompany"
-          });
+        // if (resData.code === 10407) {
+        //   cookie.setGuide("appStore", "true");
+        //   window.g_app._store.dispatch({
+        //     type: "global/showAuthCompany"
+        //   });
 
-          return;
-        }
+        //   return;
+        // }
 
         if (resData.code === 10405) {
           window.g_app._store.dispatch({
@@ -223,6 +223,9 @@ export default function request(url, options) {
               isNouse: true
             }
           });
+          return;
+        }
+        if (resData.code === 10421) {
           return;
         }
 
@@ -254,7 +257,7 @@ export default function request(url, options) {
             return;
           }
 
-          notification.warning({ message: "请求错误", description: msg });
+          notification.warning({ message: "警告", description: msg });
         }
 
         // if (status <= 504 && status >= 500) {

@@ -272,6 +272,17 @@ class TeamLayout extends PureComponent {
         },
         callback: appDetail => {
           this.setState({ currentComponent: appDetail.service });
+        },
+        handleError: data => {
+          if (data.status) {
+            if (data.status === 404) {
+              this.props.dispatch(
+                routerRedux.push(
+                  `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/exception/404`
+                )
+              );
+            }
+          }
         }
       });
     }

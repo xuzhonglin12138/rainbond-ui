@@ -544,9 +544,7 @@ const cloud = {
     return { complete, steps };
   },
   getAliyunClusterStatus(status, cluster) {
-    const logURL = `https://cs.console.aliyun.com/#/k8s/cluster/${
-      cluster.cluster_id
-    }/log`;
+    const logURL = `https://cs.console.aliyun.com/#/k8s/cluster/${cluster.cluster_id}/log`;
     switch (status) {
       case "running":
         if (cluster.rainbond_init) {
