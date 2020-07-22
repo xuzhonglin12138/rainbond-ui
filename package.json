@@ -111,6 +111,10 @@
   "optionalDependencies": {
     "nightmare": "2.10.0"
   },
+  "engines": {
+    "node": "12.8.2",
+    "yarn": "1.17.3"
+  },
   "lint-staged": {
     "**/*.{js,jsx}": "lint-staged:js",
     "**/*.less": "stylelint --syntax less"
