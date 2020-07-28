@@ -1,15 +1,15 @@
-import { Button, Card, Col, Row } from 'antd';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
-import moment from 'moment';
-import React, { PureComponent } from 'react';
-import Phoneimg from '../../../../../public/images/phone.png';
-import weChatimg from '../../../../../public/images/weChat.jpeg';
-import ordersUtil from '../../../../utils/orders';
-import styles from '../../index.less';
+import { Button, Card, Col, Row } from "antd";
+import { connect } from "dva";
+import { Link } from "dva/router";
+import moment from "moment";
+import React, { PureComponent } from "react";
+import Phoneimg from "../../../../../public/images/phone.png";
+import weChatimg from "../../../../../public/images/weChat.jpeg";
+import ordersUtil from "../../../../utils/orders";
+import styles from "../../index.less";
 
 @connect(({ order }) => ({
-  enterpriseServiceInfo: order.enterpriseServiceInfo,
+  enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class ServiceOverview extends PureComponent {
   constructor(props) {
@@ -18,53 +18,53 @@ export default class ServiceOverview extends PureComponent {
   }
 
   componentWillMount() {
-    // this.fetchEnterpriseService();
+    this.fetchEnterpriseService();
   }
   handlRefresh = () => {
     const { dispatch, eid } = this.props;
     dispatch({
-      type: 'order/fetchEnterpriseServiceRefresh',
+      type: "order/fetchEnterpriseServiceRefresh",
       payload: {
-        enterprise_id: eid,
+        enterprise_id: eid
       },
       callback: res => {
         if (res && res._code === 200) {
           this.fetchEnterpriseService();
         }
-      },
+      }
     });
   };
   fetchEnterpriseService = () => {
     const { dispatch, eid } = this.props;
     dispatch({
-      type: 'order/fetchEnterpriseService',
+      type: "order/fetchEnterpriseService",
       payload: {
-        enterprise_id: eid,
+        enterprise_id: eid
       },
       callback: res => {
         if (res && res._code === 200) {
           this.setState({
-            loading: false,
+            loading: false
           });
         }
-      },
+      }
     });
   };
 
   render() {
     const { loading } = this.state;
     const { eid, enterpriseServiceInfo } = this.props;
-    const free = enterpriseServiceInfo && enterpriseServiceInfo.type === 'free';
-    const version = free ? '免费版' : '付费版';
-    const versionName = 'RAINBOND CLOUD';
-    const service = free ? '免费服务' : '付费服务';
+    const free = enterpriseServiceInfo && enterpriseServiceInfo.type === "free";
+    const version = free ? "免费版" : "付费版";
+    const versionName = "RAINBOND CLOUD";
+    const service = free ? "免费服务" : "付费服务";
     return (
       <div>
         <Card
           bordered={false}
           loading={!enterpriseServiceInfo}
-          style={{ marginBottom: '45px' }}
-          bodyStyle={{ padding: !loading && '0' }}
+          style={{ marginBottom: "45px" }}
+          bodyStyle={{ padding: !loading && "0" }}
         >
           {enterpriseServiceInfo && (
             <Row>
@@ -74,7 +74,7 @@ export default class ServiceOverview extends PureComponent {
                 {!free ? (
                   <p>
                     {moment(enterpriseServiceInfo.expired_time).format(
-                      'YYYY-MM-DD'
+                      "YYYY-MM-DD"
                     )}
                     到期
                   </p>
@@ -89,9 +89,9 @@ export default class ServiceOverview extends PureComponent {
                       <p>当前使用调度内存(GB)</p>
                       <div
                         style={{
-                          display: 'flex',
-                          border: 'none',
-                          alignItems: 'baseline',
+                          display: "flex",
+                          border: "none",
+                          alignItems: "baseline"
                         }}
                       >
                         <h6>
@@ -101,8 +101,8 @@ export default class ServiceOverview extends PureComponent {
                         </h6>
                         <a
                           style={{
-                            marginLeft:'5px',
-                            fontSize: '12px',
+                            marginLeft: "5px",
+                            fontSize: "12px"
                           }}
                           onClick={this.handlRefresh}
                         >
@@ -110,11 +110,11 @@ export default class ServiceOverview extends PureComponent {
                         </a>
                       </div>
                     </div>
-                    <Button style={{ marginTop: '50px' }} type="primary">
+                    <Button style={{ marginTop: "50px" }} type="primary">
                       <Link
                         to={`/enterprise/${eid}/orders/overviewService/details`}
                       >
-                        {free ? '订购' : '扩容续费'}
+                        {free ? "订购" : "扩容续费"}
                       </Link>
                     </Button>
                   </Col>
