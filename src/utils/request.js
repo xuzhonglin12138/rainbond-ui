@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-underscore-dangle */
 import { notification } from "antd";
 import axios from "axios";
 // import { routerRedux } from 'dva/router';
@@ -89,9 +91,11 @@ export default function request(url, options) {
   const teamName = cookie.get("team_name");
   const regionName = cookie.get("region_name");
   let interfaceRegionName = "";
+  let interfaceTeamName = "";
   if (token && newOptions.passAuthorization) {
     newOptions.headers.Authorization = `GRJWT ${token}`;
   }
+
   if (
     url &&
     (url.lastIndexOf("/groups") > -1 || url.lastIndexOf("/topological") > -1) &&
@@ -100,9 +104,19 @@ export default function request(url, options) {
   ) {
     interfaceRegionName = newOptions.params.region_name;
   }
+  if (
+    newOptions.data &&
+    newOptions.data.region_name &&
+    newOptions.data.team_name
+  ) {
+    interfaceRegionName = newOptions.data.region_name;
+    interfaceTeamName = newOptions.data.team_name;
+  }
+
   newOptions.headers.X_REGION_NAME =
     interfaceRegionName || globalUtil.getCurrRegionName() || regionName;
-  newOptions.headers.X_TEAM_NAME = globalUtil.getCurrTeamName() || teamName;
+  newOptions.headers.X_TEAM_NAME =
+    interfaceTeamName || globalUtil.getCurrTeamName() || teamName;
 
   newOptions.url = url;
   // newOptions.withCredentials = true;
@@ -155,7 +169,6 @@ export default function request(url, options) {
           window.g_app._store.dispatch({
             type: "global/showPayTip"
           });
-
           return;
         }
 
@@ -228,6 +241,11 @@ export default function request(url, options) {
         if (resData.code === 10421) {
           return;
         }
+        // cluster request error, ignore it
+        if (resData.code === 10411) {
+          console.log(resData);
+          return;
+        }
 
         // 访问资源集群与当前集群不一致
         if (resData.code === 10404) {
@@ -259,15 +277,12 @@ export default function request(url, options) {
 
           notification.warning({ message: "警告", description: msg });
         }
-
-        // if (status <= 504 && status >= 500) {
-        // push(routerRedux.push('/exception/500'));   return; } if (status >= 404
-        // && status < 422) {   push(routerRedux.push('/exception/404')); }
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log("Error", error.message);
+        if (newOptions.handleError) {
+          newOptions.handleError(error);
+        }
       }
-
-      // return error
     });
 }

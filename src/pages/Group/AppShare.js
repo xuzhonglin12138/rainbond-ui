@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unused-state */
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable import/first */
-import React, { PureComponent, Fragment } from 'react';
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import React, { PureComponent, Fragment } from "react";
+import { connect } from "dva";
+import { routerRedux } from "dva/router";
+import PageHeaderLayout from "../../layouts/PageHeaderLayout";
 import {
   Table,
   AutoComplete,
@@ -21,20 +21,20 @@ import {
   Checkbox,
   Tabs,
   Divider,
-  InputNumber,
-} from 'antd';
-import CreateAppModels from '../../components/CreateAppModels';
-import FooterToolbar from '../../components/FooterToolbar';
-import cookie from '../../utils/cookie';
+  InputNumber
+} from "antd";
+import CreateAppModels from "../../components/CreateAppModels";
+import FooterToolbar from "../../components/FooterToolbar";
+import cookie from "../../utils/cookie";
 import {
   createEnterprise,
   createTeam,
-  createApp,
-} from '../../utils/breadcrumb';
-import globalUtil from '../../utils/global';
-import pluginUtil from '../../utils/plugin';
-import styles from './Index.less';
-import mytabcss from './mytab.less';
+  createApp
+} from "../../utils/breadcrumb";
+import globalUtil from "../../utils/global";
+import pluginUtil from "../../utils/plugin";
+import styles from "./Index.less";
+import mytabcss from "./mytab.less";
 
 const { TabPane } = Tabs;
 const FormItem = Form.Item;
@@ -49,13 +49,13 @@ const formItemLayout = {
   }
 };
 
-const token = cookie.get('token');
+const token = cookie.get("token");
 const myheaders = {};
 if (token) {
   myheaders.Authorization = `GRJWT ${token}`;
 }
 
-@Form.create()
+// @Form.create()
 class AppInfo extends PureComponent {
   componentDidMount() {
     if (this.props.getref) {
@@ -82,8 +82,8 @@ class AppInfo extends PureComponent {
     }
   };
   renderConnectInfo = () => {
-    const app = this.props.app || {};
-    const { getFieldDecorator } = this.props.form;
+    const { app = {}, form } = this.props;
+    const { getFieldDecorator } = form;
     if (
       app.service_connect_info_map_list &&
       app.service_connect_info_map_list.length
@@ -156,8 +156,8 @@ class AppInfo extends PureComponent {
     return null;
   };
   renderEvn = () => {
-    const { getFieldDecorator } = this.props.form;
-    const app = this.props.app || {};
+    const { app = {}, form } = this.props;
+    const { getFieldDecorator } = form;
     if (app.service_env_map_list && app.service_env_map_list.length) {
       return (
         <div
@@ -206,11 +206,12 @@ class AppInfo extends PureComponent {
     return null;
   };
   renderExtend = () => {
-    const app = this.props.app || {};
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { app = {}, ID = "extend", form } = this.props;
+
+    const { getFieldDecorator, getFieldValue } = form;
 
     if (app.extend_method_map) {
-      const steps = getFieldValue('extend||step_node');
+      const steps = getFieldValue(`${ID}||step_node`);
       return (
         <div
           style={{
@@ -228,7 +229,7 @@ class AppInfo extends PureComponent {
           <Row>
             <Col span={6}>
               <FormItem label="最小节点(个)" style={{ padding: 16 }}>
-                {getFieldDecorator("extend||min_node", {
+                {getFieldDecorator(`${ID}||min_node`, {
                   initialValue: app.extend_method_map.min_node,
                   rules: [
                     {
@@ -248,7 +249,7 @@ class AppInfo extends PureComponent {
             </Col>
             <Col span={6}>
               <FormItem label="最大节点(个)" style={{ padding: 16 }}>
-                {getFieldDecorator("extend||max_node", {
+                {getFieldDecorator(`${ID}||max_node`, {
                   initialValue: app.extend_method_map.max_node,
                   rules: [
                     {
@@ -268,7 +269,7 @@ class AppInfo extends PureComponent {
             </Col>
             <Col span={6}>
               <FormItem label="节点步长(个)" style={{ padding: 16 }}>
-                {getFieldDecorator("extend||step_node", {
+                {getFieldDecorator(`${ID}||step_node`, {
                   initialValue: app.extend_method_map.step_node,
                   rules: [
                     {
@@ -288,7 +289,7 @@ class AppInfo extends PureComponent {
             </Col>
             <Col span={6}>
               <FormItem label="最小内存(M)" style={{ padding: 16 }}>
-                {getFieldDecorator("extend||min_memory", {
+                {getFieldDecorator(`${ID}||min_memory`, {
                   initialValue: app.extend_method_map.min_memory,
                   rules: [
                     {
@@ -370,7 +371,7 @@ export default class Main extends PureComponent {
       versions: [],
       versionInfo: false,
       editorAppModel: false,
-      appModelInfo: false
+      appModelInfo: false,
     };
     this.com = [];
     this.share_group_info = null;
@@ -385,9 +386,71 @@ export default class Main extends PureComponent {
     this.setState({
       shareModal: null,
       isShare: isShare || this.state.isShare,
-      service_cname: '',
-      dep_service_name: [],
+      service_cname: "",
+      dep_service_name: []
     });
+  };
+
+  onFileChange = e => {
+    const share_service_data = this.share_service_list;
+    const { shareList, sharearrs } = this.state;
+    // this.props.form.setFieldsValue({sharing:e})
+
+    if (e.length > 0) {
+      const newArray = sharearrs.filter(item => !e.includes(item));
+
+      const arr = [];
+      const dep_service_key = [];
+      const dep_service_name = [];
+      e.map(item => {
+        share_service_data.map(option => {
+          if (item == option.service_share_uuid) {
+            option.dep_service_map_list &&
+              option.dep_service_map_list.length > 0 &&
+              option.dep_service_map_list.map(items => {
+                dep_service_key.push(items.dep_service_key);
+                dep_service_name.push(option.service_cname);
+              });
+          }
+        });
+      });
+
+      let show = false;
+      let name = "";
+      if (newArray.length > 0 && dep_service_key.length > 0) {
+        newArray.map(item => {
+          share_service_data.map(option => {
+            if (item == option.service_share_uuid) {
+              name = option.service_cname;
+            }
+          });
+          dep_service_key.map(items => {
+            if (items == item) {
+              show = true;
+            }
+          });
+        });
+      }
+
+      if (show && e.length <= sharearrs.length) {
+        this.setState({
+          shareModal: e,
+          service_cname: name,
+          dep_service_name
+        });
+      } else {
+        this.setState(
+          {
+            sharearrs: e
+          },
+          () => {
+            this.handleTabList();
+          }
+        );
+      }
+    } else {
+      notification.warning({ message: "分享组件不能少于1个" });
+    }
   };
   getParams() {
     return {
@@ -395,7 +458,6 @@ export default class Main extends PureComponent {
       shareId: this.props.match.params.shareId
     };
   }
-
   getBase64 = file => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -409,13 +471,13 @@ export default class Main extends PureComponent {
     const { dispatch } = this.props;
     const params = this.getParams();
     dispatch({
-      type: 'groupControl/getShareInfo',
+      type: "groupControl/getShareInfo",
       payload: {
         team_name: globalUtil.getCurrTeamName(),
-        ...params,
+        ...params
       },
       callback: data => {
-        let selectedApp = '';
+        let selectedApp = "";
         if (data) {
           if (data.bean.share_service_list[0]) {
             selectedApp = data.bean.share_service_list[0].service_alias;
@@ -427,7 +489,6 @@ export default class Main extends PureComponent {
             share_service_list: data.bean.share_service_list,
           });
           this.share_service_list = data.bean.share_service_list;
-
           const arr = [];
           if (
             data.bean.share_service_list &&
@@ -438,7 +499,7 @@ export default class Main extends PureComponent {
             });
             this.setState({
               shareList: arr,
-              sharearrs: arr,
+              sharearrs: arr
             });
             // this.props.form.setFieldsValue({ sharing: arr })
           }
@@ -452,7 +513,7 @@ export default class Main extends PureComponent {
             )
           );
         }
-      },
+      }
     });
   }
   fetchRecord = () => {
@@ -489,8 +550,8 @@ export default class Main extends PureComponent {
       team_name: teamName,
       app_id: appID
     };
-    if (scope == 'goodrain' && scopeTarget) {
-      body.scope = 'goodrain';
+    if (scope == "goodrain" && scopeTarget) {
+      body.scope = "goodrain";
       body.market_id = scopeTarget.store_id;
     } else {
       body.scope = "local";
@@ -528,15 +589,15 @@ export default class Main extends PureComponent {
                 }
                 if (isCreate) {
                   setFieldsValue({
-                    app_id: res.list[0].app_id,
+                    app_id: res.list[0].app_id
                   });
                 }
-                if (JSON.stringify(res.bean) === '{}') {
+                if (JSON.stringify(res.bean) === "{}") {
                   this.changeCurrentModel(res.list[0].app_id);
                 } else {
                   this.changeCurrentModel(
                     isCreate ? res.list[0].app_id : res.bean && res.bean.app_id,
-                    isCreate ? '' : res.bean && res.bean.version,
+                    isCreate ? "" : res.bean && res.bean.version,
                     isCreate
                   );
                 }
@@ -592,14 +653,27 @@ export default class Main extends PureComponent {
           version: values.version,
           version_alias: values.version_alias
         };
-        if (record.scope == 'goodrain') {
+        if (record.scope == "goodrain") {
           appVersionInfo.scope_target = record.scope_target;
           appVersionInfo.scope = record.scope;
           appVersionInfo.market_id =
             record.scope_target && record.scope_target.store_id;
-          appVersionInfo.template_type = 'RAM';
+          appVersionInfo.template_type = "RAM";
         }
         const share_service_data = this.share_service_list;
+
+        this.share_service_list.map((item, index) => {
+          const { extend_method_map, service_id } = item;
+          if (extend_method_map) {
+            Object.keys(extend_method_map).forEach(function(key) {
+              if (values[`${service_id}||${key}`]) {
+                share_service_data[index].extend_method_map[key] =
+                  values[`${service_id}||${key}`];
+              }
+            });
+          }
+        });
+
         const arr = [];
         const dep_service_key = [];
         sharearrs.map(item => {
@@ -657,7 +731,6 @@ export default class Main extends PureComponent {
         newinfo.share_plugin_list = this.state.info.share_plugin_list;
         const teamName = globalUtil.getCurrTeamName();
         const { appID, shareId } = this.props.match.params;
-
         dispatch({
           type: "groupControl/subShareInfo",
           payload: {
@@ -725,68 +798,6 @@ export default class Main extends PureComponent {
   };
   tabClick = val => {
     this.setState({ key: val });
-  };
-
-  onFileChange = e => {
-    const share_service_data = this.share_service_list;
-    const { shareList, sharearrs } = this.state;
-    // this.props.form.setFieldsValue({sharing:e})
-
-    if (e.length > 0) {
-      const newArray = sharearrs.filter(item => !e.includes(item));
-
-      const arr = [];
-      const dep_service_key = [];
-      const dep_service_name = [];
-      e.map(item => {
-        share_service_data.map(option => {
-          if (item == option.service_share_uuid) {
-            option.dep_service_map_list &&
-              option.dep_service_map_list.length > 0 &&
-              option.dep_service_map_list.map(items => {
-                dep_service_key.push(items.dep_service_key);
-                dep_service_name.push(option.service_cname);
-              });
-          }
-        });
-      });
-
-      let show = false;
-      let name = "";
-      if (newArray.length > 0 && dep_service_key.length > 0) {
-        newArray.map(item => {
-          share_service_data.map(option => {
-            if (item == option.service_share_uuid) {
-              name = option.service_cname;
-            }
-          });
-          dep_service_key.map(items => {
-            if (items == item) {
-              show = true;
-            }
-          });
-        });
-      }
-
-      if (show && e.length <= sharearrs.length) {
-        this.setState({
-          shareModal: e,
-          service_cname: name,
-          dep_service_name
-        });
-      } else {
-        this.setState(
-          {
-            sharearrs: e
-          },
-          () => {
-            this.handleTabList();
-          }
-        );
-      }
-    } else {
-      notification.warning({ message: "分享组件不能少于1个" });
-    }
   };
 
   handleSubmits = () => {
@@ -949,15 +960,21 @@ export default class Main extends PureComponent {
   };
 
   render() {
-    const {info} = this.state;
+    const { info, key: tabk } = this.state;
     if (!info) {
       return null;
     }
     const apps = info.share_service_list || [];
     const plugins = info.share_plugin_list || [];
-    const tabk = this.state.key;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
-    const {loading} = this.props;
+    const {
+      loading,
+      form,
+      currentEnterprise,
+      currentTeam,
+      currentRegionName
+    } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
+
     const {
       shareModal,
       sharearrs,
@@ -973,7 +990,6 @@ export default class Main extends PureComponent {
       submitLoading,
       appModelInfo
     } = this.state;
-    const { currentEnterprise, currentTeam, currentRegionName } = this.props;
     const Application = getFieldValue("app_id");
     let breadcrumbList = [];
     breadcrumbList = createApp(
@@ -988,14 +1004,12 @@ export default class Main extends PureComponent {
     );
     breadcrumbList.push({
       title: "发布记录列表",
-      href: `/team/${currentTeam.team_name}/region/${currentRegionName}/apps/${
-        appDetail.group_id
-      }/publish`
+      href: `/team/${currentTeam.team_name}/region/${currentRegionName}/apps/${appDetail.group_id}/publish`
     });
     if (record && record.scope == "goodrain") {
       breadcrumbList.push({ title: "发布到云应用商店" });
     } else {
-      breadcrumbList.push({ title: '发布到应用市场' });
+      breadcrumbList.push({ title: "发布到应用市场" });
     }
     const market_id = record.scope_target && record.scope_target.store_id;
     return (
@@ -1016,132 +1030,127 @@ export default class Main extends PureComponent {
                 padding: "24px"
               }}
             >
-              <Form layout="horizontal" className={styles.stepForm}>
-                <Row gutter={24}>
-                  <Col span="12">
-                    <Form.Item {...formItemLayout} label="应用模版">
-                      {getFieldDecorator("app_id", {
-                        initialValue: model.app_id,
-                        rules: [
-                          {
-                            required: true,
-                            message: "应用模版选择是必须的"
-                          }
-                        ]
-                      })(
-                        <Select
-                          style={{ width: 280 }}
-                          onChange={this.changeCurrentModel}
-                          placeholder="选择发布的应用模版"
-                          dropdownRender={menu => (
-                            <div>
-                              {menu}
-                              <Divider style={{ margin: "4px 0" }} />
-                              <div
-                                style={{
-                                  padding: "4px 8px",
-                                  cursor: "pointer",
-                                  textAlign: "center"
-                                }}
-                                onMouseDown={e => e.preventDefault()}
-                                onClick={this.showCreateAppModel}
-                              >
-                                <Icon type="plus" /> 新建应用模版
-                              </div>
+              {/* <Form layout="horizontal" className={styles.stepForm}> */}
+              <Row gutter={24}>
+                <Col span="12">
+                  <Form.Item {...formItemLayout} label="应用模版">
+                    {getFieldDecorator("app_id", {
+                      initialValue: model.app_id,
+                      rules: [
+                        {
+                          required: true,
+                          message: "应用模版选择是必须的"
+                        }
+                      ]
+                    })(
+                      <Select
+                        style={{ width: 280 }}
+                        onChange={this.changeCurrentModel}
+                        placeholder="选择发布的应用模版"
+                        dropdownRender={menu => (
+                          <div>
+                            {menu}
+                            <Divider style={{ margin: "4px 0" }} />
+                            <div
+                              style={{
+                                padding: "4px 8px",
+                                cursor: "pointer",
+                                textAlign: "center"
+                              }}
+                              onMouseDown={e => e.preventDefault()}
+                              onClick={this.showCreateAppModel}
+                            >
+                              <Icon type="plus" /> 新建应用模版
                             </div>
-                          )}
-                        >
-                          {models.map(item => (
-                            <Option key={item.app_id}>{item.app_name}</Option>
-                          ))}
-                        </Select>
-                      )}
-                      {Application &&
-                        models &&
-                        models.length > 0 &&
-                        !market_id && (
-                          <a
-                            style={{ marginLeft: "10px" }}
-                            onClick={() => {
-                              this.showEditorAppModel(Application);
-                            }}
-                          >
-                            编辑应用模版
-                          </a>
+                          </div>
                         )}
-                    </Form.Item>
-                  </Col>
-                  <Col span="12">
-                    <Form.Item {...formItemLayout} label="版本号">
-                      {getFieldDecorator("version", {
-                        initialValue:
-                          (versionInfo && versionInfo.version) || "",
-                        rules: [
-                          {
-                            required: true,
-                            validator: this.checkVersion
-                          }
-                        ]
-                      })(
-                        <AutoComplete
-                          style={{ width: 280 }}
-                          onChange={this.changeCurrentVersion}
-                          placeholder="版本号默认为选择模版的上次分享版本"
-                        >
-                          {versions &&
-                            versions.length > 0 &&
-                            versions.map((item, index) => {
-                              const { version } = item;
-                              return (
-                                <AutoComplete.Option
-                                  key={`version${index}`}
-                                  value={version}
-                                >
-                                  {version}
-                                </AutoComplete.Option>
-                              );
-                            })}
-                        </AutoComplete>
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col span="12">
-                    <Form.Item {...formItemLayout} label="版本别名">
-                      {getFieldDecorator("version_alias", {
-                        initialValue:
-                          (versionInfo && versionInfo.version_alias) || ""
-                      })(
-                        <Input
-                          style={{ width: 280 }}
-                          placeholder="设置版本别名，比如高级版"
-                        />
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col span="12" style={{ height: "104px" }}>
-                    <Form.Item {...formItemLayout} label="版本说明">
-                      {getFieldDecorator("describe", {
-                        initialValue:
-                          (versionInfo &&
-                            (versionInfo.describe ||
-                              versionInfo.app_describe)) ||
-                          "",
-                        rules: [
-                          {
-                            required: false,
-                            message: "请输入版本说明"
-                          }
-                        ]
-                      })(
-                        <TextArea
-                          placeholder="请输入版本说明"
-                          style={{ height: "70px" }}
-                        />
-                      )}
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
+                      >
+                        {models.map(item => (
+                          <Option key={item.app_id}>{item.app_name}</Option>
+                        ))}
+                      </Select>
+                    )}
+                    {Application && models && models.length > 0 && !market_id && (
+                      <a
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => {
+                          this.showEditorAppModel(Application);
+                        }}
+                      >
+                        编辑应用模版
+                      </a>
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span="12">
+                  <Form.Item {...formItemLayout} label="版本号">
+                    {getFieldDecorator("version", {
+                      initialValue: (versionInfo && versionInfo.version) || "",
+                      rules: [
+                        {
+                          required: true,
+                          validator: this.checkVersion
+                        }
+                      ]
+                    })(
+                      <AutoComplete
+                        style={{ width: 280 }}
+                        onChange={this.changeCurrentVersion}
+                        placeholder="版本号默认为选择模版的上次分享版本"
+                      >
+                        {versions &&
+                          versions.length > 0 &&
+                          versions.map((item, index) => {
+                            const { version } = item;
+                            return (
+                              <AutoComplete.Option
+                                key={`version${index}`}
+                                value={version}
+                              >
+                                {version}
+                              </AutoComplete.Option>
+                            );
+                          })}
+                      </AutoComplete>
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span="12">
+                  <Form.Item {...formItemLayout} label="版本别名">
+                    {getFieldDecorator("version_alias", {
+                      initialValue:
+                        (versionInfo && versionInfo.version_alias) || ""
+                    })(
+                      <Input
+                        style={{ width: 280 }}
+                        placeholder="设置版本别名，比如高级版"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span="12" style={{ height: "104px" }}>
+                  <Form.Item {...formItemLayout} label="版本说明">
+                    {getFieldDecorator("describe", {
+                      initialValue:
+                        (versionInfo &&
+                          (versionInfo.describe || versionInfo.app_describe)) ||
+                        "",
+                      rules: [
+                        {
+                          required: false,
+                          message: "请输入版本说明"
+                        }
+                      ]
+                    })(
+                      <TextArea
+                        placeholder="请输入版本说明"
+                        style={{ height: "70px" }}
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+              </Row>
+              {/* </Form> */}
             </div>
           </Card>
           <Card
@@ -1175,7 +1184,7 @@ export default class Main extends PureComponent {
                     style={{ display: "block", marginTop: "9px" }}
                   >
                     <Tabs activeKey={tabk} onChange={this.tabClick}>
-                      {apps.map(apptit => (
+                      {apps.map((apptit, index) => (
                         <TabPane
                           key={apptit.service_alias}
                           tab={
@@ -1195,35 +1204,19 @@ export default class Main extends PureComponent {
                               </a>
                             </span>
                           }
-                        />
+                        >
+                          <AppInfo
+                            form={form}
+                            app={share_service_list[index]}
+                            getref={this.save}
+                            tab={share_service_list[index].service_alias}
+                            ID={share_service_list[index].service_id}
+                          />
+                        </TabPane>
                       ))}
                     </Tabs>
                   </Checkbox.Group>
                 </div>
-                {share_service_list.map(app =>
-                  tabk == app.service_alias ? (
-                    <div key={app.service_alias}>
-                      <AppInfo
-                        app={app}
-                        getref={this.save}
-                        tab={app.service_alias}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        display: "none"
-                      }}
-                      key={app.service_alias}
-                    >
-                      <AppInfo
-                        app={app}
-                        getref={this.save}
-                        tab={app.service_alias}
-                      />
-                    </div>
-                  )
-                )}
               </div>
             </div>
           </Card>

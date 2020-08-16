@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'dva/router';
-import PageHeader from '../components/PageHeader';
-import styles from './PageHeaderLayout.less';
 import { DefaultFooter } from '@ant-design/pro-layout';
 import { Icon } from 'antd';
+import { Link } from 'dva/router';
+import React from 'react';
+import PageHeader from '../components/PageHeader';
+import styles from './PageHeaderLayout.less';
 
 export default ({
   isFooter,
