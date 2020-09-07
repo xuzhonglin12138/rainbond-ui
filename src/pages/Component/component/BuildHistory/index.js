@@ -83,18 +83,13 @@ class Index extends PureComponent {
     return (
       <Row gutter={24}>
         {logVisible && (
-          <Modal
-            className={styles.logModal}
+          <LogShow
             title="构建日志"
-            visible={logVisible}
+            EventID={EventID}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             width="1200px"
-            bodyStyle={{ background: "#222222", color: "#fff" }}
-            footer={null}
-          >
-            <LogShow EventID={EventID} />
-          </Modal>
+          />
         )}
         <Col xs={24} xm={24} md={24} lg={24} xl={24}>
           <Card
@@ -140,9 +135,7 @@ class Index extends PureComponent {
                             className={`${styles.rowRtem} ${styles.buildInfo}`}
                           >
                             <div
-                              className={` ${styles.alcen}  ${
-                                styles.rowBranch
-                              }`}
+                              className={` ${styles.alcen}  ${styles.rowBranch}`}
                             >
                               <span className={`${styles.statusIcon} `}>
                                 {status === "success" ? (
@@ -164,9 +157,7 @@ class Index extends PureComponent {
                                 )}
                               </span>
                               <a
-                                className={` ${styles.alcen} ${
-                                  styles.passeda
-                                } `}
+                                className={` ${styles.alcen} ${styles.passeda} `}
                               >
                                 <font
                                   className={styles.nowarpCorolText}
@@ -190,9 +181,7 @@ class Index extends PureComponent {
                               </a>
                             </div>
                             <div
-                              className={` ${styles.alcen} ${
-                                styles.rowMessage
-                              } `}
+                              className={` ${styles.alcen} ${styles.rowMessage} `}
                             >
                               <Tooltip
                                 title={
@@ -232,9 +221,7 @@ class Index extends PureComponent {
                           </div>
 
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.buildCommitter
-                            } ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${styles.buildCommitter} ${styles.alcen}`}
                           >
                             <div
                               style={{
@@ -318,9 +305,7 @@ class Index extends PureComponent {
                                   }
                                 >
                                   <span
-                                    className={` ${styles.alcen} ${
-                                      styles.buildwidth
-                                    } `}
+                                    className={` ${styles.alcen} ${styles.buildwidth} `}
                                     style={{ color: "rgba(0, 0, 0, 0.65)" }}
                                   >
                                     {kind &&
@@ -389,9 +374,7 @@ class Index extends PureComponent {
                         </div>
                         <div className={`${styles.linestree}`}>
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.rowDuration
-                            }`}
+                            className={`${styles.rowRtem} ${styles.rowDuration}`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="运行时间">
@@ -417,9 +400,7 @@ class Index extends PureComponent {
                             </div>
                           </div>
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.rowCalendar
-                            } ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${styles.rowCalendar} ${styles.alcen}`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="创建时间">
