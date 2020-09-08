@@ -133,10 +133,10 @@ import {
   getPerformanceAnalysis
 } from '../services/app';
 
-import { getCertificates, addCertificate } from "../services/team";
+import { getCertificates, addCertificate } from '../services/team';
 
 export default {
-  namespace: "appControl",
+  namespace: 'appControl',
   state: {
     // 标签信息
     tags: null,
@@ -463,7 +463,7 @@ export default {
         if (callback) {
           callback(response);
         }
-        yield put({ type: "saveVisitInfo", payload: response.bean });
+        yield put({ type: 'saveVisitInfo', payload: response.bean });
       }
     },
     *fetchPods({ payload, callback, handleError }, { call, put }) {
@@ -505,7 +505,7 @@ export default {
     *fetchExtendInfo({ payload, handleError }, { call, put }) {
       const response = yield call(getExtendInfo, payload, handleError);
       if (response) {
-        yield put({ type: "saveExtendInfo", payload: response.bean });
+        yield put({ type: 'saveExtendInfo', payload: response.bean });
       }
     },
     *editName({ payload, callback }, { call }) {
@@ -544,7 +544,7 @@ export default {
     *fetchApps({ payload }, { call, put }) {
       const response = yield call(getGroupApps, payload);
       if (response) {
-        yield put({ type: "saveApps", payload: response.list });
+        yield put({ type: 'saveApps', payload: response.list });
       }
     },
     *fetchPorts({ payload, callback }, { call, put }) {
@@ -778,7 +778,7 @@ export default {
     *fetchStartProbe({ payload }, { call, put }) {
       const response = yield call(getStartProbe, payload);
       if (response) {
-        yield put({ type: "saveStartProbe", payload: response.bean });
+        yield put({ type: 'saveStartProbe', payload: response.bean });
       }
     },
     *addStartProbe({ payload, callback }, { call }) {
@@ -808,7 +808,7 @@ export default {
     *fetchBaseInfo({ payload }, { call, put }) {
       const response = yield call(getBaseInfo, payload);
       if (response) {
-        yield put({ type: "saveBaseInfo", payload: response.bean });
+        yield put({ type: 'saveBaseInfo', payload: response.bean });
       }
     },
     *deleteMnt({ payload, callback }, { call }) {
@@ -850,12 +850,6 @@ export default {
     *deleteVolume({ payload, callback }, { call }) {
       const response = yield call(deleteVolume, payload);
       if (response && callback) {
-        callback(response);
-      }
-    },
-    *fetchPerformanceAnalysis({ payload, callback }, { call }) {
-      const response = yield call(getPerformanceAnalysis, payload);
-      if (callback) {
         callback(response);
       }
     },
@@ -1003,7 +997,7 @@ export default {
     *fetchMember({ payload }, { call, put }) {
       const response = yield call(getMembers, payload);
       if (response) {
-        yield put({ type: "saveMember", payload: response.list });
+        yield put({ type: 'saveMember', payload: response.list });
       }
     },
     *fetchpermsMember({ payload, callback }, { call }) {
