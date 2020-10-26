@@ -31,6 +31,10 @@ export default class Index extends PureComponent {
     };
   }
 
+  componentWillMount() {
+    this.fetchBaseInfo();
+  }
+
   componentDidMount() {
     if (!this.canView()) return;
     this.getAnalyzePlugins();
@@ -49,6 +53,18 @@ export default class Index extends PureComponent {
       }
     });
   }
+
+  fetchBaseInfo = () => {
+    const { dispatch, appAlias } = this.props;
+    dispatch({
+      type: 'appControl/fetchBaseInfo',
+      payload: {
+        team_name: globalUtil.getCurrTeamName(),
+        app_alias: appAlias,
+      },
+    });
+  };
+
   // 是否可以浏览当前界面
   canView() {
     return appUtil.canManageAppMonitor(this.props.appDetail);
