@@ -1,19 +1,14 @@
-import React, { PureComponent } from 'react';
-import PortInput from './portInput';
-import { connect } from 'dva';
 import {
-  Row,
-  Col,
-  Card,
-  Table,
   Button,
   Drawer,
   Form,
-  Input,
-  Select,
-  notification,
+
+  Select
 } from 'antd';
+import { connect } from 'dva';
+import React, { PureComponent } from 'react';
 import globalUtil from '../../utils/global';
+import PortInput from './portInput';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -327,6 +322,7 @@ class DrawerForm extends PureComponent {
                 })(
                   <Select placeholder="请选择负载均衡类型">
                     <Option value="round-robin">轮询</Option>
+                    <Option value="cookie-session-affinity">会话保持</Option>
                   </Select>
                 )}
               </FormItem>
