@@ -335,7 +335,6 @@ class DrawerForm extends PureComponent {
                 })(
                   <Select placeholder="请选择负载均衡类型">
                     <Option value="round-robin">轮询</Option>
-                    <Option value="cookie-session-affinity">会话保持</Option>
                   </Select>
                 )}
               </FormItem>
