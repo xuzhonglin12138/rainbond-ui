@@ -1,3 +1,7 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
 import {
   Card,
   Col,
@@ -7,49 +11,48 @@ import {
   Pagination,
   Row,
   Tooltip
-} from "antd";
-import { connect } from "dva";
-import { Link, routerRedux } from "dva/router";
-import React, { PureComponent } from "react";
-import AddTeam from "../../../public/images/addTeam.png";
-import Arrow from "../../../public/images/arrow.png";
-import Cpus from "../../../public/images/cpus.png";
-import CreationTeam from "../../../public/images/creationTeam.png";
-import CustomerService from "../../../public/images/CustomerService.png";
-import Element from "../../../public/images/element.png";
-import EnterpriseBj from "../../../public/images/enterpriseBj.png";
-import EnterpriseInfo from "../../../public/images/enterpriseInfo.png";
-import Memory from "../../../public/images/memory.png";
-import Records from "../../../public/images/records.png";
-import Team from "../../../public/images/team.png";
-import TeamCrew from "../../../public/images/teamCrew.png";
-import User from "../../../public/images/user.png";
-import { Pie } from "../../components/Charts";
-import ConfirmModal from "../../components/ConfirmModal";
-import Consulting from "../../components/Consulting";
-import Convenient from "../../components/Convenient";
-import CreateTeam from "../../components/CreateTeam";
-import JoinTeam from "../../components/JoinTeam";
-import Meiqia from "../../layouts/Meiqia";
-import userUtil from "../../utils/user";
-import styles from "../List/BasicList.less";
+} from 'antd';
+import { connect } from 'dva';
+import { Link, routerRedux } from 'dva/router';
+import React, { PureComponent } from 'react';
+import AddTeam from '../../../public/images/addTeam.png';
+import Arrow from '../../../public/images/arrow.png';
+import Cpus from '../../../public/images/cpus.png';
+import CreationTeam from '../../../public/images/creationTeam.png';
+import CustomerService from '../../../public/images/CustomerService.png';
+import Element from '../../../public/images/element.png';
+import EnterpriseBj from '../../../public/images/enterpriseBj.png';
+import EnterpriseInfo from '../../../public/images/enterpriseInfo.png';
+import Memory from '../../../public/images/memory.png';
+import Records from '../../../public/images/records.png';
+import Team from '../../../public/images/team.png';
+import TeamCrew from '../../../public/images/teamCrew.png';
+import User from '../../../public/images/user.png';
+import AuthCompany from '../../components/AuthCompany';
+import { Pie } from '../../components/Charts';
+import ConfirmModal from '../../components/ConfirmModal';
+import Consulting from '../../components/Consulting';
+import Convenient from '../../components/Convenient';
+import CreateTeam from '../../components/CreateTeam';
+import JoinTeam from '../../components/JoinTeam';
+import Meiqia from '../../layouts/Meiqia';
+import userUtil from '../../utils/user';
+import styles from '../List/BasicList.less';
 
-@connect(({ user, global, index, order }) => ({
+@connect(({ user, global, index }) => ({
   user: user.currentUser,
   rainbondInfo: global.rainbondInfo,
   overviewInfo: index.overviewInfo
-  // enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class Enterprise extends PureComponent {
   constructor(props) {
     super(props);
     const { user } = this.props;
     const params = this.getParam();
-    const adminer =
-      userUtil.isSystemAdmin(user) || userUtil.isCompanyAdmin(user);
+    const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
       showAddTeam: false,
-      eid: params ? params.eid : "",
+      eid: params ? params.eid : '',
       adminer,
       enterpriseInfo: false,
       enterpriseInfoLoading: true,
@@ -69,7 +72,9 @@ export default class Enterprise extends PureComponent {
       collectionInfoLoading: true,
       page_size: 6,
       page: 1,
-      total: 0
+      total: 0,
+      showMarketCloudAuth: false,
+      marketName: ''
     };
   }
   componentDidMount() {
@@ -94,11 +99,11 @@ export default class Enterprise extends PureComponent {
     const { eid } = this.state;
 
     dispatch({
-      type: "global/fetchOverviewMonitor",
+      type: 'global/fetchOverviewMonitor',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             overviewMonitorInfo: res.bean,
@@ -114,11 +119,11 @@ export default class Enterprise extends PureComponent {
     const { eid } = this.state;
 
     dispatch({
-      type: "global/fetchOverviewTeam",
+      type: 'global/fetchOverviewTeam',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             overviewTeamInfo: res.bean,
@@ -134,11 +139,11 @@ export default class Enterprise extends PureComponent {
     const { eid } = this.state;
 
     dispatch({
-      type: "global/fetchOverview",
+      type: 'global/fetchOverview',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             overviewInfo: res.bean,
@@ -154,15 +159,15 @@ export default class Enterprise extends PureComponent {
     const { eid } = this.state;
 
     dispatch({
-      type: "global/fetchOverviewApp",
+      type: 'global/fetchOverviewApp',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             overviewAppInfo:
-              res.bean && JSON.stringify(res.bean) != "{}" ? res.bean : false,
+              res.bean && JSON.stringify(res.bean) !== '{}' ? res.bean : false,
             overviewAppInfoLoading: false
           });
         }
@@ -175,11 +180,11 @@ export default class Enterprise extends PureComponent {
     const { eid } = this.state;
 
     dispatch({
-      type: "global/fetchEnterpriseInfo",
+      type: 'global/fetchEnterpriseInfo',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             enterpriseInfo: res.bean,
@@ -199,6 +204,7 @@ export default class Enterprise extends PureComponent {
         this.getOverviewApp();
         this.getOverview();
         this.getOverviewMonitor();
+        this.fetchMarkets();
       } else {
         this.fetchCollectionViewInfo();
       }
@@ -209,12 +215,12 @@ export default class Enterprise extends PureComponent {
     const { dispatch } = this.props;
     const { eid } = this.state;
     dispatch({
-      type: "user/fetchCollectionViewInfo",
+      type: 'user/fetchCollectionViewInfo',
       payload: {
         enterprise_id: eid
       },
-      callback: res => {
-        if (res && res._code == 200) {
+      callback: (res) => {
+        if (res && res._code === 200) {
           this.setState({
             total: res.list.length,
             collectionInfoLoading: false,
@@ -225,15 +231,44 @@ export default class Enterprise extends PureComponent {
     });
   };
 
-  handleCreateTeam = values => {
+  fetchMarkets = () => {
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    dispatch({
+      type: 'market/fetchMarketsTab',
+      payload: {
+        enterprise_id: eid
+      },
+      callback: (res) => {
+        if (res && res._code === 200) {
+          if (
+            res.list.length > 0 &&
+            res.list[0].access_key === '' &&
+            res.list[0].domain === 'rainbond'
+          ) {
+            this.setState({
+              showMarketCloudAuth: true,
+              marketName: res.list[0].name
+            });
+          }
+        }
+      }
+    });
+  };
+
+  handleCreateTeam = (values) => {
     this.props.dispatch({
-      type: "teamControl/createTeam",
+      type: 'teamControl/createTeam',
       payload: values,
       callback: () => {
-        notification.success({ message: "添加成功" });
+        notification.success({ message: '添加成功' });
         this.cancelCreateTeam();
         this.getOverviewTeam();
-        this.props.dispatch({ type: "user/fetchCurrent" });
+        this.props.dispatch({ type: 'user/fetchCurrent' });
       }
     });
   };
@@ -251,9 +286,6 @@ export default class Enterprise extends PureComponent {
       consulting: false
     });
   };
-  handelObtain = () => {
-    window.open("https://t.goodrain.com/");
-  };
 
   handlUnit = (num, unit) => {
     if (num) {
@@ -261,28 +293,26 @@ export default class Enterprise extends PureComponent {
       let units = unit;
       if (nums >= 1024) {
         nums = num / 1024;
-        units = "GB";
+        units = 'GB';
       }
-      const n = 3.0;
       return unit ? units : nums.toFixed(2) / 1;
-      // parseInt(nums)
     }
     return null;
   };
 
-  handleJoinTeam = values => {
+  handleJoinTeam = (values) => {
     this.props.dispatch({
-      type: "global/joinTeam",
+      type: 'global/joinTeam',
       payload: values,
       callback: () => {
-        notification.success({ message: "申请成功，请等待审核" });
+        notification.success({ message: '申请成功，请等待审核' });
         this.cancelJoinTeam();
       }
     });
   };
 
   handleConvenientEntrance = () => {
-    notification.success({ message: "添加成功" });
+    notification.success({ message: '添加成功' });
     this.fetchCollectionViewInfo();
     this.cancelConvenientEntrance();
   };
@@ -303,7 +333,7 @@ export default class Enterprise extends PureComponent {
     this.setState({ editorConvenient: !this.state.editorConvenient });
   };
 
-  deleteConvenient = collectionInfo => {
+  deleteConvenient = (collectionInfo) => {
     this.setState({
       delcollectionVisible: true,
       collectionInfo
@@ -314,14 +344,14 @@ export default class Enterprise extends PureComponent {
     const { dispatch } = this.props;
     const { collectionInfo, eid } = this.state;
     dispatch({
-      type: "user/deleteCollectionViewInfo",
+      type: 'user/deleteCollectionViewInfo',
       payload: {
         favorite_id: collectionInfo && collectionInfo.favorite_id,
         enterprise_id: eid
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
-          notification.success({ message: "删除成功" });
+          notification.success({ message: '删除成功' });
           this.fetchCollectionViewInfo();
           this.handleCloseDelCollectionVisible();
         }
@@ -338,22 +368,22 @@ export default class Enterprise extends PureComponent {
 
   renderContent = () => {
     const teamBox = {
-      marginTop: "16px",
-      lineHeight: "1px",
-      borderColor: "rgba(0, 0, 0, 0.09)",
-      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.09)",
-      color: "#3D54C4",
-      display: "flex",
-      alignItems: "center"
+      marginTop: '16px',
+      lineHeight: '1px',
+      borderColor: 'rgba(0, 0, 0, 0.09)',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.09)',
+      color: '#3D54C4',
+      display: 'flex',
+      alignItems: 'center'
     };
 
     const teamBoxList = {
       ...teamBox,
-      ...{ height: "40px", padding: "12px" }
+      ...{ height: '40px', padding: '12px' }
     };
     const teamBoxs = {
       ...teamBox,
-      ...{ height: "68px", padding: "24px", cursor: "pointer" }
+      ...{ height: '68px', padding: '24px', cursor: 'pointer' }
     };
     const { rainbondInfo } = this.props;
     const {
@@ -392,10 +422,10 @@ export default class Enterprise extends PureComponent {
     const collections =
       collectionList && collectionList.length > 0 && collectionList;
 
-    const colors = { color: "#3D54C4", cursor: "pointer" };
+    const colors = { color: '#3D54C4', cursor: 'pointer' };
     const memoryInfo = overviewMonitorInfo && overviewMonitorInfo.memory;
     const memoryUsed = memoryInfo && this.handlUnit(memoryInfo.used);
-    const memoryUsedUnit = memoryInfo && this.handlUnit(memoryInfo.used, "MB");
+    const memoryUsedUnit = memoryInfo && this.handlUnit(memoryInfo.used, 'MB');
     const memoryTotal = memoryInfo && this.handlUnit(memoryInfo.total);
     const cpuInfo = overviewMonitorInfo && overviewMonitorInfo.cpu;
     const cpuUsed = cpuInfo && cpuInfo.used && parseInt(cpuInfo.used);
@@ -412,34 +442,34 @@ export default class Enterprise extends PureComponent {
     const enterpriseVersion =
       rainbondInfo && rainbondInfo.version && rainbondInfo.version.enable
         ? rainbondInfo.version.value
-        : "";
+        : '';
     const memoryTotalUnit =
-      memoryInfo && this.handlUnit(memoryInfo.total, "MB");
+      memoryInfo && this.handlUnit(memoryInfo.total, 'MB');
     const teamOperation = (
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: this.state.adminer ? "space-around" : "center"
+          width: '100%',
+          display: 'flex',
+          justifyContent: this.state.adminer ? 'space-around' : 'center'
         }}
       >
         <div
-          style={{ textAlign: "center", cursor: "pointer" }}
+          style={{ textAlign: 'center', cursor: 'pointer' }}
           onClick={this.onJoinTeam}
         >
           <img src={AddTeam} alt="" />
-          <div style={{ marginTop: "5px" }}>
+          <div style={{ marginTop: '5px' }}>
             <a className={styles.teamTit}>加入团队</a>
           </div>
         </div>
 
         {this.state.adminer && (
           <div
-            style={{ textAlign: "center", cursor: "pointer" }}
+            style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={this.onAddTeam}
           >
             <img src={CreationTeam} alt="" />
-            <div style={{ marginTop: "5px" }}>
+            <div style={{ marginTop: '5px' }}>
               <a className={styles.teamTit}>创建团队</a>
             </div>
           </div>
@@ -478,7 +508,7 @@ export default class Enterprise extends PureComponent {
           style={{
             marginBottom: 24
           }}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: '20px' }}
           loading={enterpriseInfoLoading}
           bordered={false}
         >
@@ -516,24 +546,9 @@ export default class Enterprise extends PureComponent {
                   </p>
                 </div>
               )}
-              {/* {(!enterpriseServiceInfo ||
-                enterpriseServiceInfo.type != "vip") &&
-                rainbondUtil.isEnableBillingFunction() && (
-                  <div className={styles.btns}>
-                    <Button type="primary" onClick={this.handelObtain}>
-                      开源社区
-                    </Button>
-                    <Button
-                      className={styles.buttonBjNot}
-                      onClick={this.handelConsulting}
-                    >
-                      获取商业解决方案
-                    </Button>
-                  </div>
-                )} */}
             </div>
             <div>
-              <img src={EnterpriseBj} alt="" style={{ marginRight: "54px" }} />
+              <img src={EnterpriseBj} alt="" style={{ marginRight: '54px' }} />
             </div>
           </div>
         </Card>
@@ -549,9 +564,9 @@ export default class Enterprise extends PureComponent {
                 <Card
                   bordered={false}
                   loading={overviewAppInfoLoading}
-                  style={{ height: "243px", marginRight: "25px" }}
+                  style={{ height: '243px', marginRight: '25px' }}
                 >
-                  <Row style={{ marginBottom: "6px" }}>
+                  <Row style={{ marginBottom: '6px' }}>
                     <Col className={styles.grays} span={12}>
                       应用数量
                     </Col>
@@ -595,7 +610,7 @@ export default class Enterprise extends PureComponent {
                           <div>
                             <div
                               className={styles.appnums}
-                              style={{ marginTop: "26px" }}
+                              style={{ marginTop: '26px' }}
                             >
                               未运行应用
                             </div>
@@ -608,7 +623,7 @@ export default class Enterprise extends PureComponent {
                         </div>
                       </Col>
                       <Col span={8}>
-                        <div style={{ marginTop: "10px" }}>
+                        <div style={{ marginTop: '10px' }}>
                           <Pie
                             percent={
                               Math.round((runCom / comTotal) * 10000) / 100.0
@@ -645,7 +660,7 @@ export default class Enterprise extends PureComponent {
                           <div>
                             <div
                               className={styles.appnums}
-                              style={{ marginTop: "26px" }}
+                              style={{ marginTop: '26px' }}
                             >
                               未运行组件
                             </div>
@@ -666,7 +681,7 @@ export default class Enterprise extends PureComponent {
                 <Card
                   loading={overviewInfoLoading}
                   bordered={false}
-                  style={{ height: "243px" }}
+                  style={{ height: '243px' }}
                 >
                   <Row>
                     <Col span={7}>
@@ -733,9 +748,9 @@ export default class Enterprise extends PureComponent {
               <Card
                 bordered={false}
                 loading={overviewTeamInfoLoading}
-                style={{ height: "243px", marginRight: "25px" }}
+                style={{ height: '243px', marginRight: '25px' }}
               >
-                <Row style={{ marginBottom: "4px" }}>
+                <Row style={{ marginBottom: '4px' }}>
                   <Col className={styles.grays} span={12}>
                     团队
                   </Col>
@@ -745,8 +760,8 @@ export default class Enterprise extends PureComponent {
                       className={styles.grays}
                       span={12}
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between"
+                        display: 'flex',
+                        justifyContent: 'space-between'
                       }}
                     >
                       常用团队
@@ -759,8 +774,8 @@ export default class Enterprise extends PureComponent {
                       className={styles.grays}
                       span={12}
                       style={{
-                        display: "flex",
-                        justifyContent: "flex-end"
+                        display: 'flex',
+                        justifyContent: 'flex-end'
                       }}
                     >
                       <span style={colors} onClick={this.onJoinTeam}>
@@ -770,9 +785,9 @@ export default class Enterprise extends PureComponent {
                       {this.state.adminer && (
                         <span
                           style={{
-                            color: "#3D54C4",
-                            marginLeft: "5px",
-                            cursor: "pointer"
+                            color: '#3D54C4',
+                            marginLeft: '5px',
+                            cursor: 'pointer'
                           }}
                           onClick={this.onAddTeam}
                         >
@@ -794,9 +809,7 @@ export default class Enterprise extends PureComponent {
                           onClick={() => {
                             this.props.dispatch(
                               routerRedux.replace(
-                                `/team/${new_join_team[0].team_name}/region/${
-                                  new_join_team[0].region
-                                }/index`
+                                `/team/${new_join_team[0].team_name}/region/${new_join_team[0].region}/index`
                               )
                             );
                           }}
@@ -806,9 +819,7 @@ export default class Enterprise extends PureComponent {
                               onClick={() => {
                                 this.props.dispatch(
                                   routerRedux.replace(
-                                    `/team/${
-                                      new_join_team[0].team_name
-                                    }/region/${new_join_team[0].region}/index`
+                                    `/team/${new_join_team[0].team_name}/region/${new_join_team[0].region}/index`
                                   )
                                 );
                               }}
@@ -826,9 +837,7 @@ export default class Enterprise extends PureComponent {
 
                           <Tooltip title={new_join_team[0].team_alias}>
                             <div
-                              className={`${styles.overText} ${
-                                styles.teamtest
-                              }`}
+                              className={`${styles.overText} ${styles.teamtest}`}
                             >
                               {new_join_team[0].team_alias}
                             </div>
@@ -843,7 +852,7 @@ export default class Enterprise extends PureComponent {
                       </Card>
                     </Col>
                     <Col span={11} offset={1}>
-                      {active_teams.map(item => {
+                      {active_teams.map((item) => {
                         const { team_name, region, team_alias } = item;
                         return (
                           <Card
@@ -851,11 +860,11 @@ export default class Enterprise extends PureComponent {
                             key={team_name}
                             bodyStyle={teamBoxList}
                             bordered={false}
-                            style={{ height: "40px" }}
+                            style={{ height: '40px' }}
                           >
                             <div
                               className={styles.overText}
-                              style={{ width: "93%", cursor: "pointer" }}
+                              style={{ width: '93%', cursor: 'pointer' }}
                               onClick={() => {
                                 this.props.dispatch(
                                   routerRedux.replace(
@@ -895,7 +904,7 @@ export default class Enterprise extends PureComponent {
                 <Card
                   bordered={false}
                   loading={overviewMonitorInfoLoading}
-                  style={{ height: "243px" }}
+                  style={{ height: '243px' }}
                 >
                   {overviewMonitorInfo && (
                     <Row>
@@ -987,22 +996,22 @@ export default class Enterprise extends PureComponent {
                 <Card
                   bordered={false}
                   loading={collectionInfoLoading}
-                  style={{ height: "243px" }}
+                  style={{ height: '243px' }}
                 >
-                  <Row style={{ marginBottom: "4px" }}>
+                  <Row style={{ marginBottom: '4px' }}>
                     <Col className={styles.grays} span={12}>
                       便捷入口
                     </Col>
                     <Col
                       className={styles.grays}
-                      style={{ textAlign: "right" }}
+                      style={{ textAlign: 'right' }}
                       span={12}
                     >
                       <span
                         style={{
-                          marginRight: "10px",
-                          color: "#3D54C4",
-                          cursor: "pointer"
+                          marginRight: '10px',
+                          color: '#3D54C4',
+                          cursor: 'pointer'
                         }}
                         onClick={() => {
                           this.onConvenientEntrance();
@@ -1053,15 +1062,15 @@ export default class Enterprise extends PureComponent {
                                 bodyStyle={teamBoxList}
                                 bordered={false}
                                 style={{
-                                  height: "40px",
-                                  paddingRight: "10px"
+                                  height: '40px',
+                                  paddingRight: '10px'
                                 }}
                               >
                                 <div
                                   className={styles.overText}
                                   style={{
-                                    width: "93%",
-                                    cursor: "pointer"
+                                    width: '93%',
+                                    cursor: 'pointer'
                                   }}
                                 >
                                   <Tooltip title={name}>{name}</Tooltip>
@@ -1082,7 +1091,7 @@ export default class Enterprise extends PureComponent {
                       )}
                     </Row>
 
-                    <div style={{ textAlign: "right", marginTop: "8px" }}>
+                    <div style={{ textAlign: 'right', marginTop: '8px' }}>
                       <Pagination
                         size="small"
                         current={page}
@@ -1102,7 +1111,14 @@ export default class Enterprise extends PureComponent {
   };
 
   render() {
-    const { showAddTeam, consulting, enterpriseInfo, eid } = this.state;
+    const {
+      showAddTeam,
+      consulting,
+      enterpriseInfo,
+      eid,
+      showMarketCloudAuth,
+      marketName
+    } = this.state;
     const { rainbondInfo } = this.props;
     return (
       <div>
@@ -1115,7 +1131,7 @@ export default class Enterprise extends PureComponent {
               <Meiqia />
               <div
                 onClick={() => {
-                  _MEIQIA && _MEIQIA("showPanel");
+                  _MEIQIA && _MEIQIA('showPanel');
                 }}
               >
                 <img src={CustomerService} alt="" />
@@ -1134,6 +1150,17 @@ export default class Enterprise extends PureComponent {
             name={enterpriseInfo && enterpriseInfo.enterprise_alias}
             onOk={this.cancelConsulting}
             onCancel={this.cancelConsulting}
+          />
+        )}
+        {showMarketCloudAuth && (
+          <AuthCompany
+            eid={eid}
+            marketName={marketName}
+            title="欢迎使用Rainbond，请先完成连接云应用商店授权"
+            onCancel={() => {
+              this.setState({ showMarketCloudAuth: false });
+            }}
+            currStep={2}
           />
         )}
       </div>

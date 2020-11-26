@@ -107,6 +107,12 @@ export default [
             authority: ['admin', 'user'],
           },
           {
+            path: '/enterprise/:eid/shared/app/:appId',
+            component: './EnterpriseShared/Details',
+            name: 'AppTemplate',
+            authority: ['admin', 'user'],
+          },
+          {
             path: '/enterprise/:eid/shared/cloudMarket',
             component: './EnterpriseCloudMarket',
             name: 'EnterpriseCloudMarket',
@@ -176,7 +182,20 @@ export default [
             authority: ['admin', 'user'],
             title: '云市应用升级',
           },
-
+          {
+            path: '/team/:teamName/region/:regionName/apps/:appID/configgroups',
+            component: './Configuration',
+            name: 'Configuration',
+            authority: ['admin', 'user'],
+            title: '应用配置组管理',
+          },
+          {
+            path: '/team/:teamName/region/:regionName/apps/:appID/configgroups/details/:id',
+            component: './Configuration/Details',
+            name: 'ConfigurationDetails',
+            authority: ['admin', 'user'],
+            title: '应用配置详情',
+          },
           {
             path: '/team/:teamName/region/:regionName/apps/:appID/backup',
             component: './Group/Backup',

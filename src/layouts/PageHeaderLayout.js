@@ -1,9 +1,9 @@
-import { DefaultFooter } from '@ant-design/pro-layout';
-import { Icon } from 'antd';
 import { Link } from 'dva/router';
 import React from 'react';
+import CustomFooter from './CustomFooter';
 import PageHeader from '../components/PageHeader';
 import styles from './PageHeaderLayout.less';
+import cookie from '../utils/cookie';
 
 export default ({
   isFooter,
@@ -16,24 +16,8 @@ export default ({
     {top}
     <PageHeader key="pageheader" {...restProps} linkElement={Link} />
     {children ? <div className={styles.content}>{children}</div> : null}
-    {!isFooter && (
-      <DefaultFooter
-        copyright="2020 北京好雨科技有限公司出品"
-        links={[
-          {
-            key: 'Rainbond',
-            title: 'Rainbond',
-            href: 'https://www.rainbond.com',
-            blankTarget: true,
-          },
-          {
-            key: 'github',
-            title: <Icon type="github" />,
-            href: 'https://github.com/goodrain/rainbond',
-            blankTarget: true,
-          },
-        ]}
-      />
+    {!isFooter && cookie.get('enterprise_edition') === 'false' && (
+      <CustomFooter />
     )}
   </div>
 );

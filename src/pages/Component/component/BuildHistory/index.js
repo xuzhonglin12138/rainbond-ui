@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
@@ -7,11 +8,10 @@ import {
   Col,
   Divider,
   Form,
-  Modal,
+  Pagination,
   Popconfirm,
   Row,
-  Tooltip,
-  Pagination
+  Tooltip
 } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
