@@ -1,20 +1,28 @@
-import React, { Component } from "react";
-import { connect } from "dva";
-import { Link } from "dva/router";
-import { Form, Input, Button, Row, Col } from "antd";
-import styles from "./Register.less";
-import apiconfig from "../../../config/api.config";
-import userUtil from "../../utils/global";
-import rainbondUtil from "../../utils/rainbond";
+/* eslint-disable no-nested-ternary */
+/* eslint-disable jsx-a11y/alt-text */
+import React, { Component } from 'react';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
+import { Form, Input, Button, Row, Col, Progress } from 'antd';
+import styles from './Register.less';
+import apiconfig from '../../../config/api.config';
+import userUtil from '../../utils/global';
+import rainbondUtil from '../../utils/rainbond';
 
 const FormItem = Form.Item;
+
+const passwordProgressMap = {
+  ok: 'success',
+  pass: 'normal',
+  poor: 'exception'
+};
 
 @connect(({ user, loading, global }) => ({
   register: user.register,
   rainbondInfo: global.rainbondInfo,
   isRegist: global.isRegist,
-  submitting: loading.effects["user/register"],
-  thirdsubmitting: loading.effects["user/thirdRegister"]
+  submitting: loading.effects['user/register'],
+  thirdsubmitting: loading.effects['user/thirdRegister']
 }))
 @Form.create()
 export default class RegisterComponent extends Component {
@@ -22,7 +30,7 @@ export default class RegisterComponent extends Component {
   state = {
     confirmDirty: false,
     visible: false,
-    help: "",
+    help: '',
     time: Date.now()
   };
   componentDidMount() {
@@ -34,14 +42,14 @@ export default class RegisterComponent extends Component {
 
   getPasswordStatus = () => {
     const { form } = this.props;
-    const value = form.getFieldValue("password");
+    const value = form.getFieldValue('password');
     if (value && value.length > 9) {
-      return "ok";
+      return 'ok';
     }
     if (value && value.length > 5) {
-      return "pass";
+      return 'pass';
     }
-    return "poor";
+    return 'poor';
   };
 
   handleSubmit = e => {
@@ -69,8 +77,8 @@ export default class RegisterComponent extends Component {
 
   checkConfirm = (rule, value, callback) => {
     const { form } = this.props;
-    if (value && value !== form.getFieldValue("password")) {
-      callback("两次输入的密码不匹配!");
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两次输入的密码不匹配!');
     } else {
       callback();
     }
@@ -79,12 +87,12 @@ export default class RegisterComponent extends Component {
   checkPassword = (rule, value, callback) => {
     if (!value) {
       this.setState({
-        help: "请输入密码！",
+        help: '请输入密码！',
         visible: !!value
       });
-      callback("error");
+      callback('error');
     } else {
-      this.setState({ help: "" });
+      this.setState({ help: '' });
       if (!this.state.visible) {
         this.setState({
           visible: !!value
@@ -92,14 +100,14 @@ export default class RegisterComponent extends Component {
       }
       if (value.length < 8) {
         this.setState({
-          help: "密码不能少于8位！",
+          help: '密码不能少于8位！',
           visible: !!value
         });
-        callback("error");
+        callback('error');
       } else {
         const { form } = this.props;
         if (value && this.state.confirmDirty) {
-          form.validateFields(["confirm"], { force: true });
+          form.validateFields(['confirm'], { force: true });
         }
         callback();
       }
@@ -127,44 +135,44 @@ export default class RegisterComponent extends Component {
       <Form onSubmit={this.handleSubmit}>
         {firstRegist && (
           <FormItem>
-            {getFieldDecorator("enter_name", {
+            {getFieldDecorator('enter_name', {
               rules: [
                 {
                   required: true,
-                  message: "请输入企业名称"
+                  message: '请输入企业名称'
                 }
               ]
             })(<Input size="large" placeholder="企业名称" />)}
           </FormItem>
         )}
         <FormItem>
-          {getFieldDecorator("user_name", {
-            initialValue: user_info ? user_info.oauth_user_name : "",
+          {getFieldDecorator('user_name', {
+            initialValue: user_info ? user_info.oauth_user_name : '',
             rules: [
               {
                 required: true,
-                message: "请输入用户名！"
+                message: '请输入用户名！'
               }
             ]
           })(<Input size="large" placeholder="用户名" />)}
         </FormItem>
         <FormItem>
-          {getFieldDecorator("email", {
-            initialValue: user_info ? user_info.oauth_user_email : "",
+          {getFieldDecorator('email', {
+            initialValue: user_info ? user_info.oauth_user_email : '',
             rules: [
               {
                 required: true,
-                message: "请输入邮箱地址！"
+                message: '请输入邮箱地址！'
               },
               {
-                type: "email",
-                message: "邮箱地址格式错误！"
+                type: 'email',
+                message: '邮箱地址格式错误！'
               }
             ]
           })(<Input size="large" placeholder="邮箱" />)}
         </FormItem>
         <FormItem help={help}>
-          {getFieldDecorator("password", {
+          {getFieldDecorator('password', {
             rules: [
               {
                 validator: this.checkPassword
@@ -179,11 +187,11 @@ export default class RegisterComponent extends Component {
           )}
         </FormItem>
         <FormItem>
-          {getFieldDecorator("password_repeat", {
+          {getFieldDecorator('password_repeat', {
             rules: [
               {
                 required: true,
-                message: "请确认密码！"
+                message: '请确认密码！'
               },
               {
                 validator: this.checkConfirm
@@ -194,11 +202,11 @@ export default class RegisterComponent extends Component {
         <FormItem>
           <Row gutter={8}>
             <Col span={16}>
-              {getFieldDecorator("captcha_code", {
+              {getFieldDecorator('captcha_code', {
                 rules: [
                   {
                     required: true,
-                    message: "请输入验证码！"
+                    message: '请输入验证码！'
                   }
                 ]
               })(<Input size="large" placeholder="验证码" />)}
@@ -208,7 +216,7 @@ export default class RegisterComponent extends Component {
                 onClick={this.changeTime}
                 src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
                 style={{
-                  width: "100%",
+                  width: '100%',
                   height: 40
                 }}
               />
@@ -218,20 +226,20 @@ export default class RegisterComponent extends Component {
         <FormItem>
           <Button
             size="large"
-            loading={type === "register" ? submitting : thirdsubmitting}
+            loading={type === 'register' ? submitting : thirdsubmitting}
             className={styles.submit}
-            style={{ width: type === "register" ? "50%" : "100%" }}
+            style={{ width: type === 'register' ? '50%' : '100%' }}
             type="primary"
             htmlType="submit"
           >
             {firstRegist
-              ? "管理员注册"
-              : type === "register"
-              ? "注册"
-              : "注册并绑定"}
+              ? '管理员注册'
+              : type === 'register'
+              ? '注册'
+              : '注册并绑定'}
           </Button>
 
-          {!firstRegist && type === "register" && (
+          {!firstRegist && type === 'register' && (
             <Link className={styles.login} to="/user/login">
               使用已有账户登录
             </Link>

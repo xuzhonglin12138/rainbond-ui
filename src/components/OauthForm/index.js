@@ -1,10 +1,10 @@
-import React, { PureComponent } from "react";
-import { connect } from "dva";
-import { Form, Input, Select, Modal, Switch, Button } from "antd";
-import Branches from "../../../public/images/branches.svg";
-import Application from "../../../public/images/application.svg";
-import styles from "./Index.less";
-import styless from "../CreateTeam/index.less";
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Form, Input, Select, Modal, Switch, Button } from 'antd';
+import Branches from '../../../public/images/branches.svg';
+import Application from '../../../public/images/application.svg';
+import styles from './Index.less';
+import styless from '../CreateTeam/index.less';
 
 const { Option } = Select;
 
@@ -38,7 +38,7 @@ class CreateOAuthForm extends PureComponent {
   fetchOauthType = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: "user/fetchOauthType",
+      type: 'user/fetchOauthType',
       callback: res => {
         if (res && res._code === 200) {
           this.setState({
@@ -51,7 +51,6 @@ class CreateOAuthForm extends PureComponent {
 
   handleSubmit = () => {
     const { form, onOk } = this.props;
-
     form.validateFields((err, values) => {
       if (!err && onOk) {
         onOk(values);
@@ -71,11 +70,11 @@ class CreateOAuthForm extends PureComponent {
         span: 16
       }
     };
-    const oauthType = getFieldValue("oauth_type") || "github";
+    const oauthType = getFieldValue('oauth_type') || 'github';
     return (
       <Modal
         visible
-        title="OAuth"
+        title={edit ? 'OAuth配置编辑' : '添加Oauth服务'}
         maskClosable={false}
         onOk={this.handleSubmit}
         onCancel={onCancel}
@@ -99,9 +98,9 @@ class CreateOAuthForm extends PureComponent {
               </div>
             }
           >
-            {getFieldDecorator("oauth_type", {
-              initialValue: oauthInfo ? oauthInfo.oauth_type : "github",
-              rules: [{ required: true, message: "请选择oauth_type类型" }]
+            {getFieldDecorator('oauth_type', {
+              initialValue: oauthInfo ? oauthInfo.oauth_type : 'github',
+              rules: [{ required: true, message: '请选择oauth_type类型' }]
             })(
               <Select disabled={edit} placeholder="请选择要oauth_type类型">
                 {oauthList &&
@@ -128,20 +127,20 @@ class CreateOAuthForm extends PureComponent {
               </div>
             }
           >
-            {getFieldDecorator("name", {
-              initialValue: oauthInfo ? oauthInfo.name : "",
+            {getFieldDecorator('name', {
+              initialValue: oauthInfo ? oauthInfo.name : '',
               rules: [
-                { required: true, message: "请输入名称" },
+                { required: true, message: '请输入名称' },
                 {
                   max: 32,
-                  message: "最大长度32位"
+                  message: '最大长度32位'
                 }
               ]
             })(<Input placeholder="请输入名称" />)}
             <div className={styles.conformDesc}>OAuth服务显示名称</div>
           </Form.Item>
 
-          {oauthType !== "github" && (
+          {oauthType !== 'github' && (
             <Form.Item
               className={styles.clearConform}
               {...formItemLayout}
@@ -152,14 +151,14 @@ class CreateOAuthForm extends PureComponent {
                 </div>
               }
             >
-              {getFieldDecorator("home_url", {
-                initialValue: oauthInfo ? oauthInfo.home_url : "",
+              {getFieldDecorator('home_url', {
+                initialValue: oauthInfo ? oauthInfo.home_url : '',
                 rules: [
-                  { required: true, message: "请输入服务地址" },
-                  { type: "url", message: "输入数据不是合法的URL" },
+                  { required: true, message: '请输入服务地址' },
+                  { type: 'url', message: '输入数据不是合法的URL' },
                   {
                     max: 255,
-                    message: "最大长度255位"
+                    message: '最大长度255位'
                   }
                 ]
               })(<Input disabled={edit} placeholder="请输入服务地址" />)}
@@ -177,13 +176,13 @@ class CreateOAuthForm extends PureComponent {
               </div>
             }
           >
-            {getFieldDecorator("client_id", {
-              initialValue: oauthInfo ? oauthInfo.client_id : "",
+            {getFieldDecorator('client_id', {
+              initialValue: oauthInfo ? oauthInfo.client_id : '',
               rules: [
-                { required: true, message: "请输入client_id" },
+                { required: true, message: '请输入client_id' },
                 {
                   max: 64,
-                  message: "最大长度64位"
+                  message: '最大长度64位'
                 }
               ]
             })(<Input disabled={edit} placeholder="请输入client_id" />)}
@@ -199,13 +198,13 @@ class CreateOAuthForm extends PureComponent {
               </div>
             }
           >
-            {getFieldDecorator("client_secret", {
-              initialValue: oauthInfo ? oauthInfo.client_secret : "",
+            {getFieldDecorator('client_secret', {
+              initialValue: oauthInfo ? oauthInfo.client_secret : '',
               rules: [
-                { required: true, message: "请输入client_secret" },
+                { required: true, message: '请输入client_secret' },
                 {
                   max: 64,
-                  message: "最大长度64位"
+                  message: '最大长度64位'
                 }
               ]
             })(<Input disabled={edit} placeholder="请输入client_secret" />)}
@@ -221,21 +220,45 @@ class CreateOAuthForm extends PureComponent {
               </div>
             }
           >
-            {getFieldDecorator("redirect_domain", {
+            {getFieldDecorator('redirect_domain', {
               initialValue: oauthInfo
-                ? oauthInfo.redirect_uri.replace("/console/oauth/redirect", "")
+                ? oauthInfo.redirect_uri.replace('/console/oauth/redirect', '')
                 : `${window.location.protocol}//${window.location.host}`,
               rules: [
-                { required: true, message: "请输入正确的平台访问域名" },
-                { type: "url", message: "输入数据不是合法的URL" },
+                { required: true, message: '请输入正确的平台访问域名' },
+                { type: 'url', message: '输入数据不是合法的URL' },
                 {
                   max: 255,
-                  message: "最大长度255位"
+                  message: '最大长度255位'
                 }
               ]
             })(<Input placeholder="请输入平台访问域名" />)}
             <div className={styles.conformDesc}>
-              平台访问域名是用于OAuth认证完回跳时的访问地址
+              平台访问域名是用于OAuth认证完回跳时的访问地址，回跳路径为：/console/oauth/redirect
+            </div>
+          </Form.Item>
+          <Form.Item
+            className={styles.clearConform}
+            {...formItemLayout}
+            label={
+              <div className={styles.clearConformMinTitle}>
+                <img src={Branches} alt="" />
+                自动登录
+              </div>
+            }
+          >
+            {getFieldDecorator('is_auto_login', {
+              initialValue: oauthInfo ? oauthInfo.is_auto_login : false,
+              rules: [{ required: true, message: '设置是否开启自动登录选项' }]
+            })(
+              <Switch
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+                defaultChecked={oauthInfo ? oauthInfo.is_auto_login : false}
+              />
+            )}
+            <div className={styles.conformDesc}>
+              开启自动登录即需要登录时将自动跳转到该Oauth服务进行认证，实现单点登录效果
             </div>
           </Form.Item>
         </Form>

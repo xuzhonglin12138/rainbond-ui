@@ -1,5 +1,5 @@
-import defaultSettings from "../src/defaultSettings";
-import routerConfig from "./router.config";
+import defaultSettings from '../src/defaultSettings';
+import routerConfig from './router.config';
 
 export default {
   history: "hash",
@@ -8,11 +8,11 @@ export default {
   hash: true,
   plugins: [
     [
-      "umi-plugin-react",
+      'umi-plugin-react',
       {
         antd: true,
         dva: {
-          hmr: true
+          hmr: true,
         },
         dynamicImport: {
           loadingComponent: './components/PageLoading/index',
@@ -32,10 +32,10 @@ export default {
   ],
   ignoreMomentLocale: true,
   theme: {
-    "card-actions-background": defaultSettings.primaryColor
+    'card-actions-background': defaultSettings.primaryColor,
   },
   lessLoaderOptions: {
-    javascriptEnabled: true
+    javascriptEnabled: true,
   },
   disableDynamicImport: true,
 

@@ -4,13 +4,9 @@ import request from '../utils/request';
 
 // fetch Permissions
 export async function getPermissions() {
-  return request(
-    `${apiconfig.baseUrl}/console/perms`,
-    // `https://doc.goodrain.org/mock/18/console/perms`,
-    {
-      method: 'get'
-    }
-  );
+  return request(`${apiconfig.baseUrl}/console/perms`, {
+    method: 'get'
+  });
 }
 
 /*
@@ -237,6 +233,71 @@ export async function getTeamAppList(body = {}) {
       query: body.query
     }
   });
+}
+
+export async function getConfigurationList(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/configgroups`,
+    {
+      method: 'get',
+      params: {
+        page: body.page,
+        page_size: body.page_size,
+        query: body.query
+      }
+    }
+  );
+}
+
+export async function getConfigurationDetails(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/configgroups/${body.name}`,
+    {
+      method: 'get'
+    }
+  );
+}
+
+export async function addConfiguration(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/configgroups`,
+    {
+      method: 'post',
+      data: body
+    }
+  );
+}
+
+export async function editConfiguration(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/configgroups/${body.name}`,
+    {
+      method: 'put',
+      data: {
+        page: 1,
+        page_size: 10,
+        query: body.query,
+        enable: body.enable,
+        config_items: body.config_items,
+        service_ids: body.service_ids,
+        deploy_status: body.deploy_status
+      }
+    }
+  );
+}
+
+export async function deleteConfiguration(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/configgroups/${body.name}`,
+    {
+      method: 'DELETE',
+      data: {
+        page: body.page,
+        page_size: body.page_size,
+        query: body.query
+      }
+    }
+  );
 }
 
 /* 获取团队应用模块 */
@@ -482,7 +543,6 @@ export async function getVersion(body = {}) {
 /* 卸载云市已下载的应用 */
 export async function deleteAppModel(body = {}) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/{enterprise_id}/app-model/{app_id}`,
     `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/app-model/${body.app_id}`,
     {
       method: 'DELETE'
@@ -745,8 +805,6 @@ export async function saveLog(body = {}) {
 /* 查询企业下所有团队 */
 export async function fetchEnterpriseTeams(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/teams`,
-
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/teams`,
     {
       method: 'get',
@@ -762,18 +820,33 @@ export async function fetchEnterpriseTeams(param) {
 /* 获取企业管理员列表 */
 export async function fetchEnterpriseAdmin(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/admin/user`,
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/admin/user`,
     {
       method: 'get'
     }
   );
 }
-
+export async function getEnterpriseRoles(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/admin/roles`,
+    {
+      method: 'get'
+    }
+  );
+}
+/* 设置签发证书类型功能 */
+export async function setBasicInformation(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/configs`,
+    {
+      method: 'put',
+      data: body
+    }
+  );
+}
 /* 获取企业用户列表 */
 export async function fetchEnterpriseUsers(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/users`,
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users`,
     {
       method: 'get',
@@ -789,22 +862,30 @@ export async function fetchEnterpriseUsers(param) {
 /* 添加企业管理员 */
 export async function addEnterpriseAdminTeams(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/admin/user`,
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/admin/user`,
     {
       method: 'post',
       data: {
-        user_id: param.user_id
+        user_id: param.user_id,
+        roles: param.roles
       }
     }
   );
 }
 
+export async function upDataEnterpriseAdminTeams(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/admin/user/${body.user_id}`,
+    {
+      method: 'put',
+      data: body
+    }
+  );
+}
 /* 删除 企业管理员 */
 
 export async function deleteEnterpriseAdmin(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/admin/user/${param.user_id}`,
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/admin/user/${param.user_id}`,
     {
       method: 'delete'
@@ -815,7 +896,6 @@ export async function deleteEnterpriseAdmin(param) {
 /* 获取当前用户团队列表（搜索） */
 export async function fetchUserTeams(param) {
   return request(
-    // `http://doc.goodrain.org/mock/18/console/enterprise/{enterprise_id}/user/{user_id}/teams`,
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/user/${param.user_id}/teams`,
     {
       method: 'get',
@@ -830,13 +910,9 @@ export async function fetchUserTeams(param) {
 
 /* 查询企业列表 */
 export async function fetchEnterpriseList() {
-  return request(
-    // `http://doc.goodrain.org/mock/18/enterprises`,
-    `${apiconfig.baseUrl}/console/enterprises`,
-    {
-      method: 'get'
-    }
-  );
+  return request(`${apiconfig.baseUrl}/console/enterprises`, {
+    method: 'get'
+  });
 }
 
 /* 查询企业下组件 应用下信息 */
@@ -863,7 +939,6 @@ export async function fetchOverview(param) {
 export async function fetchOverviewTeam(param) {
   return request(
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/overview/team`,
-    // `http://doc.goodrain.org/mock/18/console/enterprise/${param.enterprise_id}/overview/team`,
     {
       method: 'get'
     }
@@ -938,7 +1013,6 @@ export async function toEditOauth(params) {
     }
   });
 }
-
 /** 修改镜像仓库信息 */
 export async function toEditImageHub(params) {
   return request(
@@ -972,7 +1046,6 @@ export async function toEditCloudBackup(params) {
     }
   );
 }
-
 /* 删除 oath信息 */
 
 export async function deleteOauth(body = {}) {

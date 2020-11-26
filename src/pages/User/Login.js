@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
+/* eslint-disable compat/compat */
+/* eslint-disable camelcase */
+import { Tooltip, Divider, Row } from 'antd';
 import { connect } from 'dva';
-import { Divider, Row, Col } from 'antd';
-import styles from './Login.less';
-import rainbondUtil from '../../utils/rainbond';
+import React, { Component } from 'react';
 import globalUtil from '../../utils/global';
-import LoginComponent from './loginComponent';
 import oauthUtil from '../../utils/oauth';
+import rainbondUtil from '../../utils/rainbond';
+import styles from './Login.less';
+import LoginComponent from './loginComponent';
 
 @connect(({ global }) => ({
   isRegist: global.isRegist,
@@ -14,17 +16,12 @@ import oauthUtil from '../../utils/oauth';
 export default class LoginPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      oauthServicesList: []
-    };
+    this.state = {};
   }
   componentWillMount() {
-    const { dispatch, rainbondInfo } = this.props;
+    const { dispatch } = this.props;
     dispatch({ type: 'global/hideNeedLogin' });
     globalUtil.removeCookie();
-    // if (rainbondInfo.enterprise_id) {
-    //   this.fetchEnterpriseInfo(rainbondInfo.enterprise_id);
-    // }
   }
   handleSubmit = values => {
     const { dispatch, location } = this.props;
@@ -71,16 +68,25 @@ export default class LoginPage extends Component {
 
   render() {
     const { rainbondInfo } = this.props;
-    const { oauthServicesList } = this.state;
     const oauthInfo =
       rainbondInfo &&
       rainbondInfo.enterprise_center_oauth &&
       rainbondInfo.enterprise_center_oauth.value;
     const url = oauthInfo && oauthUtil.getAuthredictURL(oauthInfo);
     const icon = oauthInfo && oauthUtil.getIcon(oauthInfo);
-
+    let oauthServicesList = [];
+    if (
+      rainbondInfo &&
+      rainbondInfo.oauth_services &&
+      rainbondInfo.oauth_services.enable &&
+      rainbondInfo.oauth_services.value &&
+      rainbondInfo.oauth_services.value.length > 0
+    ) {
+      oauthServicesList = rainbondInfo.oauth_services.value;
+    }
     return (
-      <div className={styles.main}>
+      <div className={styles.main} style={{ marginTop: '100px' }}>
+        <h3>用户登录</h3>
         <LoginComponent onSubmit={this.handleSubmit} type="login" />
         {rainbondUtil.OauthbEnable(rainbondInfo) &&
           (oauthInfo ||
@@ -91,26 +97,24 @@ export default class LoginPage extends Component {
               </Divider>
               <Row className={styles.third}>
                 {oauthInfo && (
-                  <Col
-                    span={8}
-                    className={styles.thirdCol}
-                    key={oauthInfo.client_id}
-                  >
-                    <a href={url}>
-                      {icon}
-                      <p>{oauthInfo.name}</p>
-                    </a>
-                  </Col>
+                  <div className={styles.thirdCol} key={oauthInfo.client_id}>
+                    <Tooltip placement="top" title={oauthInfo.name}>
+                      <a href={url} title={oauthInfo.name}>
+                        {icon}
+                      </a>
+                    </Tooltip>
+                  </div>
                 )}
                 {oauthServicesList.map(item => {
                   const { name, service_id } = item;
                   return (
-                    <Col span="8" className={styles.thirdCol} key={service_id}>
-                      <a href={oauthUtil.getAuthredictURL(item)}>
-                        {oauthUtil.getIcon(item)}
-                        <p>{name}</p>
-                      </a>
-                    </Col>
+                    <div className={styles.thirdCol} key={service_id}>
+                      <Tooltip placement="top" title={name}>
+                        <a href={oauthUtil.getAuthredictURL(item)} title={name}>
+                          {oauthUtil.getIcon(item)}
+                        </a>
+                      </Tooltip>
+                    </div>
                   );
                 })}
               </Row>
