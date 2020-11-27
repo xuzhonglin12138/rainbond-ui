@@ -32,10 +32,10 @@ const qs = require('query-string');
 
 const { Content } = Layout;
 
-const getBreadcrumbNameMap = memoizeOne((meun) => {
+const getBreadcrumbNameMap = memoizeOne(meun => {
   const routerMap = {};
-  const mergeMeunAndRouter = (meunData) => {
-    meunData.forEach((meunItem) => {
+  const mergeMeunAndRouter = meunData => {
+    meunData.forEach(meunItem => {
       if (meunItem.children) {
         mergeMeunAndRouter(meunItem.children);
       }
@@ -69,7 +69,7 @@ const query = {
 };
 
 let isMobile;
-enquireScreen((b) => {
+enquireScreen(b => {
   isMobile = b;
 });
 
@@ -108,7 +108,7 @@ class EnterpriseLayout extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/fetchEnterpriseList',
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -125,7 +125,7 @@ class EnterpriseLayout extends PureComponent {
     });
   };
 
-  loadClusters = (eid) => {
+  loadClusters = eid => {
     const { dispatch, currentUser } = this.props;
     dispatch({
       type: 'region/fetchEnterpriseClusters',
@@ -133,7 +133,7 @@ class EnterpriseLayout extends PureComponent {
         enterprise_id: eid,
         check_status: 'no'
       },
-      callback: (res) => {
+      callback: res => {
         const adminer = userUtil.isCompanyAdmin(currentUser);
         if (res && res.list && res.list.length == 0 && adminer) {
           dispatch(routerRedux.push(`/enterprise/${eid}/addCluster?init=true`));
@@ -143,7 +143,7 @@ class EnterpriseLayout extends PureComponent {
   };
 
   load = () => {
-    enquireScreen((mobile) => {
+    enquireScreen(mobile => {
       this.setState({ isMobile: mobile });
     });
     // 连接云应用市场
@@ -165,14 +165,14 @@ class EnterpriseLayout extends PureComponent {
     return title;
   };
 
-  matchParamsPath = (pathname) => {
-    const pathKey = Object.keys(this.breadcrumbNameMap).find((key) => {
+  matchParamsPath = pathname => {
+    const pathKey = Object.keys(this.breadcrumbNameMap).find(key => {
       return pathToRegexp(key).test(pathname);
     });
     return this.breadcrumbNameMap[pathKey];
   };
 
-  handleMenuCollapse = (collapsed) => {
+  handleMenuCollapse = collapsed => {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/changeLayoutCollapsed',
@@ -201,7 +201,7 @@ class EnterpriseLayout extends PureComponent {
     if (!eid || eid == 'auto') {
       if (enterpriseList.length > 0) {
         let selectE = null;
-        enterpriseList.map((item) => {
+        enterpriseList.map(item => {
           if (item.enterprise_id == currentUser.enterprise_id) {
             selectE = item;
           }
@@ -219,7 +219,7 @@ class EnterpriseLayout extends PureComponent {
         dispatch(routerRedux.push('/user/login'));
       }
     } else {
-      enterpriseList.map((item) => {
+      enterpriseList.map(item => {
         if (item.enterprise_id == eid) {
           this.fetchEnterpriseInfo(eid);
           globalUtil.putLog(Object.assign(rainbondInfo, item));
@@ -229,12 +229,12 @@ class EnterpriseLayout extends PureComponent {
     }
   };
 
-  fetchEnterpriseInfo = (eid) => {
+  fetchEnterpriseInfo = eid => {
     if (!eid) {
       return null;
     }
     const { dispatch } = this.props;
-    // this.fetchEnterpriseService(eid);
+    this.fetchEnterpriseService(eid);
     this.loadClusters(eid);
     dispatch({
       type: 'global/fetchEnterpriseInfo',
@@ -244,7 +244,7 @@ class EnterpriseLayout extends PureComponent {
     });
   };
 
-  fetchEnterpriseService = (eid) => {
+  fetchEnterpriseService = eid => {
     const { dispatch } = this.props;
     dispatch({
       type: 'order/fetchEnterpriseService',
@@ -267,9 +267,9 @@ class EnterpriseLayout extends PureComponent {
       children,
       rainbondInfo,
       enterprise,
-      showAuthCompany
+      showAuthCompany,
+      enterpriseServiceInfo
     } = this.props;
-
     const { enterpriseList, enterpriseInfo, ready } = this.state;
     const autoWidth = collapsed ? 'calc(100% - 416px)' : 'calc(100% - 116px)';
     const BillingFunction = rainbondUtil.isEnableBillingFunction();
@@ -286,17 +286,19 @@ class EnterpriseLayout extends PureComponent {
     const customHeader = () => {
       return (
         <div className={headerStype.enterprise}>
-          {/* {BillingFunction && (
+          {BillingFunction && (
             <Tooltip
               title={
-                enterpriseServiceInfo.type === "vip"
-                  ? "尊贵的付费企业用户"
-                  : "免费用户"
+                enterpriseServiceInfo && enterpriseServiceInfo.type === 'vip'
+                  ? '尊贵的付费企业用户'
+                  : '免费用户'
               }
             >
-              {globalUtil.fetchSvg(enterpriseServiceInfo.type)}
+              {globalUtil.fetchSvg(
+                enterpriseServiceInfo && enterpriseServiceInfo.type
+              )}
             </Tooltip>
-          )} */}
+          )}
           {(enterprise && enterprise.enterprise_alias) ||
             (enterpriseInfo && enterpriseInfo.enterprise_alias)}
         </div>
@@ -377,7 +379,7 @@ class EnterpriseLayout extends PureComponent {
       <Fragment>
         <DocumentTitle title={this.getPageTitle(pathname)}>
           <ContainerQuery query={query}>
-            {(params) => (
+            {params => (
               <Context.Provider value={this.getContext()}>
                 <div className={classNames(params)}>{layout()}</div>
               </Context.Provider>
@@ -394,7 +396,7 @@ class EnterpriseLayout extends PureComponent {
 
         {orders && BillingFunction && (
           <ServiceOrder
-            // enterpriseServiceInfo={enterpriseServiceInfo}
+            enterpriseServiceInfo={enterpriseServiceInfo}
             eid={eid}
             orders={orders}
           />
@@ -403,7 +405,7 @@ class EnterpriseLayout extends PureComponent {
     );
   }
 }
-export default connect(({ user, global, index, loading }) => ({
+export default connect(({ user, global, index, loading, order }) => ({
   currentUser: user.currentUser,
   notifyCount: user.notifyCount,
   collapsed: global.collapsed,
@@ -420,6 +422,6 @@ export default connect(({ user, global, index, loading }) => ({
   orders: global.orders,
   overviewInfo: index.overviewInfo,
   nouse: global.nouse,
-  enterprise: global.enterprise
-  // enterpriseServiceInfo: order.enterpriseServiceInfo
+  enterprise: global.enterprise,
+  enterpriseServiceInfo: order.enterpriseServiceInfo
 }))(EnterpriseLayout);
