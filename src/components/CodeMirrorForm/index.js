@@ -25,6 +25,7 @@ class CodeMirrorForm extends PureComponent {
     };
     this.CodeMirrorRef = '';
   }
+  
   saveRef = (ref) => {
     this.CodeMirrorRef = ref;
   };

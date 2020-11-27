@@ -1,4 +1,5 @@
-FROM registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-app-ui:v5.2.0-enterprise
+ARG VERSION=V5.2-dev
+FROM rainbond/rbd-app-ui:${VERSION}
 ADD dist /dist
 RUN mv /dist/index.html /app/ui/www/templates/index.html && \
   rm -rf /app/ui/www/static/dists/* && \

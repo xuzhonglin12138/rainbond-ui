@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react';
+/* eslint-disable no-empty-pattern */
+import { Button, Form, Input, Modal, Select, Switch } from 'antd';
 import { connect } from 'dva';
-import { Form, Input, Select, Modal, Switch, Button } from 'antd';
-import Branches from '../../../public/images/branches.svg';
+import React, { PureComponent } from 'react';
 import Application from '../../../public/images/application.svg';
-import styles from './Index.less';
+import Branches from '../../../public/images/branches.svg';
 import styless from '../CreateTeam/index.less';
+import styles from './Index.less';
 
 const { Option } = Select;
 
@@ -249,7 +250,7 @@ class CreateOAuthForm extends PureComponent {
           >
             {getFieldDecorator('is_auto_login', {
               initialValue: oauthInfo ? oauthInfo.is_auto_login : false,
-              rules: [{ required: true, message: '设置是否开启自动登录选项' }]
+              rules: [{ required: true, message: '设置是否开启自动登录选项' }],
             })(
               <Switch
                 checkedChildren="开启"

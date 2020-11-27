@@ -16,7 +16,7 @@ export default class Register extends Component {
     time: Date.now()
   };
 
-  handleSubmit = values => {
+  handleSubmit = (values) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'user/register',

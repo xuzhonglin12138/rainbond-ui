@@ -52,7 +52,7 @@ export default class RegisterComponent extends Component {
     return 'poor';
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { form, onSubmit } = this.props;
     form.validateFields(
@@ -68,7 +68,7 @@ export default class RegisterComponent extends Component {
     );
   };
 
-  handleConfirmBlur = e => {
+  handleConfirmBlur = (e) => {
     const { value } = e.target;
     this.setState({
       confirmDirty: this.state.confirmDirty || !!value

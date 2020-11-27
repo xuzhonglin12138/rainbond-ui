@@ -7,11 +7,13 @@
 import React, { Fragment, PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { Card, Spin, notification } from 'antd';
+import { Card, Spin, notification, Checkbox } from 'antd';
 import { Axis, Chart, Geom, Legend, Tooltip } from 'bizcharts';
 import globalUtil from '@/utils/global';
 import monitorDataUtil from '@/utils/monitorDataUtil';
+import CustomMonitoring from '@/components/CustomMonitoring';
 import styless from './index.less';
+import { start } from '@/services/app';
 
 @connect()
 export default class RangeChart extends PureComponent {
