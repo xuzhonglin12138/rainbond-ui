@@ -58,6 +58,7 @@ export default class Index extends PureComponent {
         </Tooltip>
       ) : null;
     }
+
     return (
       <Tooltip
         placement="topLeft"
@@ -67,21 +68,23 @@ export default class Index extends PureComponent {
         <Dropdown
           overlay={
             <Menu>
-              {links.map(item => (
-                <Menu.Item key={item}>
-                  <a
-                    target="_blank"
-                    href={
-                      item.url[0].includes('http') ||
-                      item.url[0].includes('https')
-                        ? item.url[0]
-                        : `http://${item.url[0]}`
-                    }
-                  >
-                    {item.service_cname}{' '}
-                  </a>
-                </Menu.Item>
-              ))}
+              {links.map(item => {
+                const setUrl = item.url && item.url.length > 0 && item.url[0];
+                return (
+                  <Menu.Item key={item}>
+                    <a
+                      target="_blank"
+                      href={
+                        setUrl &&
+                        (setUrl.includes('http') ||
+                          (setUrl.includes('https') && `http://${setUrl}`))
+                      }
+                    >
+                      {item.service_cname}
+                    </a>
+                  </Menu.Item>
+                );
+              })}
             </Menu>
           }
           placement="bottomRight"
