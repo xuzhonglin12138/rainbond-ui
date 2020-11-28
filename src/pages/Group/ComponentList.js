@@ -513,7 +513,7 @@ export default class ComponentList extends Component {
           <Dropdown
             overlay={menu}
             trigger={['click']}
-            placement="bottomCenter"
+            placement="topCenter"
             disabled={!this.CanBatchOperation()}
           >
             <Button>
