@@ -137,19 +137,18 @@ export default function request(url, options) {
     });
   return axios(newOptions)
     .then(checkStatus)
-    .then(response => {
+    .then((response) => {
       showLoading &&
         window.g_app._store.dispatch({
           type: 'global/hiddenLoading'
         });
-
       const res = response.data.data || {};
       res._code = response.status;
       res._condition = response.data.code;
       res.msg_show = response.data.msg_show;
       return res;
     })
-    .catch(error => {
+    .catch((error) => {
       if (showLoading) {
         window.g_app._store.dispatch({
           type: 'global/hiddenLoading'
@@ -211,7 +210,7 @@ export default function request(url, options) {
         if (resData.code === 10407) {
           cookie.setGuide('appStore', 'true');
           window.g_app._store.dispatch({
-            type: "global/showAuthCompany",
+            type: 'global/showAuthCompany',
             payload: {
               market_name: resData.data.bean.name
             }
@@ -258,7 +257,7 @@ export default function request(url, options) {
           );
           return;
         }
-        
+
         // 访问资源所属团队与当前团队不一致
         if (resData.code === 10403) {
           location.href = globalUtil.replaceUrlTeam(
