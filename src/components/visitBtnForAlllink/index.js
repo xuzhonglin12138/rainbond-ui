@@ -34,7 +34,6 @@ export default class Index extends PureComponent {
     if (isAccessUrls.length === 0) {
       return null;
     }
-
     if (links.length === 1) {
       let singleLink;
       if (links[0] && links[0].url && links[0].url[0])
@@ -76,8 +75,9 @@ export default class Index extends PureComponent {
                       target="_blank"
                       href={
                         setUrl &&
-                        (setUrl.includes('http') ||
-                          (setUrl.includes('https') && `http://${setUrl}`))
+                        (setUrl.includes('http') || setUrl.includes('https')
+                          ? setUrl
+                          : `http://${setUrl}`)
                       }
                     >
                       {item.service_cname}
