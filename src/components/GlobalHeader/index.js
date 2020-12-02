@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable react/sort-comp */
 /* eslint-disable prettier/prettier */
-import rainbondUtil from "@/utils/rainbond";
+import rainbondUtil from '@/utils/rainbond';
 import {
   Avatar,
   Dropdown,
@@ -9,7 +9,8 @@ import {
   Layout,
   Menu,
   notification,
-  Spin
+  Spin,
+  Button
 } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
@@ -21,12 +22,12 @@ import styles from './index.less';
 
 const { Header } = Layout;
 
-@connect(({ user, global, appControl }) => ({
+@connect(({ user, global, appControl, order }) => ({
   rainbondInfo: global.rainbondInfo,
   appDetail: appControl.appDetail,
   currentUser: user.currentUser,
-  enterprise: global.enterprise
-  // enterpriseServiceInfo: order.enterpriseServiceInfo
+  enterprise: global.enterprise,
+  enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class GlobalHeader extends PureComponent {
   constructor(props) {
@@ -82,8 +83,8 @@ export default class GlobalHeader extends PureComponent {
       customHeader,
       rainbondInfo,
       collapsed,
-      enterprise
-      // enterpriseServiceInfo
+      enterprise,
+      enterpriseServiceInfo
     } = this.props;
     if (!currentUser) {
       return null;
@@ -143,12 +144,12 @@ export default class GlobalHeader extends PureComponent {
         />
         {customHeader && customHeader()}
         <div className={styles.right}>
-          {/* {rainbondUtil.isEnableBillingFunction() &&
-            enterpriseServiceInfo.type === "free" && (
+          {rainbondUtil.isEnableBillingFunction() &&
+            enterpriseServiceInfo && enterpriseServiceInfo.type === 'free' && (
               <Button type="primary" onClick={this.handleVip}>
                 升级付费服务
               </Button>
-            )} */}
+            )}
           {/* {rainbondUtil.documentEnable(rainbondInfo) && (
             <Tooltip title="平台使用手册">
               <a
@@ -161,8 +162,8 @@ export default class GlobalHeader extends PureComponent {
               </a>
             </Tooltip>
           )} */}
-          
-          {enterpriseEdition ? (
+
+          {/* {enterpriseEdition ? (
             <span className={styles.action} style={{ color: '#fff' }}>
               企业版
             </span>
@@ -176,17 +177,18 @@ export default class GlobalHeader extends PureComponent {
             >
               开源版
             </a>
+          )} */}
+          {rainbondUtil.documentPlatform_url(rainbondInfo) && (
+            <a
+              className={styles.action}
+              style={{ color: '#fff' }}
+              href={`${rainbondUtil.documentPlatform_url(rainbondInfo)}docs/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              平台使用手册
+            </a>
           )}
-          {
-          rainbondUtil.documentPlatform_url(rainbondInfo) && 
-          <a
-            className={styles.action}
-            style={{ color: '#fff' }}
-            href={`${rainbondUtil.documentPlatform_url(rainbondInfo)}docs/`}
-            target="_blank"
-            rel="noopener noreferrer" 
-          >参考手册
-          </a>}
           {currentUser ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>

@@ -3,7 +3,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-nested-ternary */
-import { Icon, Layout, notification } from 'antd';
+import { Icon, Layout, notification, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
@@ -57,7 +57,7 @@ const query = {
 };
 
 let isMobile;
-enquireScreen((b) => {
+enquireScreen(b => {
   isMobile = b;
 });
 
@@ -94,7 +94,7 @@ class TeamLayout extends PureComponent {
 
     dispatch({
       type: 'global/fetchEnterpriseList',
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -122,7 +122,7 @@ class TeamLayout extends PureComponent {
     if (teamName && regionName) {
       dispatch({
         type: 'user/fetchCurrent',
-        callback: (res) => {
+        callback: res => {
           if (res && res._code === 200) {
             this.getTeamOverview(res.bean.user_id);
           }
@@ -143,7 +143,7 @@ class TeamLayout extends PureComponent {
       payload: {
         team_name: teamName
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -155,7 +155,7 @@ class TeamLayout extends PureComponent {
           );
         }
       },
-      handleError: (err) => {
+      handleError: err => {
         if (err && err.data && err.data.code) {
           const errtext =
             err.data.code === 10411
@@ -183,7 +183,7 @@ class TeamLayout extends PureComponent {
     dispatch({
       type: 'teamControl/fetchTeamUserPermissions',
       payload: { user_id: ID, team_name: teamName },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           const results = roleUtil.queryTeamUserPermissionsInfo(
             res.bean,
@@ -224,7 +224,7 @@ class TeamLayout extends PureComponent {
       payload: { team_name: teamName, region_name: regionName }
     });
     const region = userUtil.hasTeamAndRegion(currentUser, teamName, regionName);
-    enterpriseList.map((item) => {
+    enterpriseList.map(item => {
       if (eid === item.enterprise_id) {
         dispatch({ type: 'enterprise/fetchCurrentEnterprise', payload: item });
         this.setState({
@@ -237,7 +237,7 @@ class TeamLayout extends PureComponent {
     });
     this.fetchEnterpriseInfo(eid);
     this.fetchTeamApps();
-    enquireScreen((mobile) => {
+    enquireScreen(mobile => {
       this.setState({ isMobile: mobile });
     });
     // 连接云应用市场
@@ -261,10 +261,10 @@ class TeamLayout extends PureComponent {
           team_name: teamName,
           app_alias: componentID
         },
-        callback: (appDetail) => {
+        callback: appDetail => {
           this.setState({ currentComponent: appDetail.service });
         },
-        handleError: (data) => {
+        handleError: data => {
           if (data.status) {
             if (data.status === 404) {
               this.props.dispatch(
@@ -290,11 +290,11 @@ class TeamLayout extends PureComponent {
     });
   };
 
-  fetchEnterpriseInfo = (eid) => {
+  fetchEnterpriseInfo = eid => {
     if (!eid) {
       return null;
     }
-    // this.fetchEnterpriseService(eid);
+    this.fetchEnterpriseService(eid);
     const { dispatch } = this.props;
     dispatch({
       type: 'global/fetchEnterpriseInfo',
@@ -304,7 +304,7 @@ class TeamLayout extends PureComponent {
     });
   };
 
-  fetchEnterpriseService = (eid) => {
+  fetchEnterpriseService = eid => {
     const { dispatch } = this.props;
     dispatch({
       type: 'order/fetchEnterpriseService',
@@ -330,7 +330,7 @@ class TeamLayout extends PureComponent {
     return title;
   };
 
-  handleMenuCollapse = (collapsed) => {
+  handleMenuCollapse = collapsed => {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/changeLayoutCollapsed',
@@ -355,7 +355,7 @@ class TeamLayout extends PureComponent {
   render() {
     const {
       currentUser,
-      // enterpriseServiceInfo,
+      enterpriseServiceInfo,
       collapsed,
       children,
       location,
@@ -419,23 +419,25 @@ class TeamLayout extends PureComponent {
     }
 
     const mode = this.getMode(appID || componentID);
-    // const nobleIcon = (
-    //   <Tooltip
-    //     title={
-    //       enterpriseServiceInfo.type === "vip"
-    //         ? "尊贵的付费企业用户"
-    //         : "免费用户"
-    //     }
-    //   >
-    //     {globalUtil.fetchSvg(enterpriseServiceInfo.type)}
-    //   </Tooltip>
-    // );
+    const nobleIcon = (
+      <Tooltip
+        title={
+          enterpriseServiceInfo && enterpriseServiceInfo.type === 'vip'
+            ? '尊贵的付费企业用户'
+            : '免费用户'
+        }
+      >
+        {globalUtil.fetchSvg(
+          enterpriseServiceInfo && enterpriseServiceInfo.type
+        )}
+      </Tooltip>
+    );
 
     const customHeader = () => {
       if (mode == 'team') {
         return (
           <TeamHeader
-            nobleIcon={BillingFunction}
+            nobleIcon={BillingFunction && nobleIcon}
             teamName={teamName}
             currentEnterprise={currentEnterprise}
             currentTeam={currentTeam}
@@ -453,7 +455,7 @@ class TeamLayout extends PureComponent {
           currentRegion={currentRegion}
           regionName={regionName}
           appID={appID}
-          nobleIcon={BillingFunction}
+          nobleIcon={BillingFunction && nobleIcon}
           currentComponent={currentComponent}
           componentID={componentID}
           upDataHeader={upDataHeader}
@@ -611,7 +613,7 @@ class TeamLayout extends PureComponent {
       <Fragment>
         <DocumentTitle title={this.getPageTitle(pathname)}>
           <ContainerQuery key={teamName + regionName} query={query}>
-            {(params) => (
+            {params => (
               <Context.Provider value={this.getContext()}>
                 <div className={classNames(params)}>{layout()}</div>
               </Context.Provider>
@@ -628,7 +630,7 @@ class TeamLayout extends PureComponent {
         )}
         {orders && BillingFunction && (
           <ServiceOrder
-            // enterpriseServiceInfo={enterpriseServiceInfo}
+            enterpriseServiceInfo={enterpriseServiceInfo}
             eid={currentEnterprise && currentEnterprise.enterprise_id}
             orders={orders}
           />
@@ -638,23 +640,25 @@ class TeamLayout extends PureComponent {
   }
 }
 
-export default connect(({ user, global, index, loading, teamControl }) => ({
-  currentUser: user.currentUser,
-  notifyCount: user.notifyCount,
-  collapsed: global.collapsed,
-  groups: global.groups,
-  fetchingNotices: loading.effects['global/fetchNotices'],
-  notices: global.notices,
-  rainbondInfo: global.rainbondInfo,
-  payTip: global.payTip,
-  memoryTip: global.memoryTip,
-  noMoneyTip: global.noMoneyTip,
-  showAuthCompany: global.showAuthCompany,
-  overviewInfo: index.overviewInfo,
-  nouse: global.nouse,
-  enterprise: global.enterprise,
-  orders: global.orders,
-  // enterpriseServiceInfo: order.enterpriseServiceInfo,
-  upDataHeader: global.upDataHeader,
-  currentTeamPermissionsInfo: teamControl.currentTeamPermissionsInfo
-}))(TeamLayout);
+export default connect(
+  ({ user, global, index, loading, teamControl, order }) => ({
+    currentUser: user.currentUser,
+    notifyCount: user.notifyCount,
+    collapsed: global.collapsed,
+    groups: global.groups,
+    fetchingNotices: loading.effects['global/fetchNotices'],
+    notices: global.notices,
+    rainbondInfo: global.rainbondInfo,
+    payTip: global.payTip,
+    memoryTip: global.memoryTip,
+    noMoneyTip: global.noMoneyTip,
+    showAuthCompany: global.showAuthCompany,
+    overviewInfo: index.overviewInfo,
+    nouse: global.nouse,
+    enterprise: global.enterprise,
+    orders: global.orders,
+    enterpriseServiceInfo: order.enterpriseServiceInfo,
+    upDataHeader: global.upDataHeader,
+    currentTeamPermissionsInfo: teamControl.currentTeamPermissionsInfo
+  })
+)(TeamLayout);
