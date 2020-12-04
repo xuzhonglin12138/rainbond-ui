@@ -8,11 +8,11 @@ import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
 import { enquireScreen } from 'enquire-js';
-import memoizeOne from 'memoize-one';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
 import { ContainerQuery } from 'react-container-query';
 import DocumentTitle from 'react-document-title';
+import logo from '../../public/logo.png';
 import { getAppMenuData } from '../common/appMenu';
 import { getMenuData } from '../common/teamMenu';
 import AuthCompany from '../components/AuthCompany';
@@ -30,7 +30,6 @@ import userUtil from '../utils/user';
 import AppHeader from './components/AppHeader';
 import TeamHeader from './components/TeamHeader';
 import Context from './MenuContext';
-import logo from '../../public/logo.png';
 const qs = require('query-string');
 
 const { Content } = Layout;
@@ -71,7 +70,6 @@ class TeamLayout extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.getPageTitle = memoizeOne(this.getPageTitle);
     this.state = {
       isMobile,
       enterpriseList: [],
@@ -317,17 +315,6 @@ class TeamLayout extends PureComponent {
   getChildContext = () => {
     const { location } = this.props;
     return { location, breadcrumbNameMap: this.breadcrumbNameMap };
-  };
-
-  getPageTitle = () => {
-    const { rainbondInfo } = this.props;
-    const title =
-      (rainbondInfo &&
-        rainbondInfo.title &&
-        rainbondInfo.title.enable &&
-        rainbondInfo.title.value) ||
-      'Rainbond | Serverless PaaS , A new generation of easy-to-use cloud management platforms based on kubernetes.';
-    return title;
   };
 
   handleMenuCollapse = collapsed => {
@@ -608,10 +595,11 @@ class TeamLayout extends PureComponent {
         </Layout>
       );
     };
+    const SiteTitle = rainbondUtil.fetchSiteTitle(rainbondInfo);
 
     return (
       <Fragment>
-        <DocumentTitle title={this.getPageTitle(pathname)}>
+        <DocumentTitle title={SiteTitle}>
           <ContainerQuery key={teamName + regionName} query={query}>
             {params => (
               <Context.Provider value={this.getContext()}>
