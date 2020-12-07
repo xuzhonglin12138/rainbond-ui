@@ -45,6 +45,7 @@ import {
   fetchEnterpriseInfo,
   fetchEnterpriseTeams,
   fetchEnterpriseUsers,
+  fetchOperationLogs,
   deleteEnterpriseUsers,
   upEnterpriseUsers,
   fetchEnterpriseAdmin,
@@ -541,6 +542,12 @@ export default {
     },
     *fetchEnterpriseUsers({ payload, callback }, { put, call }) {
       const response = yield call(fetchEnterpriseUsers, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *fetchOperationLogs({ payload, callback }, { put, call }) {
+      const response = yield call(fetchOperationLogs, payload);
       if (response) {
         callback && callback(response);
       }

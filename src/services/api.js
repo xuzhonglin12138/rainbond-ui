@@ -919,6 +919,23 @@ export async function fetchEnterpriseUsers(param) {
   );
 }
 
+export async function fetchOperationLogs(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        operation_type: param.operation_type,
+        page: param.page,
+        page_size: param.page_size,
+        user_name: param.name,
+        start_time: param.start_time,
+        end_time: param.end_time,
+      },
+    }
+  );
+}
+
 /* 添加企业管理员 */
 export async function addEnterpriseAdminTeams(param) {
   return request(

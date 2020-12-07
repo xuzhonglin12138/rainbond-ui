@@ -23,7 +23,7 @@ import {
   fetchAccessToken,
   addAccessToken,
   putAccessToken,
-  deleteAccessToke,
+  deleteAccessToke
 } from '../services/user';
 import { setAuthority } from '../utils/authority';
 import userUtil from '../utils/global';
@@ -38,7 +38,7 @@ export default {
     list: [],
     currentUser: null,
     notifyCount: 0,
-    register: null,
+    register: null
   },
 
   effects: {
@@ -185,7 +185,7 @@ export default {
         }
       }
     },
-    *thirdLogin({ payload, callback }, { call, put, select }) {
+    *thirdLogin({ payload, callback }, { call, put }) {
       const response = yield call(login, payload);
 
       if (response) {
@@ -194,23 +194,26 @@ export default {
       }
     },
 
-    *logout(_, { put, select }) {
-      try {
-        // get location pathname
-        const urlParams = new URL(window.location.href);
-        // const pathname = yield select(state => state.routing.location.pathname);
-        // add the parameters in the url
-        // urlParams.searchParams.set("redirect", pathname);
-        window.history.replaceState(null, 'login', urlParams.href);
-      } finally {
-        // yield put(routerRedux.push('/user/login')); Login out after permission
-        // changes to admin or user The refresh will automatically redirect to the login
-        // page
-        yield put({ type: 'tologout' });
+    *logout({ payload }, { call, put }) {
+      const response = yield call(logout, payload);
+      if (response) {
+        try {
+          // get location pathname
+          const urlParams = new URL(window.location.href);
+          // const pathname = yield select(state => state.routing.location.pathname);
+          // add the parameters in the url
+          // urlParams.searchParams.set("redirect", pathname);
+          window.history.replaceState(null, 'login', urlParams.href);
+        } finally {
+          // yield put(routerRedux.push('/user/login')); Login out after permission
+          // changes to admin or user The refresh will automatically redirect to the login
+          // page
+          yield put({ type: 'tologout' });
 
-        yield put({ type: 'saveCurrentUser', payload: null });
+          yield put({ type: 'saveCurrentUser', payload: null });
 
-        yield put(routerRedux.push('/user/login'));
+          yield put(routerRedux.push('/user/login'));
+        }
       }
     },
     *register({ payload, complete }, { call, put, select }) {
@@ -245,8 +248,8 @@ export default {
             routerRedux.push({
               pathname: '/user/register-result',
               state: {
-                account: response.bean.nick_name,
-              },
+                account: response.bean.nick_name
+              }
             })
           );
         } else {
@@ -289,7 +292,7 @@ export default {
       if (response) {
         callback && callback(response.bean);
       }
-    },
+    }
   },
 
   reducers: {
@@ -297,7 +300,7 @@ export default {
       return {
         ...state,
         register: payload,
-        redirect,
+        redirect
       };
     },
     changeLoginStatus(state, { payload }) {
@@ -305,7 +308,7 @@ export default {
       return {
         ...state,
         status: payload.status,
-        type: payload.type,
+        type: payload.type
       };
     },
     tologout(state, action) {
@@ -314,13 +317,13 @@ export default {
     save(state, action) {
       return {
         ...state,
-        list: action.payload,
+        list: action.payload
       };
     },
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser: action.payload
       };
     },
     saveOtherTeam(state, action) {
@@ -328,14 +331,14 @@ export default {
       currentUser.teams.push(action.team);
       return {
         ...state,
-        currentUser: Object.assign({}, currentUser),
+        currentUser: Object.assign({}, currentUser)
       };
     },
     changeNotifyCount(state, action) {
       return {
         ...state,
-        notifyCount: action.payload,
+        notifyCount: action.payload
       };
-    },
-  },
+    }
+  }
 };

@@ -1,30 +1,23 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable react/sort-comp */
 /* eslint-disable prettier/prettier */
-import rainbondUtil from "@/utils/rainbond";
-import {
-  Avatar,
-  Dropdown,
-  Icon,
-  Layout,
-  Menu,
-  notification,
-  Spin
-} from "antd";
-import { connect } from "dva";
-import { routerRedux } from "dva/router";
-import Debounce from "lodash-decorators/debounce";
-import React, { PureComponent } from "react";
-import userIcon from "../../../public/images/user-icon-small.png";
-import ChangePassword from "../ChangePassword";
-import styles from "./index.less";
+import rainbondUtil from '@/utils/rainbond';
+import { Avatar, Dropdown, Icon, Layout, Menu, notification, Spin } from 'antd';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import Debounce from 'lodash-decorators/debounce';
+import React, { PureComponent } from 'react';
+import userIcon from '../../../public/images/user-icon-small.png';
+import ChangePassword from '../ChangePassword';
+import NoticeIcon from '../NoticeIcon';
+import styles from './index.less';
 
 const { Header } = Layout;
 
 @connect(({ user, global, appControl, order }) => ({
   rainbondInfo: global.rainbondInfo,
   appDetail: appControl.appDetail,
-  currentUser: user.currentUser,
+  currentUser: user.currentUser
   // enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class GlobalHeader extends PureComponent {
@@ -37,14 +30,14 @@ export default class GlobalHeader extends PureComponent {
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
-    if (key === "userCenter") {
+    if (key === 'userCenter') {
       dispatch(routerRedux.replace(`/account/center`));
     }
-    if (key === "cpw") {
+    if (key === 'cpw') {
       this.showChangePass();
     }
-    if (key === "logout") {
-      dispatch({ type: "user/logout" });
+    if (key === 'logout') {
+      dispatch({ type: 'user/logout' });
     }
   };
   showChangePass = () => {
@@ -55,12 +48,12 @@ export default class GlobalHeader extends PureComponent {
   };
   handleChangePass = vals => {
     this.props.dispatch({
-      type: "user/changePass",
+      type: 'user/changePass',
       payload: {
         ...vals
       },
       callback: () => {
-        notification.success({ message: "修改成功，请重新登录" });
+        notification.success({ message: '修改成功，请重新登录' });
       }
     });
   };
@@ -77,13 +70,15 @@ export default class GlobalHeader extends PureComponent {
 
   render() {
     const {
+      eid,
       currentUser,
       customHeader,
       rainbondInfo,
       collapsed,
+      dispatch
       // enterpriseServiceInfo
     } = this.props;
-    if (!currentUser ) {
+    if (!currentUser) {
       return null;
     }
     const handleUserSvg = () => (
@@ -123,18 +118,19 @@ export default class GlobalHeader extends PureComponent {
     const menu = (
       <div className={styles.uesrInfo}>
         <Menu selectedKeys={[]} onClick={this.handleMenuClick}>
-          {MenuItems("userCenter", handleUserSvg, "个人中心")}
-          {MenuItems("cpw", handleEditSvg, "修改密码")}
-          {MenuItems("logout", handleLogoutSvg, "退出登录")}
+          {MenuItems('userCenter', handleUserSvg, '个人中心')}
+          {MenuItems('cpw', handleEditSvg, '修改密码')}
+          {MenuItems('logout', handleLogoutSvg, '退出登录')}
         </Menu>
       </div>
     );
+    const isInformation = window.location.href.indexOf('information') > -1;
     return (
       <Header className={styles.header}>
         <Icon
           className={styles.trigger}
-          type={!collapsed ? "menu-unfold" : "menu-fold"}
-          style={{ color: "#ffffff", float: "left" }}
+          type={!collapsed ? 'menu-unfold' : 'menu-fold'}
+          style={{ color: '#ffffff', float: 'left' }}
           onClick={this.toggle}
         />
         {customHeader && customHeader()}
@@ -157,7 +153,49 @@ export default class GlobalHeader extends PureComponent {
               </a>
             </Tooltip>
           )} */}
-          <a className={styles.action} style={{color: "#fff"}} href={`${rainbondUtil.documentPlatform_url(rainbondInfo)}docs/`} target="_blank">参考手册</a>
+          {!isInformation && (
+            <NoticeIcon
+              className={styles.action}
+              count={12}
+              onClear={() => {
+                dispatch(routerRedux.push(`/information/unread`));
+              }}
+              // onClick={() => {
+              //   dispatch(routerRedux.push(`/information/unread`));
+              // }}
+              // onClear={onNoticeClear}
+              // onLoadMore={this.fetchMoreNotices}
+              // onPopupVisibleChange={onNoticeVisibleChange}
+              // loading={fetchingNotices}
+            >
+              <NoticeIcon.Tab
+                count={1}
+                list={[
+                  {
+                    avatar:
+                      'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
+                    datetime: '3 年前',
+                    id: '000000001',
+                    key: '000000001',
+                    title: '你收到了 14 份新周报',
+                    type: 'notification'
+                  }
+                ]}
+                title="通知"
+                name="notification"
+                emptyText="你已查看所有通知"
+                emptyImage="https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg"
+              />
+            </NoticeIcon>
+          )}
+          <a
+            className={styles.action}
+            style={{ color: '#fff' }}
+            href={`${rainbondUtil.documentPlatform_url(rainbondInfo)}docs/`}
+            target="_blank"
+          >
+            参考手册
+          </a>
 
           {currentUser ? (
             <Dropdown overlay={menu}>

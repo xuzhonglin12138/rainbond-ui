@@ -15,9 +15,10 @@ export default class NoticeIcon extends PureComponent {
     loading: false,
     locale: {
       emptyText: '暂无数据',
-      clear: '清空',
+      clear: '清空'
     },
-    emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
+    emptyImage:
+      'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg'
   };
   static Tab = TabPane;
   constructor(props) {
@@ -30,19 +31,21 @@ export default class NoticeIcon extends PureComponent {
   onItemClick = (item, tabProps) => {
     const { onItemClick } = this.props;
     onItemClick(item, tabProps);
-  }
-  onTabChange = (tabType) => {
+  };
+  onTabChange = tabType => {
     this.setState({ tabType });
     this.props.onTabChange(tabType);
-  }
+  };
   getNotificationBox() {
     const { children, loading, locale } = this.props;
     if (!children) {
       return null;
     }
-    const panes = React.Children.map(children, (child) => {
-      const title = child.props.list && child.props.list.length > 0
-        ? `${child.props.title} (${child.props.list.length})` : child.props.title;
+    const panes = React.Children.map(children, child => {
+      const title =
+        child.props.list && child.props.list.length > 0
+          ? `${child.props.title} (${child.props.list.length})`
+          : child.props.title;
       return (
         <TabPane tab={title} key={child.props.title}>
           <List
@@ -65,11 +68,17 @@ export default class NoticeIcon extends PureComponent {
     );
   }
   render() {
-    const { className, count, popupAlign, onPopupVisibleChange } = this.props;
+    const {
+      className,
+      count,
+      popupAlign,
+      onPopupVisibleChange,
+      onClick
+    } = this.props;
     const noticeButtonClass = classNames(className, styles.noticeButton);
     const notificationBox = this.getNotificationBox();
     const trigger = (
-      <span className={noticeButtonClass}>
+      <span className={noticeButtonClass} onClick={onClick}>
         <Badge count={count} className={styles.badge}>
           <Icon type="bell" className={styles.icon} />
         </Badge>

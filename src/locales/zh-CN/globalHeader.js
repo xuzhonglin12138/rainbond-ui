@@ -1,4 +1,5 @@
 export default {
+    'header.information':'站内信',
     'header.team.re':'返回企业视图',
     'header.team.name':'团队视图',
     'header.team.search':'筛选团队',
