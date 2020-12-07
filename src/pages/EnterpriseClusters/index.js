@@ -369,12 +369,6 @@ export default class EnterpriseClusters extends PureComponent {
       pageSize: tenantPageSize,
       current: tenantPage
     };
-    const {
-      match: {
-        params: { eid }
-      }
-    } = this.props;
-
     const colorbj = (color, bg) => {
       return {
         width: '100px',
