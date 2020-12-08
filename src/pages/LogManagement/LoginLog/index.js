@@ -290,7 +290,7 @@ export default class LoginLog extends PureComponent {
           dataSource={logList || []}
           columns={[
             {
-              title: '操作责',
+              title: '操作者',
               align: 'center',
               width: 150,
               dataIndex: 'user_name'
