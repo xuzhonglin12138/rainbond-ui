@@ -68,7 +68,7 @@ export default {
     } else if (obj.view_type === 'team') {
       url = `/team/${obj.team_name}/region/${obj.region}/index`;
     } else if (obj.view_type === 'app') {
-      url = `/team/${obj.team_name}/region/${obj.region}/apps${obj.app_id}`;
+      url = `/team/${obj.team_name}/region/${obj.region}/apps/${obj.app_id}`;
     } else if (obj.view_type === 'component') {
       url = `/team/${obj.team_name}/region/${obj.region}/components/${obj.service_alias}/overview`;
     } else if (obj.view_type === 'plugin') {
