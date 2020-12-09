@@ -5,9 +5,11 @@ import { connect } from 'dva';
 import { Form, Select, DatePicker, Col, Row, Button, Table } from 'antd';
 import logsUtil from '@/utils/logs';
 import moment from 'moment';
+import styles from '../index.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 @Form.create()
 @connect(({ user, list, loading, global, index }) => ({
@@ -32,7 +34,9 @@ export default class LoginLog extends PureComponent {
       logsPage: 1,
       logsPageSize: 10,
       logsTotal: 0,
-      adminList: []
+      adminList: [],
+      startTime: '',
+      endTime: ''
     };
   }
 
@@ -52,15 +56,26 @@ export default class LoginLog extends PureComponent {
       }
     );
   };
-
-  loadOperationLog = (val = {}) => {
+  handleChange = value => {
+    this.setState(
+      {
+        name: value,
+        page: 1
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
+  };
+  loadOperationLog = () => {
     const {
       dispatch,
       match: {
         params: { eid }
       }
     } = this.props;
-    const { logsPage, logsPageSize, name } = this.state;
+    const { logsPage, logsPageSize, name, startTime, endTime } = this.state;
+
     dispatch({
       type: 'global/fetchOperationLogs',
       payload: {
@@ -68,8 +83,9 @@ export default class LoginLog extends PureComponent {
         page: logsPage,
         page_size: logsPageSize,
         operation_type: 'login_manage',
-        name: val.user_name || name,
-        ...val
+        name,
+        start_time: startTime,
+        end_time: endTime
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -111,13 +127,6 @@ export default class LoginLog extends PureComponent {
     // Can not select days before today and today
     return current && current > moment().endOf('day');
   };
-  disabledDateTime = () => {
-    return {
-      disabledHours: () => this.range(0, 24).splice(4, 20),
-      disabledMinutes: () => this.range(30, 60),
-      disabledSeconds: () => [55, 56]
-    };
-  };
   range = (start, end) => {
     const result = [];
     for (let i = start; i < end; i++) {
@@ -137,22 +146,57 @@ export default class LoginLog extends PureComponent {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
-        const startTime = values.start_time
-          ? moment(values.start_time).valueOf()
-          : '';
-        const endTime = values.end_time
-          ? moment(values.end_time).valueOf()
-          : '';
-        const user_name = values.user_name || '';
-        this.setState({ loading: true, logsPage: 1 }, () => {
-          this.loadOperationLog({
-            start_time: startTime,
-            end_time: endTime,
-            user_name
-          });
-        });
+        let startTime = '';
+        let endTime = '';
+
+        if (values.times && values.times.length > 1) {
+          startTime = moment(values.times[0])
+            .locale('zh-cn')
+            .format('YYYY-MM-DD HH:mm:ss');
+          endTime = moment(values.times[1])
+            .locale('zh-cn')
+            .format('YYYY-MM-DD HH:mm:ss');
+        }
+        const name = values.user_name || '';
+        this.setState(
+          {
+            loading: true,
+            logsPage: 1,
+            startTime,
+            endTime,
+            name
+          },
+          () => {
+            this.loadOperationLog();
+          }
+        );
       }
     });
+  };
+  handleChangeTimes = values => {
+    let startTime = '';
+    let endTime = '';
+
+    if (values && values.length > 1) {
+      startTime = moment(values[0])
+        .locale('zh-cn')
+        .format('YYYY-MM-DD HH:mm:ss');
+      endTime = moment(values[1])
+        .locale('zh-cn')
+        .format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    this.setState(
+      {
+        loading: true,
+        logsPage: 1,
+        startTime,
+        endTime
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
   };
 
   render() {
@@ -166,7 +210,6 @@ export default class LoginLog extends PureComponent {
       logsTotal
     } = this.state;
 
-    const logs = logsUtil.fetchOperationType();
     const formItemLayout = {
       labelCol: {
         xs: {
@@ -200,20 +243,21 @@ export default class LoginLog extends PureComponent {
                   rules: [
                     {
                       required: false,
-                      message: '请选择操作者'
+                      message: '请选择成员'
                     }
                   ]
                 })(
                   <Select
                     showSearch
-                    placeholder="请选择操作者"
+                    placeholder="请选择成员"
                     defaultActiveFirstOption={false}
                     filterOption={false}
                     notFoundContent={null}
                     onSearch={this.handleSearch}
+                    onChange={this.handleChange}
                   >
                     <Option key={0} value="">
-                      全部
+                      所有成员
                     </Option>
                     {adminList &&
                       adminList.length > 0 &&
@@ -229,36 +273,26 @@ export default class LoginLog extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={4}>
+            <Col span={8}>
               <FormItem {...formItemLayout}>
-                {getFieldDecorator('start_time', {
-                  rules: [{ required: false, message: '请选择开始日期!' }],
+                {getFieldDecorator('times', {
                   initialValue: ''
                 })(
-                  <DatePicker
-                    placeholder="请选择开始日期"
+                  <RangePicker
+                    separator="至"
                     style={{ width: '100%' }}
-                    format="YYYY-MM-DD HH:mm:ss"
                     disabledDate={this.disabledDate}
-                    disabledTime={this.disabledDateTime}
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-                  />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={4}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('end_time', {
-                  rules: [{ required: false, message: '请选择结束日期!' }],
-                  initialValue: ''
-                })(
-                  <DatePicker
-                    placeholder="请选择结束日期"
-                    style={{ width: '100%' }}
+                    onChange={value => {
+                      this.handleChangeTimes(value);
+                    }}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [
+                        moment('00:00:00', 'HH:mm:ss'),
+                        moment('23:59:59', 'HH:mm:ss')
+                      ]
+                    }}
                     format="YYYY-MM-DD HH:mm:ss"
-                    disabledDate={this.disabledDate}
-                    disabledTime={this.disabledDateTime}
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
                   />
                 )}
               </FormItem>
@@ -279,7 +313,7 @@ export default class LoginLog extends PureComponent {
         <Table
           loading={loading}
           size="middle"
-          style={{ background: '#fff' }}
+          className={styles.tables}
           pagination={{
             size: 'default',
             current: logsPage,
@@ -290,7 +324,7 @@ export default class LoginLog extends PureComponent {
           dataSource={logList || []}
           columns={[
             {
-              title: '操作者',
+              title: '成员',
               align: 'center',
               width: 150,
               dataIndex: 'user_name'

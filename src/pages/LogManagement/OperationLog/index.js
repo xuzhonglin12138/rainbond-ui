@@ -5,9 +5,11 @@ import { connect } from 'dva';
 import { Form, Select, DatePicker, Col, Row, Button, Table } from 'antd';
 import logsUtil from '@/utils/logs';
 import moment from 'moment';
+import styles from '../index.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 @Form.create()
 @connect(({ user, list, loading, global, index }) => ({
@@ -45,7 +47,10 @@ export default class OperationLog extends PureComponent {
       logsPage: 1,
       logsPageSize: 10,
       logsTotal: 0,
-      adminList: []
+      adminList: [],
+      startTime: '',
+      endTime: '',
+      operationType: ''
     };
   }
 
@@ -65,23 +70,54 @@ export default class OperationLog extends PureComponent {
       }
     );
   };
+  handleChange = value => {
+    this.setState(
+      {
+        name: value,
+        page: 1
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
+  };
 
-  loadOperationLog = (val = {}) => {
+  handleChangeType = value => {
+    this.setState(
+      {
+        operationType: value,
+        page: 1
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
+  };
+  loadOperationLog = () => {
     const {
       dispatch,
       match: {
         params: { eid }
       }
     } = this.props;
-    const { logsPage, logsPageSize, name } = this.state;
+    const {
+      logsPage,
+      logsPageSize,
+      name,
+      startTime,
+      endTime,
+      operationType
+    } = this.state;
     dispatch({
       type: 'global/fetchOperationLogs',
       payload: {
         enterprise_id: eid,
         page: logsPage,
         page_size: logsPageSize,
-        name: val.user_name || name,
-        ...val
+        name,
+        start_time: startTime,
+        end_time: endTime,
+        operation_type: operationType
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -123,13 +159,7 @@ export default class OperationLog extends PureComponent {
     // Can not select days before today and today
     return current && current > moment().endOf('day');
   };
-  disabledDateTime = () => {
-    return {
-      disabledHours: () => this.range(0, 24).splice(4, 20),
-      disabledMinutes: () => this.range(30, 60),
-      disabledSeconds: () => [55, 56]
-    };
-  };
+
   range = (start, end) => {
     const result = [];
     for (let i = start; i < end; i++) {
@@ -143,28 +173,63 @@ export default class OperationLog extends PureComponent {
       this.loadOperationLog();
     });
   };
+  handleChangeTimes = values => {
+    let startTime = '';
+    let endTime = '';
 
+    if (values && values.length > 1) {
+      startTime = moment(values[0])
+        .locale('zh-cn')
+        .format('YYYY-MM-DD HH:mm:ss');
+      endTime = moment(values[1])
+        .locale('zh-cn')
+        .format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    this.setState(
+      {
+        loading: true,
+        logsPage: 1,
+        startTime,
+        endTime
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
+  };
   handleSubmit = e => {
     e.preventDefault();
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
-        const startTime = values.start_time
-          ? moment(values.start_time).valueOf()
-          : '';
-        const endTime = values.end_time
-          ? moment(values.end_time).valueOf()
-          : '';
-        const user_name = values.user_name || '';
-        const operation_type = values.operation_type || '';
-        this.setState({ loading: true, logsPage: 1 }, () => {
-          this.loadOperationLog({
-            start_time: startTime,
-            end_time: endTime,
-            user_name,
-            operation_type
-          });
-        });
+        let startTime = '';
+        let endTime = '';
+
+        if (values.times && values.times.length > 1) {
+          startTime = moment(values.times[0])
+            .locale('zh-cn')
+            .format('YYYY-MM-DD HH:mm:ss');
+          endTime = moment(values.times[1])
+            .locale('zh-cn')
+            .format('YYYY-MM-DD HH:mm:ss');
+        }
+        const name = values.user_name || '';
+        const operationType = values.operation_type || '';
+
+        this.setState(
+          {
+            loading: true,
+            logsPage: 1,
+            startTime,
+            endTime,
+            name,
+            operationType
+          },
+          () => {
+            this.loadOperationLog();
+          }
+        );
       }
     });
   };
@@ -225,9 +290,10 @@ export default class OperationLog extends PureComponent {
                     filterOption={false}
                     notFoundContent={null}
                     onSearch={this.handleSearch}
+                    onChange={this.handleChange}
                   >
                     <Option key={0} value="">
-                      全部
+                      所有操作者
                     </Option>
                     {adminList &&
                       adminList.length > 0 &&
@@ -253,9 +319,12 @@ export default class OperationLog extends PureComponent {
                     }
                   ]
                 })(
-                  <Select placeholder="操作类型">
+                  <Select
+                    placeholder="操作类型"
+                    onChange={this.handleChangeType}
+                  >
                     <Option key={0} value="">
-                      全部
+                      所有类型
                     </Option>
                     {Object.keys(logs).map(item => (
                       <Option value={item}>{logs[item]}</Option>
@@ -264,36 +333,26 @@ export default class OperationLog extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={4}>
+            <Col span={8}>
               <FormItem {...formItemLayout}>
-                {getFieldDecorator('start_time', {
-                  rules: [{ required: false, message: '请选择开始日期!' }],
+                {getFieldDecorator('times', {
                   initialValue: ''
                 })(
-                  <DatePicker
-                    placeholder="请选择开始日期"
+                  <RangePicker
                     style={{ width: '100%' }}
-                    format="YYYY-MM-DD HH:mm:ss"
+                    separator='至'
                     disabledDate={this.disabledDate}
-                    disabledTime={this.disabledDateTime}
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-                  />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={4}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('end_time', {
-                  rules: [{ required: false, message: '请选择结束日期!' }],
-                  initialValue: ''
-                })(
-                  <DatePicker
-                    placeholder="请选择结束日期"
-                    style={{ width: '100%' }}
+                    onChange={value => {
+                      this.handleChangeTimes(value);
+                    }}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [
+                        moment('00:00:00', 'HH:mm:ss'),
+                        moment('23:59:59', 'HH:mm:ss')
+                      ]
+                    }}
                     format="YYYY-MM-DD HH:mm:ss"
-                    disabledDate={this.disabledDate}
-                    disabledTime={this.disabledDateTime}
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
                   />
                 )}
               </FormItem>
@@ -311,9 +370,9 @@ export default class OperationLog extends PureComponent {
           </Row>
         </Form>
         <Table
+          className={styles.tables}
           loading={loading}
           size="middle"
-          style={{ background: '#fff' }}
           pagination={{
             size: 'default',
             current: logsPage,

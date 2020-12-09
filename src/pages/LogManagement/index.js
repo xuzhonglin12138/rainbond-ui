@@ -46,7 +46,7 @@ export default class EnterpriseSetting extends PureComponent {
     return (
       <PageHeaderLayout
         title="日志管理"
-        content="操作日志"
+        content="记录平台的一些操作"
       >
         <Tabs onChange={this.onChange} activeKey={activeKey}>
           <TabPane tab={<div>操作日志</div>} key="operationLog">
