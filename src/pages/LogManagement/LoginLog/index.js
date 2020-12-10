@@ -308,7 +308,7 @@ export default class LoginLog extends PureComponent {
                     </Option>
                     {[
                       { name: '登录', key: 'login' },
-                      { name: '退出', key: 'logout' }
+                      { name: '登出', key: 'logout' }
                     ].map(item => (
                       <Option value={item.key}>{item.name}</Option>
                     ))}
@@ -368,8 +368,7 @@ export default class LoginLog extends PureComponent {
             {
               title: '成员',
               align: 'center',
-              width: 150,
-              dataIndex: 'user_name'
+              dataIndex: 'username'
             },
             {
               title: '登录时间',
@@ -380,15 +379,17 @@ export default class LoginLog extends PureComponent {
               render: val => {
                 return (
                   <span>
-                    {moment(val)
-                      .locale('zh-cn')
-                      .format('YYYY-MM-DD HH:mm:ss')}
+                    {val
+                      ? moment(val)
+                          .locale('zh-cn')
+                          .format('YYYY-MM-DD HH:mm:ss')
+                      : '-'}
                   </span>
                 );
               }
             },
             {
-              title: '退出时间',
+              title: '登出时间',
               dataIndex: 'logout_time',
               rowKey: 'logout_time',
               align: 'center',
@@ -396,18 +397,56 @@ export default class LoginLog extends PureComponent {
               render: val => {
                 return (
                   <span>
-                    {moment(val)
-                      .locale('zh-cn')
-                      .format('YYYY-MM-DD HH:mm:ss')}
+                    {val
+                      ? moment(val)
+                          .locale('zh-cn')
+                          .format('YYYY-MM-DD HH:mm:ss')
+                      : '-'}
                   </span>
                 );
               }
             },
             {
-              title: '操作内容',
-              dataIndex: 'comment',
+              title: '活跃时间',
+              dataIndex: 'duration',
+              rowKey: 'duration',
+              align: 'center',
+              width: 200,
               render: val => {
-                return <span>{logsUtil.fetchLogsContent(val)}</span>;
+                return (
+                  <span>
+                    {val
+                      ? moment('1900-01-01 00:00:00')
+                          .add(val, 'seconds')
+                          .format('HH:mm:ss')
+                      : '-'}
+                  </span>
+                );
+              }
+            },
+            {
+              title: '客户端 IP',
+              align: 'center',
+              dataIndex: 'client_ip',
+              render: val => {
+                return <span>{val || '-'}</span>;
+              }
+            },
+            {
+              title: '用户代理',
+              align: 'center',
+              dataIndex: 'user_agent',
+              render: val => {
+                return <span>{val || '-'}</span>;
+              }
+            },
+            {
+              title: '操作类型',
+              align: 'center',
+              dataIndex: 'event_type',
+              width: 100,
+              render: val => {
+                return <span>{val === 'login' ? '登录' : '登出'}</span>;
               }
             }
           ]}

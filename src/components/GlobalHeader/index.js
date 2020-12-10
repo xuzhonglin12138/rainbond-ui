@@ -158,7 +158,7 @@ export default class GlobalHeader extends PureComponent {
               className={styles.action}
               count={12}
               onClear={() => {
-                dispatch(routerRedux.push(`/information/unread`));
+                dispatch(routerRedux.push(`/information/management/notice/unread`));
               }}
               // onClick={() => {
               //   dispatch(routerRedux.push(`/information/unread`));

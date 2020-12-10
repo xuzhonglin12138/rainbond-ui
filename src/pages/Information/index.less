@@ -5,13 +5,16 @@
   height: 100%;
   background-color: @body-background;
   display: flex;
-  padding-top: 16px;
   padding-bottom: 16px;
   overflow: auto;
   .leftmenu {
     width: 224px;
+    background: #f7f8fa;
     border-right: @border-width-base @border-style-base @border-color-split;
     :global {
+      .ant-menu {
+        background: #f7f8fa;
+      }
       .ant-menu-inline {
         border: none;
       }
@@ -20,18 +23,59 @@
       }
     }
   }
+  .layoutMenuTitle {
+    padding: 24px 30px 20px;
+    .titles {
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 28px;
+      font-weight: 500;
+    }
+  }
   .right {
     flex: 1;
     padding-left: 40px;
     padding-right: 40px;
-    padding-top: 8px;
+    padding-top: 24px;
     padding-bottom: 8px;
+    .boxs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
     .title {
       font-size: 20px;
       color: @heading-color;
       line-height: 28px;
       font-weight: 500;
-      margin-bottom: 12px;
+    }
+
+    .customTitle {
+      color: rgb(96, 108, 128);
+      padding: 10px 12px;
+      border-top: 1px solid rgb(218, 223, 230);
+      border-bottom: 1px solid rgb(242, 244, 246);
+    }
+    .customSubTitle{
+      padding: 0px 12px;
+      margin: 42px 0px 15px;
+      color: rgb(96, 108, 128);
+      font-size: 12px;
+      margin-top: 15px;
+    }
+    .customContent {
+      list-style: none;
+      display: flex;
+      margin-bottom: 0 !important;
+      li {
+        flex: 1 1 0%;
+      }
+      li:last-child {
+        margin-left: auto;
+        flex: 0 0 auto;
+        width: 70px;
+      }
     }
   }
   :global {
@@ -44,45 +88,12 @@
     }
   }
 }
-:global {
-  .ant-list-item-meta {
-    // 账号绑定图标
-    .taobao {
-      color: #ff4000;
-      display: block;
-      font-size: 48px;
-      line-height: 48px;
-      border-radius: @border-radius-base;
-    }
-    .dingding {
-      background-color: #2eabff;
-      color: #fff;
-      font-size: 32px;
-      line-height: 32px;
-      padding: 6px;
-      margin: 2px;
-      border-radius: @border-radius-base;
-    }
-    .alipay {
-      color: #2eabff;
-      font-size: 48px;
-      line-height: 48px;
-      border-radius: @border-radius-base;
-    }
-  }
-
-  // 密码强度
-  font.strong {
-    color: @success-color;
-  }
-  font.medium {
-    color: @warning-color;
-  }
-  font.weak {
-    color: @error-color;
-  }
+.mb10 {
+  margin-bottom: 20px;
 }
-
+.pb20 {
+  padding-bottom: 20px;
+}
 @media screen and (max-width: @screen-md) {
   .main {
     flex-direction: column;

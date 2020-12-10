@@ -452,10 +452,28 @@ export default [
         authority: ['admin', 'user'],
         routes: [
           {
-            path: '/information/:infoType',
-            name: 'unreadInformation',
+            path: '/information/management',
+            name: 'InformationManagement',
             component: './Information',
-            authority: ['admin', 'user']
+            routes: [
+              {
+                path: '/information/management',
+                redirect: '/information/management/notice/unread'
+              },
+              {
+                path: '/information/management/notice/:activeType',
+                name: 'noticeInformation',
+                component: './Information/Notice'
+              },
+              {
+                path: '/information/management/alarm/:activeType',
+                component: './Information/Alarm'
+              },
+              {
+                path: '/information/management/remind/:activeType',
+                component: './Information/RemindSetting'
+              }
+            ]
           },
           { component: '404' }
         ]
