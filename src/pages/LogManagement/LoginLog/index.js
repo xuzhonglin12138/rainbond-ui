@@ -371,6 +371,29 @@ export default class LoginLog extends PureComponent {
               dataIndex: 'username'
             },
             {
+              title: '活跃时长',
+              dataIndex: 'duration',
+              rowKey: 'duration',
+              align: 'center',
+              width: 200,
+              render: val => {
+                if (!val) {
+                  return '-';
+                }
+                const durations = moment.duration(val, 'seconds');
+                const hours = Math.floor(durations.asHours());
+                const mins = Math.floor(durations.asMinutes()) - hours * 60;
+                const seconds = val - hours * 60 * 60 - mins * 60;
+                return (
+                  <span>
+                    {hours ? `${hours}小时` : ''}
+                    {mins ? `${mins}分钟` : ''}
+                    {seconds ? `${seconds}秒` : ''}
+                  </span>
+                );
+              }
+            },
+            {
               title: '登录时间',
               dataIndex: 'login_time',
               rowKey: 'login_time',
@@ -406,24 +429,7 @@ export default class LoginLog extends PureComponent {
                 );
               }
             },
-            {
-              title: '活跃时间',
-              dataIndex: 'duration',
-              rowKey: 'duration',
-              align: 'center',
-              width: 200,
-              render: val => {
-                return (
-                  <span>
-                    {val
-                      ? moment('1900-01-01 00:00:00')
-                          .add(val, 'seconds')
-                          .format('HH:mm:ss')
-                      : '-'}
-                  </span>
-                );
-              }
-            },
+
             {
               title: '客户端 IP',
               align: 'center',
