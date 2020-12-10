@@ -26,7 +26,7 @@ export default class LoginLog extends PureComponent {
     super(props);
     const { user } = this.props;
     this.state = {
-      name: '',
+      username: '',
       page: 1,
       page_size: 10,
       loading: true,
@@ -36,13 +36,14 @@ export default class LoginLog extends PureComponent {
       logsTotal: 0,
       adminList: [],
       startTime: '',
-      endTime: ''
+      endTime: '',
+      eventType: ''
     };
   }
 
   componentDidMount() {
     this.loadUser();
-    this.loadOperationLog();
+    this.loadLoginLog();
   }
 
   handleSearch = name => {
@@ -59,31 +60,32 @@ export default class LoginLog extends PureComponent {
   handleChange = value => {
     this.setState(
       {
-        name: value,
+        username: value,
         page: 1
       },
       () => {
-        this.loadOperationLog();
+        this.loadLoginLog();
       }
     );
   };
-  loadOperationLog = () => {
+  loadLoginLog = () => {
+    const { dispatch } = this.props;
     const {
-      dispatch,
-      match: {
-        params: { eid }
-      }
-    } = this.props;
-    const { logsPage, logsPageSize, name, startTime, endTime } = this.state;
+      logsPage,
+      logsPageSize,
+      username,
+      startTime,
+      endTime,
+      eventType
+    } = this.state;
 
     dispatch({
-      type: 'global/fetchOperationLogs',
+      type: 'global/fetchLoginLogs',
       payload: {
-        enterprise_id: eid,
         page: logsPage,
         page_size: logsPageSize,
-        operation_type: 'login_manage',
-        name,
+        event_type: eventType,
+        username,
         start_time: startTime,
         end_time: endTime
       },
@@ -137,7 +139,7 @@ export default class LoginLog extends PureComponent {
 
   onPageChange = logsPage => {
     this.setState({ logsPage, loading: true }, () => {
-      this.loadOperationLog();
+      this.loadLoginLog();
     });
   };
 
@@ -157,22 +159,36 @@ export default class LoginLog extends PureComponent {
             .locale('zh-cn')
             .format('YYYY-MM-DD HH:mm:ss');
         }
-        const name = values.user_name || '';
+        const username = values.user_name || '';
+        const eventType = values.event_type || '';
         this.setState(
           {
             loading: true,
             logsPage: 1,
             startTime,
             endTime,
-            name
+            username,
+            eventType
           },
           () => {
-            this.loadOperationLog();
+            this.loadLoginLog();
           }
         );
       }
     });
   };
+  handleChangeType = value => {
+    this.setState(
+      {
+        eventType: value,
+        logsPage: 1
+      },
+      () => {
+        this.loadLoginLog();
+      }
+    );
+  };
+
   handleChangeTimes = values => {
     let startTime = '';
     let endTime = '';
@@ -194,7 +210,7 @@ export default class LoginLog extends PureComponent {
         endTime
       },
       () => {
-        this.loadOperationLog();
+        this.loadLoginLog();
       }
     );
   };
@@ -273,6 +289,33 @@ export default class LoginLog extends PureComponent {
                 )}
               </FormItem>
             </Col>
+            <Col span={4}>
+              <FormItem {...formItemLayout}>
+                {getFieldDecorator('event_type', {
+                  rules: [
+                    {
+                      required: false,
+                      message: '请选择操作类型'
+                    }
+                  ]
+                })(
+                  <Select
+                    placeholder="操作类型"
+                    onChange={this.handleChangeType}
+                  >
+                    <Option key={0} value="">
+                      所有类型
+                    </Option>
+                    {[
+                      { name: '登录', key: 'login' },
+                      { name: '退出', key: 'logout' }
+                    ].map(item => (
+                      <Option value={item.key}>{item.name}</Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
             <Col span={8}>
               <FormItem {...formItemLayout}>
                 {getFieldDecorator('times', {
@@ -307,7 +350,6 @@ export default class LoginLog extends PureComponent {
                 查询
               </Button>
             </Col>
-            <Col span={4} />
           </Row>
         </Form>
         <Table
@@ -330,9 +372,25 @@ export default class LoginLog extends PureComponent {
               dataIndex: 'user_name'
             },
             {
-              title: '操作时间',
-              dataIndex: 'create_time',
-              rowKey: 'create_time',
+              title: '登录时间',
+              dataIndex: 'login_time',
+              rowKey: 'login_time',
+              align: 'center',
+              width: 200,
+              render: val => {
+                return (
+                  <span>
+                    {moment(val)
+                      .locale('zh-cn')
+                      .format('YYYY-MM-DD HH:mm:ss')}
+                  </span>
+                );
+              }
+            },
+            {
+              title: '退出时间',
+              dataIndex: 'logout_time',
+              rowKey: 'logout_time',
               align: 'center',
               width: 200,
               render: val => {

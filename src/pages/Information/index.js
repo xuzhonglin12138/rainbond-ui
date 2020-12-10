@@ -124,14 +124,14 @@ export default class Information extends PureComponent {
                 <Button
                   type="primary"
                   onClick={this.start}
-                  disabled={!hasSelected}
+                  // disabled={!hasSelected}
                   loading={loading}
                 >
                   清空通知
                 </Button>
               </div>
               <Table
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 pagination={{
                   total,
                   page_num,
@@ -154,9 +154,9 @@ export default class Information extends PureComponent {
                     width: 100,
                     render: (val, data) => {
                       return (
-                        <a onClick={() => {}} href="javascript:;">
-                          已读
-                        </a>
+                        <Button onClick={() => {}} href="javascript:;">
+                          标记已读
+                        </Button>
                       );
                     }
                   }
@@ -166,7 +166,7 @@ export default class Information extends PureComponent {
             </TabPane>
             <TabPane tab="全部" key="all">
               <Table
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 pagination={{
                   total,
                   page_num,
@@ -189,9 +189,9 @@ export default class Information extends PureComponent {
                     width: 100,
                     render: (val, data) => {
                       return (
-                        <a onClick={() => {}} href="javascript:;">
-                          已读
-                        </a>
+                        <Button onClick={() => {}} href="javascript:;">
+                          标记已读
+                        </Button>
                       );
                     }
                   }
