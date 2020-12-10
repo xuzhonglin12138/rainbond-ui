@@ -46,6 +46,7 @@ import {
   fetchEnterpriseTeams,
   fetchEnterpriseUsers,
   fetchOperationLogs,
+  fetchInternalMessages,
   fetchLoginLogs,
   deleteEnterpriseUsers,
   upEnterpriseUsers,
@@ -549,6 +550,12 @@ export default {
     },
     *fetchOperationLogs({ payload, callback }, { put, call }) {
       const response = yield call(fetchOperationLogs, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *fetchInternalMessages({ payload, callback }, { put, call }) {
+      const response = yield call(fetchInternalMessages, payload);
       if (response) {
         callback && callback(response);
       }

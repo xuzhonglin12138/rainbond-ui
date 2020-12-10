@@ -932,6 +932,15 @@ export async function fetchOperationLogs(param) {
     }
   });
 }
+
+
+export async function fetchInternalMessages(param) {
+  return request(`${apiconfig.baseUrl}/console/internal-messages`, {
+    method: 'get',
+    params: param
+  });
+}
+
 export async function fetchLoginLogs(param) {
   return request(`${apiconfig.baseUrl}/console/login-events`, {
     method: 'get',

@@ -368,6 +368,7 @@ export default class LoginLog extends PureComponent {
             {
               title: '成员',
               align: 'center',
+              width: 200,
               dataIndex: 'username'
             },
             {
@@ -375,7 +376,7 @@ export default class LoginLog extends PureComponent {
               dataIndex: 'duration',
               rowKey: 'duration',
               align: 'center',
-              width: 200,
+              width: 150,
               render: val => {
                 if (!val) {
                   return '-';

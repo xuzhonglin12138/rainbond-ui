@@ -2,7 +2,16 @@
 /* eslint-disable no-unused-expressions */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Form, Select, DatePicker, Col, Row, Button, Table } from 'antd';
+import {
+  Form,
+  Select,
+  DatePicker,
+  Col,
+  Row,
+  Button,
+  Table,
+  Tooltip
+} from 'antd';
 import logsUtil from '@/utils/logs';
 import moment from 'moment';
 import styles from '../index.less';
@@ -340,7 +349,7 @@ export default class OperationLog extends PureComponent {
                 })(
                   <RangePicker
                     style={{ width: '100%' }}
-                    separator='至'
+                    separator="至"
                     disabledDate={this.disabledDate}
                     onChange={value => {
                       this.handleChangeTimes(value);
@@ -385,8 +394,23 @@ export default class OperationLog extends PureComponent {
             {
               title: '操作者',
               align: 'center',
-              width: 150,
-              dataIndex: 'user_name'
+              width: 200,
+              dataIndex: 'user_name',
+              render: (val, data) => {
+                return (
+                  <Tooltip
+                    placement="top"
+                    title={
+                      <div>
+                        <div>账户：{data.real_name}</div>
+                        <div>邮箱：{data.email}</div>
+                      </div>
+                    }
+                  >
+                    {val}
+                  </Tooltip>
+                );
+              }
             },
             {
               title: '操作类型',

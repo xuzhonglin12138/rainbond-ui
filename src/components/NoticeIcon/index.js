@@ -49,6 +49,7 @@ export default class NoticeIcon extends PureComponent {
       return (
         <TabPane tab={title} key={child.props.title}>
           <List
+            {...this.props}
             {...child.props}
             data={child.props.list}
             onClick={item => this.onItemClick(item, child.props)}

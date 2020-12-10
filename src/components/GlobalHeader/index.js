@@ -24,9 +24,35 @@ export default class GlobalHeader extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      showChangePassword: false
+      showChangePassword: false,
+      loading: true,
+      List: [],
+      total: 0
     };
   }
+  componentDidMount() {
+    this.loadInternalMessages();
+  }
+  loadInternalMessages = () => {
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: 'global/fetchInternalMessages',
+      payload: {
+        is_read: false,
+        create_time: ''
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          this.setState({
+            loading: false,
+            List: res.list,
+            total: res.total
+          });
+        }
+      }
+    });
+  };
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
@@ -78,6 +104,7 @@ export default class GlobalHeader extends PureComponent {
       dispatch
       // enterpriseServiceInfo
     } = this.props;
+    const { List, loading, total } = this.state;
     if (!currentUser) {
       return null;
     }
@@ -156,31 +183,49 @@ export default class GlobalHeader extends PureComponent {
           {!isInformation && (
             <NoticeIcon
               className={styles.action}
-              count={12}
+              count={total}
+              loading={loading}
               onClear={() => {
-                dispatch(routerRedux.push(`/information/management/notice/unread`));
+                dispatch(
+                  routerRedux.push(`/information/management/notice/unread`)
+                );
               }}
-              // onClick={() => {
-              //   dispatch(routerRedux.push(`/information/unread`));
-              // }}
+              onJump={() => {
+                dispatch(
+                  routerRedux.push(`/information/management/notice/unread`)
+                );
+              }}
               // onClear={onNoticeClear}
               // onLoadMore={this.fetchMoreNotices}
               // onPopupVisibleChange={onNoticeVisibleChange}
-              // loading={fetchingNotices}
             >
               <NoticeIcon.Tab
                 count={1}
-                list={[
-                  {
-                    avatar:
-                      'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
-                    datetime: '3 年前',
-                    id: '000000001',
-                    key: '000000001',
-                    title: '你收到了 14 份新周报',
-                    type: 'notification'
-                  }
-                ]}
+                list={
+                  List || [
+                    {
+                      is_read: false,
+                      receiver_id: -18539345.688984096,
+                      msg_type: 'in aliqua',
+                      title: 'minim id',
+                      level: 'id',
+                      update_time: 'nisi Ut id non',
+                      message_id: 'exercitation ',
+                      content: 'Lorem',
+                      create_time: 'mollit',
+                      ID: -86919835.53554396
+                    }
+                    // {
+                    //   avatar:
+                    //     'https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png',
+                    //   datetime: '3 年前',
+                    //   id: '000000001',
+                    //   key: '000000001',
+                    //   title: '你收到了 14 份新周报',
+                    //   type: 'notification'
+                    // }
+                  ]
+                }
                 title="通知"
                 name="notification"
                 emptyText="你已查看所有通知"
