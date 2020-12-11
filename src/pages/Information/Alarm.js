@@ -93,7 +93,7 @@ export default class Alarm extends PureComponent {
               dataSource={dataList}
               columns={[
                 {
-                  title: '内容',
+                  title: '',
                   dataIndex: 'comment',
                   render: val => {
                     return <span>{val}</span>;
@@ -127,7 +127,7 @@ export default class Alarm extends PureComponent {
               dataSource={dataList}
               columns={[
                 {
-                  title: '内容',
+                  title: '',
                   dataIndex: 'comment',
                   render: val => {
                     return <span>{val}</span>;

@@ -111,6 +111,7 @@ export default class Notice extends PureComponent {
     const { total, loading, page, pageSize, dataList } = this.state;
     return (
       <Table
+        showHeader={false}
         loading={loading}
         pagination={{
           total,
@@ -122,7 +123,7 @@ export default class Notice extends PureComponent {
         dataSource={dataList}
         columns={[
           {
-            title: '内容',
+            title: '',
             dataIndex: 'content',
             render: (val, data) => {
               return (
