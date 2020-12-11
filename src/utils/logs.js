@@ -79,7 +79,11 @@ export default {
     } else if (obj.team_name && obj.region && obj.plugin_id) {
       url = `/team/${obj.team_name}/region/${obj.region}/myplugns/${obj.plugin_id}`;
     } else if (obj.team_name && obj.region) {
-      url = `/team/${obj.team_name}/region/${obj.region}/index`;
+      if (obj.view_type && obj.view_type === 'team_application') {
+        url = `/team/${obj.team_name}/region/${obj.region}/team`;
+      } else {
+        url = `/team/${obj.team_name}/region/${obj.region}/index`;
+      }
     }
     return url;
   }

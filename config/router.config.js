@@ -458,7 +458,7 @@ export default [
             routes: [
               {
                 path: '/information/management',
-                redirect: '/information/management/notice/unread'
+                redirect: '/information/management/notice/all'
               },
               {
                 path: '/information/management/notice/:activeType',

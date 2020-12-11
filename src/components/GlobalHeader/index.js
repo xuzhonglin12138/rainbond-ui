@@ -96,7 +96,7 @@ export default class GlobalHeader extends PureComponent {
 
   handleJump = () => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push(`/information/management/notice/unread`));
+    dispatch(routerRedux.push(`/information/management/notice/all`));
   };
   render() {
     const {

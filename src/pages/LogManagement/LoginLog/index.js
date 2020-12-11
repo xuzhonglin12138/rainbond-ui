@@ -337,7 +337,23 @@ export default class LoginLog extends PureComponent {
               }
             },
             {
-              title: '用户代理',
+              title: '登录时间',
+              dataIndex: 'login_time',
+              rowKey: 'login_time',
+              align: 'center',
+              width: 150,
+              render: val => {
+                return (
+                  <span>
+                    {moment(val)
+                      .locale('zh-cn')
+                      .format('YYYY-MM-DD HH:mm:ss')}
+                  </span>
+                );
+              }
+            },
+            {
+              title: '登录设备',
               dataIndex: 'user_agent',
               render: val => {
                 return <div>{val || '-'}</div>;

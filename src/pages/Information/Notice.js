@@ -1,7 +1,7 @@
-import { Tabs, Table, Button } from 'antd';
-import { connect } from 'dva';
-import moment from 'moment';
 import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Tabs, Table, Button, Badge } from 'antd';
+import moment from 'moment';
 import logsUtil from '@/utils/logs';
 import styles from './index.less';
 
@@ -23,8 +23,8 @@ export default class Notice extends PureComponent {
       pageSize: 10,
       modifyLoading: false,
       loading: false,
-      isRead: 'False',
-      activeKey: activeType || 'unread'
+      isRead: null,
+      activeKey: activeType || 'all'
     };
   }
 
@@ -108,9 +108,18 @@ export default class Notice extends PureComponent {
   };
 
   handleTable = () => {
-    const { total, loading, page, pageSize, dataList } = this.state;
+    const { total, loading, page, pageSize, dataList, activeKey } = this.state;
     return (
       <Table
+        onRow={record => {
+          return {
+            onClick: () => {
+              if (!record.is_read && activeKey === 'all') {
+                this.putInternalMessages([record.message_id]);
+              }
+            } // 点击行
+          };
+        }}
         showHeader={false}
         loading={loading}
         pagination={{
@@ -129,12 +138,21 @@ export default class Notice extends PureComponent {
               return (
                 <div
                   style={{
+                    cursor: data.is_read ? 'auto' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}
                 >
-                  {logsUtil.fetchLogsContent(val)}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Badge status={data.is_read ? 'default' : 'error'} />
+                    {logsUtil.fetchLogsContent(val)}
+                  </div>
                   {data.create_time && (
                     <span
                       style={{
@@ -176,20 +194,22 @@ export default class Notice extends PureComponent {
       <div>
         <div className={styles.boxs}>
           <div className={styles.title}>系统通知</div>
-          <Button
-            type="primary"
-            disabled={dataList.length < 1}
-            loading={modifyLoading}
-            onClick={this.handleRead}
-          >
-            标记所有为已读
-          </Button>
+          {activeKey === 'unread' && (
+            <Button
+              type="primary"
+              disabled={dataList.length < 1}
+              loading={modifyLoading}
+              onClick={this.handleRead}
+            >
+              标记所有为已读
+            </Button>
+          )}
         </div>
         <Tabs onChange={this.onChange} activeKey={activeKey}>
-          <TabPane tab="未读通知" key="unread">
+          <TabPane tab="所有通知" key="all">
             {this.handleTable()}
           </TabPane>
-          <TabPane tab="所有通知" key="all">
+          <TabPane tab="未读通知" key="unread">
             {this.handleTable()}
           </TabPane>
         </Tabs>
