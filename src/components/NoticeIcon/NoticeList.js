@@ -1,5 +1,6 @@
 import React from 'react';
 import { Avatar, List, Badge } from 'antd';
+import logsUtil from '@/utils/logs';
 import { Link } from 'dva/router';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
@@ -16,8 +17,8 @@ export default function NoticeList({
   if (data.length === 0) {
     return (
       <div style={{ textAlign: 'center' }}>
-        {emptyImage ? <img src={emptyImage} alt="not found" /> : null}
-        <div style={{ padding: '50px 0' }}>{emptyText || locale.emptyText}</div>
+        <div style={{ padding: '20px 0' }}> {emptyImage || null}</div>
+        <div style={{ padding: '0 0 20px 0' }}>{emptyText || locale.emptyText}</div>
         <div className={styles.clear} onClick={onClear}>
           查看历史消息
         </div>
@@ -45,7 +46,7 @@ export default function NoticeList({
                     <div className={styles.extra}>
                       {item.is_read === false ? <Badge status="error" /> : null}
                     </div>
-                    {item.title}
+                    {logsUtil.fetchLogsContent(item.content)}
                   </div>
                 }
                 description={

@@ -920,29 +920,35 @@ export async function fetchEnterpriseUsers(param) {
 }
 
 export async function fetchOperationLogs(param) {
-  return request(`${apiconfig.baseUrl}/console/operation-logs`, {
+  return request(`${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/operation-logs`, {
     method: 'get',
     params: {
       operation_type: param.operation_type,
       page: param.page,
       page_size: param.page_size,
-      user_name: param.name,
+      username: param.name,
       start_time: param.start_time,
       end_time: param.end_time
     }
   });
 }
 
-
 export async function fetchInternalMessages(param) {
-  return request(`${apiconfig.baseUrl}/console/internal-messages`, {
+    return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
     method: 'get',
     params: param
   });
 }
 
+export async function putInternalMessages(param) {
+    return request(`${apiconfig.baseUrl}//console/users/internal-messages`, {
+    method: 'put',
+    data: param
+  });
+}
+
 export async function fetchLoginLogs(param) {
-  return request(`${apiconfig.baseUrl}/console/login-events`, {
+  return request(`${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/login-events`, {
     method: 'get',
     params: param
   });

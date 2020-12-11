@@ -16,7 +16,6 @@ export default class Information extends PureComponent {
         params: { activeType }
       }
     } = this.props;
-    console.log('activeType',this.props)
     const menuMap = {};
     menuMap.notice = (
       <FormattedMessage
@@ -24,15 +23,15 @@ export default class Information extends PureComponent {
         defaultMessage="notice"
       />
     );
-    menuMap.alarm = (
-      <FormattedMessage id="header.information.alarm" defaultMessage="alarm" />
-    );
-    menuMap.remind = (
-      <FormattedMessage
-        id="header.information.remindSetting"
-        defaultMessage="remindSetting"
-      />
-    );
+    // menuMap.alarm = (
+    //   <FormattedMessage id="header.information.alarm" defaultMessage="alarm" />
+    // );
+    // menuMap.remind = (
+    //   <FormattedMessage
+    //     id="header.information.remindSetting"
+    //     defaultMessage="remindSetting"
+    //   />
+    // );
     this.state = {
       menuMap,
       selectKey: activeType || 'notice'

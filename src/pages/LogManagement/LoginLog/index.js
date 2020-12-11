@@ -3,7 +3,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Form, Select, DatePicker, Col, Row, Button, Table } from 'antd';
-import logsUtil from '@/utils/logs';
 import moment from 'moment';
 import styles from '../index.less';
 
@@ -36,8 +35,7 @@ export default class LoginLog extends PureComponent {
       logsTotal: 0,
       adminList: [],
       startTime: '',
-      endTime: '',
-      eventType: ''
+      endTime: ''
     };
   }
 
@@ -61,7 +59,7 @@ export default class LoginLog extends PureComponent {
     this.setState(
       {
         username: value,
-        page: 1
+        logsPage: 1
       },
       () => {
         this.loadLoginLog();
@@ -69,22 +67,20 @@ export default class LoginLog extends PureComponent {
     );
   };
   loadLoginLog = () => {
-    const { dispatch } = this.props;
     const {
-      logsPage,
-      logsPageSize,
-      username,
-      startTime,
-      endTime,
-      eventType
-    } = this.state;
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    const { logsPage, logsPageSize, username, startTime, endTime } = this.state;
 
     dispatch({
       type: 'global/fetchLoginLogs',
       payload: {
+        enterprise_id: eid,
         page: logsPage,
         page_size: logsPageSize,
-        event_type: eventType,
         username,
         start_time: startTime,
         end_time: endTime
@@ -160,15 +156,13 @@ export default class LoginLog extends PureComponent {
             .format('YYYY-MM-DD HH:mm:ss');
         }
         const username = values.user_name || '';
-        const eventType = values.event_type || '';
         this.setState(
           {
             loading: true,
             logsPage: 1,
             startTime,
             endTime,
-            username,
-            eventType
+            username
           },
           () => {
             this.loadLoginLog();
@@ -177,18 +171,6 @@ export default class LoginLog extends PureComponent {
       }
     });
   };
-  handleChangeType = value => {
-    this.setState(
-      {
-        eventType: value,
-        logsPage: 1
-      },
-      () => {
-        this.loadLoginLog();
-      }
-    );
-  };
-
   handleChangeTimes = values => {
     let startTime = '';
     let endTime = '';
@@ -289,33 +271,6 @@ export default class LoginLog extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={4}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('event_type', {
-                  rules: [
-                    {
-                      required: false,
-                      message: '请选择操作类型'
-                    }
-                  ]
-                })(
-                  <Select
-                    placeholder="操作类型"
-                    onChange={this.handleChangeType}
-                  >
-                    <Option key={0} value="">
-                      所有类型
-                    </Option>
-                    {[
-                      { name: '登录', key: 'login' },
-                      { name: '登出', key: 'logout' }
-                    ].map(item => (
-                      <Option value={item.key}>{item.name}</Option>
-                    ))}
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
             <Col span={8}>
               <FormItem {...formItemLayout}>
                 {getFieldDecorator('times', {
@@ -340,7 +295,7 @@ export default class LoginLog extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={4}>
+            <Col span={8}>
               <Button
                 onClick={this.handleSubmit}
                 type="primary"
@@ -368,15 +323,32 @@ export default class LoginLog extends PureComponent {
             {
               title: '成员',
               align: 'center',
-              width: 200,
-              dataIndex: 'username'
+              dataIndex: 'username',
+              width: 130
+            },
+
+            {
+              title: '客户端 IP',
+              align: 'center',
+              width: 130,
+              dataIndex: 'client_ip',
+              render: val => {
+                return <div>{val || '-'}</div>;
+              }
+            },
+            {
+              title: '用户代理',
+              dataIndex: 'user_agent',
+              render: val => {
+                return <div>{val || '-'}</div>;
+              }
             },
             {
               title: '活跃时长',
               dataIndex: 'duration',
               rowKey: 'duration',
               align: 'center',
-              width: 150,
+              width: 140,
               render: val => {
                 if (!val) {
                   return '-';
@@ -392,68 +364,6 @@ export default class LoginLog extends PureComponent {
                     {seconds ? `${seconds}秒` : ''}
                   </span>
                 );
-              }
-            },
-            {
-              title: '登录时间',
-              dataIndex: 'login_time',
-              rowKey: 'login_time',
-              align: 'center',
-              width: 200,
-              render: val => {
-                return (
-                  <span>
-                    {val
-                      ? moment(val)
-                          .locale('zh-cn')
-                          .format('YYYY-MM-DD HH:mm:ss')
-                      : '-'}
-                  </span>
-                );
-              }
-            },
-            {
-              title: '登出时间',
-              dataIndex: 'logout_time',
-              rowKey: 'logout_time',
-              align: 'center',
-              width: 200,
-              render: val => {
-                return (
-                  <span>
-                    {val
-                      ? moment(val)
-                          .locale('zh-cn')
-                          .format('YYYY-MM-DD HH:mm:ss')
-                      : '-'}
-                  </span>
-                );
-              }
-            },
-
-            {
-              title: '客户端 IP',
-              align: 'center',
-              dataIndex: 'client_ip',
-              render: val => {
-                return <span>{val || '-'}</span>;
-              }
-            },
-            {
-              title: '用户代理',
-              align: 'center',
-              dataIndex: 'user_agent',
-              render: val => {
-                return <span>{val || '-'}</span>;
-              }
-            },
-            {
-              title: '操作类型',
-              align: 'center',
-              dataIndex: 'event_type',
-              width: 100,
-              render: val => {
-                return <span>{val === 'login' ? '登录' : '登出'}</span>;
               }
             }
           ]}

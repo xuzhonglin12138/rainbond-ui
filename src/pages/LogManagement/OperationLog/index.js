@@ -50,7 +50,7 @@ export default class OperationLog extends PureComponent {
         //   operation_type: 'enterprise_manage',
         //   service_alias: '',
         //   team_name: '45jnv9c8',
-        //   user_name: 'gradmin'
+        //   username: 'gradmin'
         // }
       ],
       logsPage: 1,
@@ -83,7 +83,7 @@ export default class OperationLog extends PureComponent {
     this.setState(
       {
         name: value,
-        page: 1
+        logsPage: 1
       },
       () => {
         this.loadOperationLog();
@@ -95,7 +95,7 @@ export default class OperationLog extends PureComponent {
     this.setState(
       {
         operationType: value,
-        page: 1
+        logsPage: 1
       },
       () => {
         this.loadOperationLog();
@@ -223,7 +223,7 @@ export default class OperationLog extends PureComponent {
             .locale('zh-cn')
             .format('YYYY-MM-DD HH:mm:ss');
         }
-        const name = values.user_name || '';
+        const name = values.username || '';
         const operationType = values.operation_type || '';
 
         this.setState(
@@ -284,7 +284,7 @@ export default class OperationLog extends PureComponent {
           >
             <Col span={4}>
               <FormItem {...formItemLayout}>
-                {getFieldDecorator('user_name', {
+                {getFieldDecorator('username', {
                   rules: [
                     {
                       required: false,
@@ -395,7 +395,7 @@ export default class OperationLog extends PureComponent {
               title: '操作者',
               align: 'center',
               width: 200,
-              dataIndex: 'user_name',
+              dataIndex: 'username',
               render: (val, data) => {
                 return (
                   <Tooltip
@@ -418,7 +418,7 @@ export default class OperationLog extends PureComponent {
               width: 150,
               dataIndex: 'operation_type',
               render: val => {
-                return <span>{logs[val]}</span>;
+                return <span>{logs[val] || '-'}</span>;
               }
             },
             {

@@ -21,7 +21,7 @@ export default {
   },
   // eslint-disable-next-line consistent-return
   fetchLogsContent(val) {
-    const start = val.indexOf('<<');
+    const start = val.indexOf('<<{');
     if (start > -1) {
       return this.fetchInterception(val, '');
     }
@@ -31,23 +31,30 @@ export default {
     );
   },
   fetchInterception(val, boxs) {
-    const start = val.indexOf('<<');
-    const end = val.indexOf('>>');
+    const start = val.indexOf('<<{');
+    const end = val.indexOf('}>>');
     const startVal = val.substring(0, start);
-    const obj = JSON.parse(val.substring(start + 2, end));
-    const nextVal = val.substring(end + 2);
+    const obj = JSON.parse(val.substring(start + 2, end + 1));
+    const nextVal = val.substring(end + 3);
     let url = '';
-    if (obj && obj.view_type) {
+    if (obj) {
       url = this.fetchViewType(obj);
     }
     let box = (
       <span>
         {boxs}
         {startVal}
-        <Link to={url}>{obj.name}</Link>
+        <Link
+          onClick={event => {
+            event.stopPropagation();
+          }}
+          to={url}
+        >
+          {obj.name}
+        </Link>
       </span>
     );
-    if (nextVal && nextVal.indexOf('>>') > -1) {
+    if (nextVal && nextVal.indexOf('}>>') > -1) {
       return this.fetchInterception(nextVal, box);
     }
     if (nextVal) {
@@ -61,18 +68,18 @@ export default {
 
     return box;
   },
-  fetchViewType(obj) {
+  fetchViewType(obj = {}) {
     let url = '';
-    if (obj.view_type === 'enterprise') {
+    if (obj.eid) {
       url = `/enterprise/${obj.eid}/index`;
-    } else if (obj.view_type === 'team') {
-      url = `/team/${obj.team_name}/region/${obj.region}/index`;
-    } else if (obj.view_type === 'app') {
+    } else if (obj.team_name && obj.region && obj.app_id) {
       url = `/team/${obj.team_name}/region/${obj.region}/apps/${obj.app_id}`;
-    } else if (obj.view_type === 'component') {
+    } else if (obj.team_name && obj.region && obj.service_alias) {
       url = `/team/${obj.team_name}/region/${obj.region}/components/${obj.service_alias}/overview`;
-    } else if (obj.view_type === 'plugin') {
+    } else if (obj.team_name && obj.region && obj.plugin_id) {
       url = `/team/${obj.team_name}/region/${obj.region}/myplugns/${obj.plugin_id}`;
+    } else if (obj.team_name && obj.region) {
+      url = `/team/${obj.team_name}/region/${obj.region}/index`;
     }
     return url;
   }
