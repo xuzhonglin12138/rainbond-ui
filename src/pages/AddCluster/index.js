@@ -1,6 +1,3 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import {
   Alert,
   Button,
@@ -16,16 +13,19 @@ import {
   Table,
   Typography
 } from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import React, { PureComponent } from 'react';
 import ACKBuyConfig from '../../components/Cluster/ACKBuyConfig';
 import BaseAddCluster from '../../components/Cluster/BaseAddCluster';
 import KubernetesTableShow from '../../components/Cluster/KubernetesTableShow';
 import RainbondClusterInit from '../../components/Cluster/RainbondClusterInit';
 import SetRegionConfig from '../../components/Cluster/SetRegionConfig';
 import ShowInitRainbondDetail from '../../components/Cluster/ShowInitRainbondDetail';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import cloud from '../../utils/cloud';
-import userUtil from '../../utils/user';
 import rainbondUtil from '../../utils/rainbond';
+import userUtil from '../../utils/user';
 import styles from './index.less';
 
 const { Step } = Steps;
@@ -77,8 +77,8 @@ export default class EnterpriseClusters extends PureComponent {
     }
   }
   componentDidMount() {
-    // this.getAccessKey();
-    // this.loadRunningInitTasks();
+    this.getAccessKey();
+    this.loadRunningInitTasks();
   }
 
   // getAccessKey get enterprise accesskey
