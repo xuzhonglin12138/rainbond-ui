@@ -941,7 +941,7 @@ export async function fetchInternalMessages(param) {
 }
 
 export async function putInternalMessages(param) {
-    return request(`${apiconfig.baseUrl}//console/users/internal-messages`, {
+    return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
     method: 'put',
     data: param
   });

@@ -2,7 +2,16 @@
 /* eslint-disable no-unused-expressions */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Form, Select, DatePicker, Col, Row, Button, Table } from 'antd';
+import {
+  Form,
+  Select,
+  DatePicker,
+  Col,
+  Row,
+  Button,
+  Table,
+  Pagination
+} from 'antd';
 import moment from 'moment';
 import styles from '../index.less';
 
@@ -137,6 +146,18 @@ export default class LoginLog extends PureComponent {
     this.setState({ logsPage, loading: true }, () => {
       this.loadLoginLog();
     });
+  };
+  onShowSizeChange = (logsPage, logsPageSize) => {
+    this.setState(
+      {
+        logsPage,
+        logsPageSize,
+        loading: true
+      },
+      () => {
+        this.loadLoginLog();
+      }
+    );
   };
 
   handleSubmit = e => {
@@ -311,13 +332,7 @@ export default class LoginLog extends PureComponent {
           loading={loading}
           size="middle"
           className={styles.tables}
-          pagination={{
-            size: 'default',
-            current: logsPage,
-            pageSize: logsPageSize,
-            total: logsTotal,
-            onChange: this.onPageChange
-          }}
+          pagination={false}
           dataSource={logList || []}
           columns={[
             {
@@ -341,7 +356,7 @@ export default class LoginLog extends PureComponent {
               dataIndex: 'login_time',
               rowKey: 'login_time',
               align: 'center',
-              width: 150,
+              width: 180,
               render: val => {
                 return (
                   <span>
@@ -383,6 +398,18 @@ export default class LoginLog extends PureComponent {
               }
             }
           ]}
+        />
+        <Pagination
+          style={{ margin: '20px 0', float: 'right' }}
+          size="default"
+          current={logsPage}
+          pageSize={logsPageSize}
+          showSizeChanger
+          total={Number(logsTotal)}
+          defaultCurrent={1}
+          onChange={this.onPageChange}
+          pageSizeOptions={['5', '10', '20', '50']}
+          onShowSizeChange={this.onShowSizeChange}
         />
       </Fragment>
     );

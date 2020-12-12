@@ -10,7 +10,8 @@ import {
   Row,
   Button,
   Table,
-  Tooltip
+  Tooltip,
+  Pagination
 } from 'antd';
 import logsUtil from '@/utils/logs';
 import moment from 'moment';
@@ -181,6 +182,18 @@ export default class OperationLog extends PureComponent {
     this.setState({ logsPage, loading: true }, () => {
       this.loadOperationLog();
     });
+  };
+  onShowSizeChange = (logsPage, logsPageSize) => {
+    this.setState(
+      {
+        logsPage,
+        logsPageSize,
+        loading: true
+      },
+      () => {
+        this.loadOperationLog();
+      }
+    );
   };
   handleChangeTimes = values => {
     let startTime = '';
@@ -382,13 +395,7 @@ export default class OperationLog extends PureComponent {
           className={styles.tables}
           loading={loading}
           size="middle"
-          pagination={{
-            size: 'default',
-            current: logsPage,
-            pageSize: logsPageSize,
-            total: logsTotal,
-            onChange: this.onPageChange
-          }}
+          pagination={false}
           dataSource={logList || []}
           columns={[
             {
@@ -445,6 +452,18 @@ export default class OperationLog extends PureComponent {
               }
             }
           ]}
+        />
+        <Pagination
+          style={{ margin: '20px 0', float: 'right' }}
+          size="default"
+          current={logsPage}
+          pageSize={logsPageSize}
+          showSizeChanger
+          total={Number(logsTotal)}
+          defaultCurrent={1}
+          onChange={this.onPageChange}
+          pageSizeOptions={['5', '10', '20', '50']}
+          onShowSizeChange={this.onShowSizeChange}
         />
       </Fragment>
     );
