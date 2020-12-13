@@ -1,10 +1,22 @@
 /*
    快速复制
 */
-import React, { PureComponent } from 'react';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Row,
+  Select,
+  Spin,
+  Tooltip
+} from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Button, Checkbox, Col, Form, Input, Modal, notification, Row, Select, Spin, Tooltip } from 'antd';
+import React, { PureComponent } from 'react';
 import appUtil from '../../utils/app';
 import globalUtil from '../../utils/global';
 import AddGroup from '../AddOrEditGroup';
@@ -18,7 +30,7 @@ const { Option } = Select;
 @connect(({ user, enterprise, groupControl }) => ({
   currentUser: user.currentUser,
   currentEnterprise: enterprise.currentEnterprise,
-  groupDetail: groupControl.groupDetail || {},
+  groupDetail: groupControl.groupDetail || {}
 }))
 export default class Index extends PureComponent {
   constructor(props) {
@@ -44,7 +56,7 @@ export default class Index extends PureComponent {
       indeterminate: false,
       checkAll: true,
       errInput: '',
-      addGroup: false,
+      addGroup: false
     };
   }
   componentDidMount() {
@@ -64,7 +76,7 @@ export default class Index extends PureComponent {
       type: 'groupControl/fetchCopyComponent',
       payload: {
         tenantName: globalUtil.getCurrTeamName(),
-        group_id: groupDetail.group_id,
+        group_id: groupDetail.group_id
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -80,16 +92,15 @@ export default class Index extends PureComponent {
             checkAllList: arr,
             checkedList: arr,
             dataSource: res.list,
-            loading: false,
+            loading: false
           });
         }
-      },
+      }
     });
   };
 
   handleAddGroup = vals => {
     const { getFieldValue } = this.props.form;
-
     const { userTeamList } = this.state;
     const teamRegion = getFieldValue('teamRegion');
     const arrs = userTeamList.filter(item => item.name === teamRegion);
@@ -99,21 +110,25 @@ export default class Index extends PureComponent {
       teamName = arrs && arrs[0].value[0];
       regionName = arrs && arrs[0].value[1];
     }
-
-    this.props.dispatch({
-      type: 'groupControl/addGroup',
-      payload: {
-        team_name: teamName || globalUtil.getCurrTeamName(),
-        ...vals,
-      },
-      callback: group => {
-        if (group) {
-          // 获取群组
-          this.fetchTeamApps(teamName, regionName, group.group_id);
-          this.cancelAddGroup();
+    if (teamName != '' && regionName != '') {
+      this.props.dispatch({
+        type: 'groupControl/addGroup',
+        payload: {
+          team_name: teamName,
+          region_name: regionName,
+          ...vals
+        },
+        callback: group => {
+          if (group) {
+            // 获取群组
+            this.fetchTeamApps(teamName, regionName, group.group_id);
+            this.cancelAddGroup();
+          }
         }
-      },
-    });
+      });
+    } else {
+      notification.warning({ message: '创建应用参数不足' });
+    }
   };
 
   // 应用
@@ -128,17 +143,17 @@ export default class Index extends PureComponent {
         team_name: teamName || globalUtil.getCurrTeamName(),
         region_name: regionName || globalUtil.getCurrRegionName(),
         page: app_page,
-        page_size: app_page_size,
+        page_size: app_page_size
       },
       callback: data => {
         if (data) {
           teamName &&
             setFieldsValue({
-              apps: groupId || (data.length > 0 ? data[0].group_id : ''),
+              apps: groupId || (data.length > 0 ? data[0].group_id : '')
             });
           this.setState({ apps: data });
         }
-      },
+      }
     });
   };
 
@@ -169,7 +184,7 @@ export default class Index extends PureComponent {
       const versions = isCodeApp ? code_version : version;
       const objs = {
         service_id,
-        change: { build_source: { version: versions } },
+        change: { build_source: { version: versions } }
       };
       arr.push(objs);
     });
@@ -179,7 +194,7 @@ export default class Index extends PureComponent {
       payload: {
         tenantName: globalUtil.getCurrTeamName(),
         group_id: groupDetail.group_id,
-        ...obj,
+        ...obj
       },
       callback: res => {
         this.handleCloseLoading();
@@ -199,7 +214,7 @@ export default class Index extends PureComponent {
           notification.warning({ message: err.data.msg_show });
         }
         this.handleCloseLoading();
-      },
+      }
     });
   };
 
@@ -213,7 +228,7 @@ export default class Index extends PureComponent {
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
-      ...row,
+      ...row
     });
     this.setState({ inputValue: '', dataSource: newData });
   };
@@ -227,7 +242,7 @@ export default class Index extends PureComponent {
         enterprise_id: currentEnterprise.enterprise_id,
         user_id: currentUser.user_id,
         page: 1,
-        page_size: 999,
+        page_size: 999
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -240,16 +255,16 @@ export default class Index extends PureComponent {
               team.region_list.map(region => {
                 const item = {
                   name: `${team.team_alias} | ${region.region_alias}`,
-                  value: [team.team_name, region.region_name],
+                  value: [team.team_name, region.region_name]
                 };
                 arr.push(item);
               });
             });
           this.setState({
-            userTeamList: arr,
+            userTeamList: arr
           });
         }
-      },
+      }
     });
   };
 
@@ -289,7 +304,7 @@ export default class Index extends PureComponent {
       checkedList,
       indeterminate:
         !!checkedList.length && checkedList.length < checkAllList.length,
-      checkAll: checkedList.length === checkAllList.length,
+      checkAll: checkedList.length === checkAllList.length
     });
   };
 
@@ -298,7 +313,7 @@ export default class Index extends PureComponent {
     this.setState({
       checkedList: e.target.checked ? checkAllList : [],
       indeterminate: false,
-      checkAll: e.target.checked,
+      checkAll: e.target.checked
     });
   };
 
@@ -320,7 +335,7 @@ export default class Index extends PureComponent {
       apps,
       loading,
       Loading,
-      errInput,
+      errInput
     } = this.state;
     const userTeams = userTeamList && userTeamList.length > 0 && userTeamList;
     let defaultTeamRegion = '';
@@ -338,12 +353,12 @@ export default class Index extends PureComponent {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 6 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 17 },
-      },
+        sm: { span: 17 }
+      }
     };
 
     return (
@@ -364,7 +379,7 @@ export default class Index extends PureComponent {
             onClick={this.handleSubmit}
           >
             确定
-          </Button>,
+          </Button>
         ]}
       >
         <div className={styles.copyBox}>
@@ -389,9 +404,9 @@ export default class Index extends PureComponent {
                       rules: [
                         {
                           required: true,
-                          validator: this.checkTeams,
-                        },
-                      ],
+                          validator: this.checkTeams
+                        }
+                      ]
                     })(
                       <Select
                         onChange={this.onSelectChange}
@@ -412,9 +427,9 @@ export default class Index extends PureComponent {
                     rules: [
                       {
                         required: true,
-                        message: '请选择应用',
-                      },
-                    ],
+                        message: '请选择应用'
+                      }
+                    ]
                   })(
                     <Select style={{ width: '180px' }} placeholder="请选择应用">
                       {appList &&
@@ -466,7 +481,7 @@ export default class Index extends PureComponent {
                   image,
                   git_url,
                   rain_app_name,
-                  service_source,
+                  service_source
                 } = build_source;
 
                 const isImageApp = appUtil.isImageAppByBuildSource(
@@ -507,9 +522,9 @@ export default class Index extends PureComponent {
                         rules: [
                           {
                             required: true,
-                            message: '不能为空',
-                          },
-                        ],
+                            message: '不能为空'
+                          }
+                        ]
                       })(
                         <Input
                           addonBefore={versionSelector}
@@ -520,12 +535,12 @@ export default class Index extends PureComponent {
                             this.save(item, isCodeApp);
                           }}
                           style={{
-                            width: '268px',
+                            width: '268px'
                           }}
                           onChange={e => {
                             this.setState({
                               errInput: e.target.value,
-                              inputValue: e.target.value,
+                              inputValue: e.target.value
                             });
                           }}
                         />
@@ -550,7 +565,7 @@ export default class Index extends PureComponent {
                           style={{
                             paddingRight: '5px',
                             width: '80px',
-                            color: 'rgba(0, 0, 0, 0.85)',
+                            color: 'rgba(0, 0, 0, 0.85)'
                           }}
                         >
                           {isImageApp
