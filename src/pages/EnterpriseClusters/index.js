@@ -432,7 +432,7 @@ export default class EnterpriseClusters extends PureComponent {
         title: '内存(GB)',
         dataIndex: 'total_memory',
         align: 'center',
-        width: '20%',
+        width: '170px',
         render: (_, item) => {
           return (
             <a
@@ -450,13 +450,13 @@ export default class EnterpriseClusters extends PureComponent {
         title: '版本',
         dataIndex: 'rbd_version',
         align: 'center',
-        width: '30%'
+        width: '300px'
       },
       {
         title: '状态',
         dataIndex: 'status',
         align: 'center',
-        width: '10%',
+        width: '150px',
         render: (val, data) => {
           if (data.health_status === 'failure') {
             return <span style={{ color: 'red' }}>通信异常</span>;
@@ -512,7 +512,7 @@ export default class EnterpriseClusters extends PureComponent {
         title: '操作',
         dataIndex: 'method',
         align: 'center',
-        width: '10%',
+        width: '150px',
         render: (_, item) => {
           return [
             <a
@@ -644,7 +644,7 @@ export default class EnterpriseClusters extends PureComponent {
             style={{ marginBottom: '16px' }}
             message="注意！集群内存使用量是指当前集群的整体使用量，一般都大于租户内存使用量的总和"
           />
-          <Table size="middle" dataSource={clusters} columns={columns} />
+          <Table dataSource={clusters} columns={columns} />
         </Card>
         {showTenantList && (
           <Modal
