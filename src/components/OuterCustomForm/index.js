@@ -313,7 +313,6 @@ export default class Index extends PureComponent {
                 value={endpointsType}
               >
                 <Radio value="static">静态注册</Radio>
-                <Radio value="discovery">动态注册</Radio>
                 <Radio value="api">API注册</Radio>
               </RadioGroup>
             )}
