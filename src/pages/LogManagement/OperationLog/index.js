@@ -69,6 +69,13 @@ export default class OperationLog extends PureComponent {
     );
   };
   handleChange = value => {
+    if (value === '') {
+      this.setState({
+        name: '',
+      }, () => {
+        this.loadUser();
+      })
+    }
     this.setState(
       {
         name: value,
