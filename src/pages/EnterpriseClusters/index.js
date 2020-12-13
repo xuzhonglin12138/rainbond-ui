@@ -432,7 +432,7 @@ export default class EnterpriseClusters extends PureComponent {
         title: '内存(GB)',
         dataIndex: 'total_memory',
         align: 'center',
-        width: '170px',
+        width: '200px',
         render: (_, item) => {
           return (
             <a
@@ -450,7 +450,7 @@ export default class EnterpriseClusters extends PureComponent {
         title: '版本',
         dataIndex: 'rbd_version',
         align: 'center',
-        width: '300px'
+        width: '350px'
       },
       {
         title: '状态',
@@ -512,7 +512,7 @@ export default class EnterpriseClusters extends PureComponent {
         title: '操作',
         dataIndex: 'method',
         align: 'center',
-        width: '150px',
+        width: '170px',
         render: (_, item) => {
           return [
             <a
