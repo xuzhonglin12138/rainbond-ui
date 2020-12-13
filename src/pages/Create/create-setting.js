@@ -95,7 +95,7 @@ export default class Index extends PureComponent {
           },
         });
         this.props.dispatch(
-          routerRedux.replace(
+          routerRedux.push(
             `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/index`
           )
         );

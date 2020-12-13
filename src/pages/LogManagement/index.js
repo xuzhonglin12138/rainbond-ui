@@ -4,8 +4,8 @@ import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import userUtil from '../../utils/user';
-import OperationLog from './OperationLog';
 import LoginLog from './LoginLog';
+import OperationLog from './OperationLog';
 
 const { TabPane } = Tabs;
 
@@ -46,7 +46,7 @@ export default class EnterpriseSetting extends PureComponent {
     return (
       <PageHeaderLayout
         title="日志管理"
-        content="记录平台的一些操作"
+        content="跟踪账号操作记录的查询，可用于安全分析、资源变更追踪以及合规性审计等场景。"
       >
         <Tabs onChange={this.onChange} activeKey={activeKey}>
           <TabPane tab={<div>操作日志</div>} key="operationLog">
