@@ -75,8 +75,18 @@ export default class EventList extends PureComponent {
       },
       callback: data => {
         if (data) {
+          let defaultUserRole = ''
+          if (data.list) {
+            data.list.map(item=> {
+              if (item.name.indexOf('开发') !== -1){
+                defaultUserRole = item.ID
+              }
+              return item
+            })
+          }
           this.setState({
-            roles: data.list || []
+            roles: data.list || [], 
+            defaultUserRole
           });
         }
       }
@@ -216,7 +226,7 @@ export default class EventList extends PureComponent {
       memberPermissions: { isCreate },
       form
     } = this.props;
-    const { joinSettingShow, roles } = this.state;
+    const { joinSettingShow, roles, defaultUserRole } = this.state;
     const { getFieldDecorator } = form;
     const pagination = {
       current: this.state.page,
@@ -313,6 +323,7 @@ export default class EventList extends PureComponent {
             <Form>
               <FormItem {...formItemLayout} label="选择角色">
                 {getFieldDecorator("role_ids", {
+                  initialValue: defaultUserRole,
                   rules: [
                     {
                       required: true,
