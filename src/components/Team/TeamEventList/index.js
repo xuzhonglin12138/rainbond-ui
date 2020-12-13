@@ -323,7 +323,7 @@ export default class EventList extends PureComponent {
             <Form>
               <FormItem {...formItemLayout} label="选择角色">
                 {getFieldDecorator("role_ids", {
-                  initialValue: defaultUserRole,
+                  initialValue: [defaultUserRole],
                   rules: [
                     {
                       required: true,
