@@ -1,20 +1,22 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-unused-expressions */
-import React, { PureComponent, Fragment } from 'react';
-import { connect } from 'dva';
-import {
-  Form,
-  Select,
-  DatePicker,
-  Col,
-  Row,
-  Button,
-  Table,
-  Tooltip,
-  Pagination
-} from 'antd';
 import logsUtil from '@/utils/logs';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Pagination,
+  Row,
+  Select,
+  Table,
+  Tag,
+  Tooltip
+} from 'antd';
+import { connect } from 'dva';
 import moment from 'moment';
+import React, { Fragment, PureComponent } from 'react';
 import styles from '../index.less';
 
 const FormItem = Form.Item;
@@ -34,26 +36,12 @@ const { RangePicker } = DatePicker;
 export default class OperationLog extends PureComponent {
   constructor(props) {
     super(props);
-    const { user } = this.props;
     this.state = {
       name: '',
       page: 1,
-      page_size: 10,
+      page_size: 30,
       loading: true,
-      logList: [
-        // {
-        //   ID: 92,
-        //   app_id: 0,
-        //   comment:
-        //     'gradmin 创建了团队 <<{"name": "22a", "view_type": "team", "region": "rainbond", "app_id": 0, "service_alias": "", "plugin_id": "", "team_name": "45jnv9c8"}>>转移了<<{"name": "转名称", "view_type": "team", "region": "rainbond", "app_id": 0, "service_alias": "", "plugin_id": "", "team_name": "45jnv9c8"}>>sd',
-        //   create_time: '2020-12-07T16:15:31.531346',
-        //   enterprise_id: 'c3ec3fc667b54a5da1f53d385074b19a',
-        //   operation_type: 'enterprise_manage',
-        //   service_alias: '',
-        //   team_name: '45jnv9c8',
-        //   username: 'gradmin'
-        // }
-      ],
+      logList: [],
       logsPage: 1,
       logsPageSize: 10,
       logsTotal: 0,
@@ -402,14 +390,14 @@ export default class OperationLog extends PureComponent {
               title: '操作者',
               align: 'center',
               width: 200,
-              dataIndex: 'username',
+              dataIndex: 'real_name',
               render: (val, data) => {
                 return (
                   <Tooltip
                     placement="top"
                     title={
                       <div>
-                        <div>账户：{data.real_name}</div>
+                        <div>账户：{data.username}</div>
                         <div>邮箱：{data.email}</div>
                       </div>
                     }
@@ -447,8 +435,8 @@ export default class OperationLog extends PureComponent {
             {
               title: '操作内容',
               dataIndex: 'comment',
-              render: val => {
-                return <span>{logsUtil.fetchLogsContent(val)}</span>;
+              render: (val, data) => {
+                return <span>{data.is_openapi && <Tag>OpenAPI</Tag>}{logsUtil.fetchLogsContent(val)}</span>;
               }
             }
           ]}
