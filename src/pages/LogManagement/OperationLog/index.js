@@ -443,7 +443,7 @@ export default class OperationLog extends PureComponent {
               title: '操作内容',
               dataIndex: 'comment',
               render: (val, data) => {
-                return <span>{data.is_openapi && <Tag>OpenAPI</Tag>}{logsUtil.fetchLogsContent(val)}</span>;
+                return <span>{data.is_openapi && <Tag color="green">OpenAPI</Tag>}{logsUtil.fetchLogsContent(val)}</span>;
               }
             }
           ]}

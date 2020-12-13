@@ -27,7 +27,7 @@ export default {
     }
     return (
       // eslint-disable-next-line react/react-in-jsx-scope
-      <div>{val}</div>
+      <span>{val}</span>
     );
   },
   fetchInterception(val, boxs) {
