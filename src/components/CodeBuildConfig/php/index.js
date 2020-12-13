@@ -1,6 +1,7 @@
-import React, { PureComponent } from "react";
-import { Form, Radio, Switch, Input } from "antd";
+import { Form, Radio, Switch } from "antd";
 import { connect } from "dva";
+import React, { PureComponent } from "react";
+
 const RadioGroup = Radio.Group;
 
 @connect(null, null, null,
@@ -40,10 +41,10 @@ class Index extends PureComponent {
           help="开启后下一次构建将移除所有缓存文件，包括编译工具和依赖库"
         >
           {getFieldDecorator("BUILD_NO_CACHE", {
-            initialValue: envs && envs.BUILD_NO_CACHE ? true : false
+            initialValue: !!(envs && envs.BUILD_NO_CACHE)
           })(
             <Switch
-              defaultChecked={envs && envs.BUILD_NO_CACHE ? true : false}
+              defaultChecked={!!(envs && envs.BUILD_NO_CACHE)}
             />
           )}
         </Form.Item>
@@ -70,8 +71,8 @@ class Index extends PureComponent {
               </Radio>
               <Radio value="5.5.38">5.5.38</Radio>
               <Radio value="7.0.29">7.0.29</Radio>
-              <Radio value="7.1.33">7.1.33</Radio>
-              <Radio value="7.2.26">7.2.26</Radio>
+              <Radio value="7.1.27">7.1.27</Radio>
+              <Radio value="7.2.16">7.2.16</Radio>
               <Radio value="7.3.13">7.3.13</Radio>
             </RadioGroup>
           )}
