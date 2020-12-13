@@ -786,16 +786,7 @@ export default class Index extends PureComponent {
             <FormattedMessage id="team.appmodeNum" />
           </p>
           <div>
-            <Link
-              to={`/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/source`}
-              style={{
-                wordBreak: "break-all",
-                wordWrap: "break-word",
-                color: "#1890ff"
-              }}
-            >
-              {index.overviewInfo.share_app_num || 0}
-            </Link>
+            {index.overviewInfo.share_app_num || 0}
           </div>
         </div>
       </div>
