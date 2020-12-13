@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 /*
    快速复制
 */
@@ -39,17 +40,11 @@ export default class Index extends PureComponent {
     this.state = {
       userTeamList: [],
       Loading: false,
-      list: [],
       dataSource: [],
-      page_num: 1,
-      page_size: 10,
-      total: '',
-      bean: '',
       loading: true,
       app_page_size: 10,
       app_page: 1,
       apps: [],
-      isAddApps: false,
       checkedList: [],
       inputValue: '',
       checkAllList: [],
@@ -110,7 +105,7 @@ export default class Index extends PureComponent {
       teamName = arrs && arrs[0].value[0];
       regionName = arrs && arrs[0].value[1];
     }
-    if (teamName != '' && regionName != '') {
+    if (teamName !== '' && regionName !== '') {
       this.props.dispatch({
         type: 'groupControl/addGroup',
         payload: {

@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-undef */
 import apiconfig from '../../config/api.config';
 import request from '../utils/request';
 
@@ -232,6 +234,7 @@ export async function addGroup(
     team_name,
     group_name,
     group_note,
+    region_name
   }
 ) {
   return request(
@@ -241,6 +244,7 @@ export async function addGroup(
       data: {
         group_name: body.group_name,
         group_note: body.group_note,
+        region_name: body.region_name
       },
     }
   );
