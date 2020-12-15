@@ -1,16 +1,17 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable prettier/prettier */
 /* eslint-disable array-callback-return */
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/extensions */
 /* eslint-disable react/sort-comp */
 // eslint-disable-next-line react/no-multi-comp
-import React, { Fragment, PureComponent } from 'react';
-import moment from 'moment';
-import { connect } from 'dva';
-import { Card, Spin, notification } from 'antd';
-import { Axis, Chart, Geom, Legend, Tooltip } from 'bizcharts';
 import globalUtil from '@/utils/global';
 import monitorDataUtil from '@/utils/monitorDataUtil';
+import { Card, notification, Spin } from 'antd';
+import { Axis, Chart, Geom, Legend, Tooltip } from 'bizcharts';
+import { connect } from 'dva';
+import moment from 'moment';
+import React, { Fragment, PureComponent } from 'react';
 import styless from './index.less';
 
 @connect()
@@ -55,22 +56,26 @@ export default class RangeChart extends PureComponent {
     }
   }
 
-  loadPerformanceAnalysis = (props) => {
+  loadPerformanceAnalysis = (props, updateTime=false) => {
     this.setState({ loading: true });
     const { dispatch, appAlias } = props;
     dispatch({
       type: 'appControl/fetchPerformanceAnalysis',
-      payload: Object.assign({}, this.handleParameter(props), {
+      payload: Object.assign({}, this.handleParameter(props, updateTime), {
         app_alias: appAlias
       }),
       callback: (re) => {
         this.setState({ loading: false });
-        if (re.bean) {
-          this.setState({ performanceObj: re.bean });
+        if (re.bean && re.bean.result && re.bean.result.length > 0) {
+          this.setState({
+            memoryRange: re.bean.result,
+            performanceObj: re.bean
+          });
         }
       }
     });
   };
+
   loadRangeData = (props) => {
     this.setState({ loading: true });
     const { appDetail, dispatch } = props;
@@ -81,18 +86,18 @@ export default class RangeChart extends PureComponent {
       }),
       callback: (re) => {
         this.setState({ loading: false });
-        if (re.bean) {
+        if (re.bean && re.bean.result && re.bean.result.length > 0) {
           this.setState({ memoryRange: re.bean.result });
         }
       }
     });
   };
-  handleParameter = (props) => {
+  handleParameter = (props, updateTime=false) => {
     const { moduleName, type, start, end } = props;
     return {
       query: moduleName === 'CustomMonitor' ? type : this.getQueryByType(type),
-      start: start || new Date().getTime() / 1000 - 60 * 60,
-      end: end || new Date().getTime() / 1000,
+      start: updateTime ? new Date().getTime() / 1000 - 60 * 60 : start,
+      end: updateTime ? new Date().getTime() / 1000 : end,
       step: Math.ceil((end - start) / 100) || 15,
       teamName: globalUtil.getCurrTeamName()
     };
@@ -159,7 +164,15 @@ export default class RangeChart extends PureComponent {
     const rangedata = [];
     if (dataRange) {
       dataRange.map((item) => {
-        const cid = item.metric.pod;
+        const setObj = Object.assign({}, item.metric);
+        let cid = '';
+        if (setObj && setObj.__name__) {
+          delete setObj.__name__;
+          cid = item.metric.__name__ + JSON.stringify(setObj);
+        }
+        if (setObj && setObj.pod) {
+          cid = item.metric.pod + JSON.stringify(setObj);
+        }
         if (item.values) {
           item.values.map((v) => {
             rangedata.push({
@@ -180,7 +193,7 @@ export default class RangeChart extends PureComponent {
       moduleName === 'PerformanceAnalysis' ||
       moduleName === 'CustomMonitor'
     ) {
-      this.loadPerformanceAnalysis(this.props);
+      this.loadPerformanceAnalysis(this.props, true);
     } else {
       this.loadRangeData(this.props);
     }
@@ -223,7 +236,7 @@ export default class RangeChart extends PureComponent {
     const isCustomMonitor = moduleName === 'CustomMonitor';
     const { title, label, unit } = this.getMeta();
     const data =
-      moduleName === 'PerformanceAnalysis' || isCustomMonitor
+      moduleName === 'PerformanceAnalysis'
         ? monitorDataUtil.queryRangeTog2F(performanceObj, title)
         : this.converData(memoryRange);
     const cols = {
@@ -235,7 +248,13 @@ export default class RangeChart extends PureComponent {
       },
       value: {
         alias: { label },
-        tickCount: 5
+        tickCount: 5,
+        formatter: (val) => {
+          if (val > 1000) {
+            return `${(val/1000)}k`;
+          }
+          return val;
+        },
       },
       cid: {
         type: 'cat'
@@ -278,28 +297,31 @@ export default class RangeChart extends PureComponent {
             }
           >
             <Chart
-              height={isCustomMonitor ? 200 : 400}
+              height={isCustomMonitor ? 222 : 400}
               data={data}
               scale={cols}
               forceFit
             >
               <Legend
                 useHtml
-                containerTpl={
-                  '<div class="g2-legend" style="position:absolute;top:20px;right:60px;width:100%;">' +
-                  '<h4 class="g2-legend-title"></h4>' +
-                  '<ul class="g2-legend-list" style="list-style-type:none;margin:0;padding:0;"></ul>' +
-                  '</div>'
-                }
-                itemTpl={
-                  '<li class="g2-legend-list-item item-{index} {checked}" data-color="{originColor}" data-value="{originValue}" style="cursor: pointer;font-size: 14px;">' +
-                  '<i class="g2-legend-marker" style="width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:10px;background-color: {color};"></i>' +
-                  '<span title={value} class="g2-legend-text" style="display:inline-block;max-width:94%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{value}</span>' +
-                  '</li>'
-                }
+                containerTpl={`<div class="g2-legend" style="position:absolute;top:20px;right:60px;width:100%;margin-top:-2px;">
+                      <h4 class="g2-legend-title"></h4>
+                      <div class=${styless.ov}><ul class="g2-legend-list" style="list-style-type:none;margin:0;padding:0;"></ul></div>
+                    </div>
+               `}
+                itemTpl={`
+                  <li class="g2-legend-list-item item-{index} {checked}" data-color="{originColor}" data-value="{originValue}" style="cursor: pointer;font-size: 14px;">
+                  <i class="g2-legend-marker" style="width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:10px;background-color: {color};"></i>
+                  <span title={value} class="g2-legend-text" style="display:inline-block;max-width:94%;white-space:nowrap;font-size:80%;">{value}</span>
+                  </li>`}
+                g2-legend={{
+                  overflow: 'hidden',
+                  marginTop: '-2px'
+                }}
                 g2-legend-list={{
+                  marginTop: '-5px',
                   border: 'none',
-                  height: '40px'
+                  height: '50px'
                 }}
                 g2-legend-list-item={{
                   display: 'flex',
@@ -327,9 +349,23 @@ export default class RangeChart extends PureComponent {
               />
               <Axis name="time" />
               <Tooltip
+                shared
+                follow
+                g2-tooltip={{
+                  zIndex: 99,
+                  width: '80%',
+                  overflow: 'hidden'
+                }}
                 crosshairs={{
                   type: 'y'
                 }}
+                containerTpl='<div class="g2-tooltip">
+                                <p class="g2-tooltip-title"></p>
+                              <table class="g2-tooltip-list" style="display: block;width: 400px;"></table></div>'
+                itemTpl={`<tr class="g2-tooltip-list-item" style="display: flex;justify-content: space-between;">
+                    <td style="font-size:80%;color:{color};width:90%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{name}</td>
+                    <td style="margin-left: 5px;">{value}</td>
+                  </tr>`}
               />
               <Geom
                 type="line"
