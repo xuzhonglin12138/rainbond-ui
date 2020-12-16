@@ -11,11 +11,6 @@ const { Item } = Menu;
 export default class Information extends PureComponent {
   constructor(props) {
     super(props);
-    const {
-      match: {
-        params: { activeType }
-      }
-    } = this.props;
     const menuMap = {};
     menuMap.notice = (
       <FormattedMessage
@@ -26,15 +21,17 @@ export default class Information extends PureComponent {
     // menuMap.alarm = (
     //   <FormattedMessage id="header.information.alarm" defaultMessage="alarm" />
     // );
-    // menuMap.remind = (
-    //   <FormattedMessage
-    //     id="header.information.remindSetting"
-    //     defaultMessage="remindSetting"
-    //   />
-    // );
+    menuMap.remind = (
+      <FormattedMessage
+        id="header.information.remindSetting"
+        defaultMessage="remindSetting"
+      />
+    );
+    const type =
+      window.location.href.indexOf('notice') > -1 ? 'notice' : 'remind';
     this.state = {
       menuMap,
-      selectKey: activeType || 'notice'
+      selectKey: type
     };
   }
 
@@ -47,9 +44,7 @@ export default class Information extends PureComponent {
 
   selectKey = ({ key }) => {
     router.push(
-      `/information/management/${key}/${
-        key === 'remind' ? 'setting' : 'unread'
-      }`
+      `/information/management/${key}/${key === 'remind' ? 'setting' : 'all'}`
     );
     this.setState({
       selectKey: key

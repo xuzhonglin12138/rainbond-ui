@@ -47,6 +47,8 @@ import {
   fetchEnterpriseUsers,
   fetchOperationLogs,
   fetchInternalMessages,
+  fetchSetRemind,
+  putSetRemind,
   putInternalMessages,
   fetchLoginLogs,
   deleteEnterpriseUsers,
@@ -557,6 +559,18 @@ export default {
     },
     *fetchInternalMessages({ payload, callback }, { put, call }) {
       const response = yield call(fetchInternalMessages, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *fetchSetRemind({ payload, callback }, { put, call }) {
+      const response = yield call(fetchSetRemind, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *putSetRemind({ payload, callback }, { put, call }) {
+      const response = yield call(putSetRemind, payload);
       if (response) {
         callback && callback(response);
       }
