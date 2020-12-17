@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { Menu } from 'antd';
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
@@ -11,37 +12,54 @@ const { Item } = Menu;
 export default class Information extends PureComponent {
   constructor(props) {
     super(props);
-    const menuMap = {};
-    menuMap.notice = (
-      <FormattedMessage
-        id="header.information.notice"
-        defaultMessage="notice"
-      />
-    );
-    // menuMap.alarm = (
-    //   <FormattedMessage id="header.information.alarm" defaultMessage="alarm" />
-    // );
-    menuMap.remind = (
-      <FormattedMessage
-        id="header.information.remindSetting"
-        defaultMessage="remindSetting"
-      />
-    );
-    const type =
-      window.location.href.indexOf('notice') > -1 ? 'notice' : 'remind';
     this.state = {
-      menuMap,
-      selectKey: type
+      selectKey: this.handleKey()
     };
+  }
+  componentWillReceiveProps() {
+    const key = this.handleKey();
+    if (key !== this.state.selectKey) {
+      this.state = {
+        selectKey: this.handleKey()
+      };
+    }
   }
 
   getmenu = () => {
-    const { menuMap } = this.state;
-    return Object.keys(menuMap).map(item => (
-      <Item key={item}>{menuMap[item]}</Item>
-    ));
+    const menuMap = {
+      notice: (
+        <FormattedMessage
+          id="header.information.notice"
+          defaultMessage="notice"
+        />
+      ),
+      alarm: (
+        <FormattedMessage
+          id="header.information.notice"
+          defaultMessage="notice"
+        />
+      ),
+      remind: (
+        <FormattedMessage
+          id="header.information.remindSetting"
+          defaultMessage="remindSetting"
+        />
+      )
+    };
+    if (menuMap) {
+      return Object.keys(menuMap).map(item => (
+        <Item key={item}>{menuMap[item]}</Item>
+      ));
+    }
+    return '';
   };
-
+  handleKey = () => {
+    return window.location.href.indexOf('notice') > -1
+      ? 'notice'
+      : window.location.href.indexOf('alarm') > -1
+      ? 'alarm'
+      : 'remind';
+  };
   selectKey = ({ key }) => {
     router.push(
       `/information/management/${key}/${key === 'remind' ? 'setting' : 'all'}`

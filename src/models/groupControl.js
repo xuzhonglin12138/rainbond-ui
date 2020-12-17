@@ -1,6 +1,7 @@
 import {
   getGroupApps,
   getGroupDetail,
+  getAppLogs,
   deleteGroup,
   editGroup,
   addGroup,
@@ -34,11 +35,11 @@ import {
   getPluginShareEventInShareApp,
   queryAllBackup,
   queryRestoreState
-} from "../services/group";
-import cookie from "../utils/cookie";
+} from '../services/group';
+import cookie from '../utils/cookie';
 
 export default {
-  namespace: "groupControl",
+  namespace: 'groupControl',
   state: {
     // app detail
     groupDetail: {},
@@ -93,14 +94,20 @@ export default {
     *fetchGroupDetail({ payload, callback, handleError }, { call, put }) {
       const response = yield call(getGroupDetail, payload, handleError);
       if (response) {
-        yield put({ type: "saveGroupDetail", payload: response.bean });
+        yield put({ type: 'saveGroupDetail', payload: response.bean });
+        callback && callback(response);
+      }
+    },
+    *fetchAppLogs({ payload, callback }, { call }) {
+      const response = yield call(getAppLogs, payload);
+      if (response) {
         callback && callback(response);
       }
     },
     *fetchApps({ payload, callback }, { call, put }) {
       const response = yield call(getGroupApps, payload);
       if (response) {
-        yield put({ type: "saveApps", payload: response.list });
+        yield put({ type: 'saveApps', payload: response.list });
         callback && callback(response);
       }
     },

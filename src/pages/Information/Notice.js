@@ -57,7 +57,8 @@ export default class Notice extends PureComponent {
         page,
         page_size: pageSize,
         create_time: '',
-        is_read: isRead
+        is_read: isRead,
+        category: 'system'
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -189,15 +190,15 @@ export default class Notice extends PureComponent {
   };
 
   render() {
-    const { activeKey, dataList, modifyLoading } = this.state;
+    const { activeKey, dataList, modifyLoading, loading } = this.state;
     return (
       <div>
         <div className={styles.boxs}>
-          <div className={styles.title}>系统通知</div>
+          <div className={styles.title}>通知信息</div>
           {activeKey === 'unread' && (
             <Button
               type="primary"
-              disabled={dataList.length < 1}
+              disabled={loading || dataList.length === 0}
               loading={modifyLoading}
               onClick={this.handleRead}
             >

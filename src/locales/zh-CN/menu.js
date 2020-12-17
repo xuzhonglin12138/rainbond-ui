@@ -19,5 +19,6 @@ export default {
   "menu.app.publish": "发布",
   "menu.app.backup": "备份",
   "menu.app.gateway": "网关",
-  "menu.app.upgrade": "升级"
+  "menu.app.upgrade": "升级",
+  "menu.app.logs": "日志"
 };
