@@ -60,7 +60,14 @@ class CreateUserForm extends PureComponent {
     });
   };
   render() {
-    const { eid, onCancel, title, userInfo, form } = this.props;
+    const {
+      eid,
+      onCancel,
+      title,
+      userInfo,
+      form,
+      loading = false
+    } = this.props;
     const { getFieldDecorator } = form;
     const { authorityList } = this.state;
     const formItemLayout = {
@@ -77,6 +84,7 @@ class CreateUserForm extends PureComponent {
       <Modal
         visible
         maskClosable={false}
+        confirmLoading={loading}
         title={title || '添加用户'}
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}

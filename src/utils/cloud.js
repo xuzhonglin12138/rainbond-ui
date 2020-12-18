@@ -438,15 +438,24 @@ const cloud = {
     switch (code) {
       case 4001:
         notification.warning({ message: "请求Token过期，请尝试重新登录" });
-        break;
+      break;
       case 3000:
-        notification.warning({ message: "用户已存在" });
+        notification.warning({ message: '用户已存在' });
+        break;
+      case 3001:
+        notification.warning({ message: '用户不存在' });
+        break;
+      case 3002:
+        notification.warning({ message: '用户不存在' });
         break;
       case 3003:
-        notification.warning({ message: "邮箱已存在" });
+        notification.warning({ message: '邮箱已存在' });
         break;
       case 3004:
-        notification.warning({ message: "电话已存在" });
+        notification.warning({ message: '电话已存在' });
+        break;
+      case 3005:
+        notification.warning({ message: '不允许删除管理员' });
         break;
       case 7002:
         notification.warning({
