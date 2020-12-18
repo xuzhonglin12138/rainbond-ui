@@ -208,7 +208,8 @@ export default class EnterpriseUsers extends PureComponent {
     this.loadUser();
   };
   handelChange = e => {
-    this.setState({ name: e.target.value });
+    const { value } = e.target;
+    this.setState({ name: value.trim() });
   };
   render() {
     const {
