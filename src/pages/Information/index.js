@@ -35,8 +35,8 @@ export default class Information extends PureComponent {
       ),
       alarm: (
         <FormattedMessage
-          id="header.information.notice"
-          defaultMessage="notice"
+          id="header.information.alarm"
+          defaultMessage="alarm"
         />
       ),
       remind: (

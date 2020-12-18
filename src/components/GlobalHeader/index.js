@@ -111,10 +111,10 @@ export default class GlobalHeader extends PureComponent {
     let systemList = [];
     if (messageList && messageList.length > 0) {
       alertList = messageList.filter(
-        item => !item.is_read && item.msg_type === 'alert'
+        item => !item.is_read && item.category === 'alert'
       );
       systemList = messageList.filter(
-        item => !item.is_read && item.msg_type === 'system'
+        item => !item.is_read && item.category === 'system'
       );
     }
     if (messageList.length > 0) {

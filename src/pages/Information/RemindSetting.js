@@ -65,6 +65,10 @@ export default class RemindSetting extends PureComponent {
 
   render() {
     const { list } = this.state;
+    const categoryMap = {
+      system: '通知信息',
+      alert: '报警信息'
+    };
     return (
       <div>
         <div className={styles.boxs}>
@@ -73,37 +77,30 @@ export default class RemindSetting extends PureComponent {
         <div className={styles.customTitle}>
           <ul className={styles.customContent}>
             <li>消息类型</li>
-            <li>系统提醒</li>
             <li>邮件提醒</li>
           </ul>
         </div>
         <Spin spinning={this.state.loading}>
-          {list.map(item => {
-            const { ID, msg_type: type, enable } = item;
-            return (
-              <div className={styles.customTitle} key={ID}>
-                <ul className={styles.customContent}>
-                  <li>{type}</li>
-                  <li>
-                    <Switch
-                      className={styles.noAllowed}
-                      disabled
-                      defaultChecked
-                      checked
-                    />
-                  </li>
-                  <li>
-                    <Switch
-                      checked={enable}
-                      onChange={() => {
-                        this.onChange(item);
-                      }}
-                    />
-                  </li>
-                </ul>
-              </div>
-            );
-          })}
+          {list &&
+            list.length > 0 &&
+            list.map(item => {
+              const { ID, category, enable } = item;
+              return (
+                <div className={styles.customTitle} key={ID}>
+                  <ul className={styles.customContent}>
+                    <li>{categoryMap[category] || category}</li>
+                    <li>
+                      <Switch
+                        checked={enable}
+                        onChange={() => {
+                          this.onChange(item);
+                        }}
+                      />
+                    </li>
+                  </ul>
+                </div>
+              );
+            })}
         </Spin>
       </div>
     );
