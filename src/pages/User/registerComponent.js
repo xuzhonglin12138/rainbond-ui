@@ -74,6 +74,9 @@ export default class RegisterComponent extends Component {
       (err, values) => {
         if (!err) {
           userUtil.removeCookie();
+          if (!values.name) {
+            values.name = values.user_name;
+          }
           onSubmit && onSubmit(values);
         }
       }
@@ -188,6 +191,9 @@ export default class RegisterComponent extends Component {
               }
             ]
           })(<Input size="large" placeholder="用户名" />)}
+        </FormItem>
+        <FormItem>
+          {getFieldDecorator('name')(<Input size="large" placeholder="姓名" />)}
         </FormItem>
         <FormItem>
           {getFieldDecorator('email', {
