@@ -599,36 +599,37 @@ export default class Index extends PureComponent {
                 </FormItem>
               </Col>
             )}
-
-            <Col span={4}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('service_alias')(
-                  <Select
-                    showSearch
-                    placeholder="请选择组件"
-                    defaultActiveFirstOption={false}
-                    filterOption={false}
-                    notFoundContent={null}
-                    onSearch={this.handleSearchComponent}
-                    onChange={this.handleChangeComponent}
-                  >
-                    <Option key={0} value="">
-                      所有组件
-                    </Option>
-                    {apps &&
-                      apps.length > 0 &&
-                      apps.map(item => {
-                        const { service_alias, service_cname } = item;
-                        return (
-                          <Option key={service_alias} value={service_alias}>
-                            {service_cname}
-                          </Option>
-                        );
-                      })}
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
+            {views === 'app' && (
+              <Col span={4}>
+                <FormItem {...formItemLayout}>
+                  {getFieldDecorator('service_alias')(
+                    <Select
+                      showSearch
+                      placeholder="请选择组件"
+                      defaultActiveFirstOption={false}
+                      filterOption={false}
+                      notFoundContent={null}
+                      onSearch={this.handleSearchComponent}
+                      onChange={this.handleChangeComponent}
+                    >
+                      <Option key={0} value="">
+                        所有组件
+                      </Option>
+                      {apps &&
+                        apps.length > 0 &&
+                        apps.map(item => {
+                          const { service_alias, service_cname } = item;
+                          return (
+                            <Option key={service_alias} value={service_alias}>
+                              {service_cname}
+                            </Option>
+                          );
+                        })}
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+            )}
             <Col span={8}>
               <FormItem {...formItemLayout}>
                 {getFieldDecorator('times', {
