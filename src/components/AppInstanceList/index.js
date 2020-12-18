@@ -44,13 +44,7 @@ class InstanceList extends PureComponent {
               title="运行内存"
               percent={(item.container[0] && item.container[0].usage_rate) || 0}
             />
-            <a
-              onClick={() => {
-                this.props.handlePodClick(item.pod_name, item.manage_name);
-              }}
-              href="javascript:;"
-              className={style.instancename}
-            >
+            <a className={style.instancename} href="javascript:;">
               {this.showName(item.pod_name)}
             </a>
             <br/>
