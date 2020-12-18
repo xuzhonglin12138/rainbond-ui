@@ -34,7 +34,7 @@ export default function NoticeList({
             [styles.read]: item.read
           });
           return (
-            <List.Item className={itemCls} key={item.key || i}>
+            <List.Item className={itemCls} key={item.ID || i}>
               <List.Item.Meta
                 className={styles.meta}
                 avatar={

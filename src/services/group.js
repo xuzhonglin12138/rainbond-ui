@@ -151,7 +151,7 @@ export async function getAppLogs(body = {}) {
         page_size: body.page_size,
         start_time: body.start_time,
         end_time: body.end_time,
-        operation_type: body.operation_type
+        service_alias: body.service_alias
       }
     }
   );

@@ -128,30 +128,19 @@ const upgradeIcon = (
     </svg>
   </i>
 );
-const logSvg = (
+const dynamicSvg = (
   <i className="anticon">
     <svg
-      t="1607308888685"
+      t="1608277476831"
       viewBox="0 0 1024 1024"
-      version="1.1"
-      p-id="5862"
+      p-id="7077"
       width="20"
       height="20"
     >
       <path
-        d="M394.836769 987.615861H163.337688A113.950325 113.950325 0 0 1 46.188758 876.864142V110.798099A113.950325 113.950325 0 0 1 163.337688 0.04638h566.952844A113.950325 113.950325 0 0 1 845.840159 110.798099v338.652369a39.98257 39.98257 0 0 1-77.966011 0V110.798099a39.98257 39.98257 0 0 0-39.98257-36.783965H163.337688a39.98257 39.98257 0 0 0-39.98257 36.783965v766.066043a39.98257 39.98257 0 0 0 39.98257 37.18379h231.499081a36.783964 36.783964 0 1 1 0 73.567929z"
-        fill="#9ca298"
-        p-id="5863"
-      />
-      <path
-        d="M632.333235 285.921756H262.494462a36.783964 36.783964 0 1 1 0-73.567929h369.838773a36.783964 36.783964 0 1 1 0 73.567929zM632.333235 473.44001H262.494462a36.783964 36.783964 0 1 1 0-73.567929h369.838773a36.783964 36.783964 0 1 1 0 73.567929zM976.982989 746.520964c0-21.190762-13.9939-31.986056-37.18379-33.985185a47.979084 47.979084 0 0 1-47.179433-58.774378c8.796165-39.98257 6.797037-45.58013-30.786578-66.371066l-23.989543-13.194249a51.17769 51.17769 0 0 0-71.5688 5.997386c-27.587973 21.590588-39.98257 21.190762-66.371066 0a51.17769 51.17769 0 0 0-71.568801-6.797037l-39.98257 21.990414a37.583616 37.583616 0 0 0-19.591459 47.579258c12.394597 39.98257-5.59756 65.571415-48.778736 69.969498-17.992157 1.999129-29.986928 11.594945-30.786579 27.587973a749.673189 749.673189 0 0 0 0 94.758691c0 20.391111 13.594074 30.786579 35.984313 32.785708a49.178561 49.178561 0 0 1 48.778736 57.574901c-7.996514 41.981699-7.996514 46.379781 31.986056 67.970369 8.39634 4.797908 16.792679 9.995643 25.588845 14.393725a48.778736 48.778736 0 0 0 64.371938-8.39634c30.786579-26.388496 39.98257-25.988671 72.368451 0a388.230756 388.230756 0 0 0 39.982571 23.189891c29.187276-18.391982 57.974727-34.38501 83.963397-53.576644a35.584487 35.584487 0 0 0 3.598431-31.58623c-14.793551-35.984313 8.796165-67.570543 50.378038-71.568801 17.192505 0 28.78745-10.795294 29.587102-25.98867a831.237632 831.237632 0 0 0 1.199477-93.559214z m-245.093154 139.139343a96.357994 96.357994 0 1 1 96.357994-96.357993 95.958168 95.958168 0 0 1-96.357994 96.357993z"
-        fill="#9ca298"
-        p-id="5864"
-      />
-      <path
-        d="M223.311543 587.390335l260.286531 0 0 73.967754-260.286531 0 0-73.967754Z"
-        fill="#9ca298"
-        p-id="5865"
+        d="M844.8 512c0-96-51.2-179.2-128-224-6.4 0-12.8-6.4-19.2-6.4-19.2 0-32 12.8-32 32 0 12.8 6.4 19.2 12.8 25.6 57.6 32 96 96 96 166.4 0 76.8-38.4 140.8-102.4 172.8-6.4 6.4-12.8 12.8-12.8 25.6 0 19.2 12.8 32 32 32 6.4 0 12.8-6.4 12.8-6.4 83.2-38.4 140.8-121.6 140.8-217.6z m-38.4-377.6c-6.4 0-12.8-6.4-19.2-6.4-19.2 0-32 12.8-32 32 0 12.8 6.4 19.2 19.2 25.6C883.2 249.6 960 371.2 960 512c0 140.8-76.8 262.4-185.6 326.4-12.8 6.4-19.2 12.8-19.2 25.6 0 19.2 12.8 32 32 32 6.4 0 12.8 0 19.2-6.4 128-76.8 217.6-217.6 217.6-377.6 0-160-89.6-300.8-217.6-377.6zM76.8 300.8h153.6c19.2 0 51.2-6.4 185.6-108.8 25.6-19.2 44.8-38.4 70.4-51.2v396.8c0 19.2 12.8 32 32 32s32-12.8 32-32V83.2c0-12.8-6.4-25.6-19.2-32-19.2 0-32 0-44.8 6.4L371.2 147.2C268.8 224 236.8 236.8 230.4 236.8h-192c-25.6 0-38.4 12.8-38.4 32v486.4c0 19.2 12.8 32 32 32H256c6.4 0 32 12.8 128 89.6l102.4 89.6c6.4 6.4 12.8 6.4 25.6 6.4 6.4 0 12.8 0 12.8-6.4 12.8-6.4 19.2-19.2 19.2-32v-172.8c0-12.8-12.8-25.6-32-25.6s-32 12.8-32 32v108.8c-12.8-12.8-32-25.6-44.8-44.8-121.6-102.4-153.6-108.8-172.8-108.8H96c-19.2 0-25.6-6.4-25.6-25.6V326.4c-12.8-19.2-6.4-25.6 6.4-25.6z"
+        p-id="7078"
+        fill="#979797"
       />
     </svg>
   </i>
@@ -171,8 +160,8 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.dashboard' }),
       icon: 'dashboard',
       path: `team/${teamName}/region/${regionName}/apps/${appID}`,
-      authority: ['admin', 'user'],
-    },
+      authority: ['admin', 'user']
+    }
   ];
 
   function addMenuArr(obj) {
@@ -184,7 +173,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.publish' }),
       icon: publishIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/publish`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
 
@@ -193,7 +182,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.backup' }),
       icon: backupIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/backup`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
   if (control) {
@@ -201,7 +190,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.gateway' }),
       icon: 'gateway',
       path: `team/${teamName}/region/${regionName}/apps/${appID}/gateway`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
 
@@ -210,14 +199,14 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.upgrade' }),
       icon: upgradeIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/upgrade`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
   addMenuArr({
-    name: formatMessage({ id: 'menu.app.logs' }),
-    icon: logSvg,
-    path: `team/${teamName}/region/${regionName}/apps/${appID}/logs`,
-    authority: ['admin', 'user'],
+    name: formatMessage({ id: 'menu.app.dynamic' }),
+    icon: dynamicSvg,
+    path: `team/${teamName}/region/${regionName}/apps/${appID}/dynamics`,
+    authority: ['admin', 'user']
   });
   return menuArr;
 }
@@ -231,7 +220,7 @@ function formatter(data, parentPath = '', parentAuthority) {
     const result = {
       ...item,
       path,
-      authority: item.authority || parentAuthority,
+      authority: item.authority || parentAuthority
     };
     if (item.children) {
       result.children = formatter(

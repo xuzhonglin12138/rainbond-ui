@@ -8,7 +8,7 @@ export default class AppLogs extends PureComponent {
     return (
       <Fragment>
         <PageHeaderLayout
-          title="日志管理"
+          title="动态"
           content="跟踪账号操作记录的查询，可用于安全分析、资源变更追踪以及合规性审计等场景。"
         >
           <Logs views="app" appID={appID} />

@@ -14,6 +14,7 @@ import {
   Tag,
   Tooltip
 } from 'antd';
+import { Link } from 'dva/router';
 import { connect } from 'dva';
 import moment from 'moment';
 import globalUtil from '@/utils/global';
@@ -47,13 +48,19 @@ export default class Index extends PureComponent {
       logsPageSize: 10,
       logsTotal: 0,
       adminList: [],
+      apps: [],
       startTime: '',
       endTime: '',
-      operationType: ''
+      operationType: '',
+      service_alias: ''
     };
   }
 
   componentDidMount() {
+    const { views } = this.props;
+    if (views === 'app') {
+      this.loadComponents();
+    }
     this.handleViews();
     this.handleUser();
   }
@@ -86,10 +93,21 @@ export default class Index extends PureComponent {
       }
     );
   };
+  handleSearchComponent = service_alias => {
+    this.setState(
+      {
+        service_alias
+      },
+      () => {
+        this.loadComponents();
+      }
+    );
+  };
   handleChange = value => {
     if (value === '') {
       this.setState(
         {
+          loading: true,
           name: ''
         },
         () => {
@@ -99,6 +117,7 @@ export default class Index extends PureComponent {
     }
     this.setState(
       {
+        loading: true,
         name: value,
         logsPage: 1
       },
@@ -119,6 +138,30 @@ export default class Index extends PureComponent {
       }
     );
   };
+  handleChangeComponent = value => {
+    if (value === '') {
+      this.setState(
+        {
+          loading: true,
+          service_alias: ''
+        },
+        () => {
+          this.handleViews();
+        }
+      );
+    }
+    this.setState(
+      {
+        loading: true,
+        service_alias: value,
+        logsPage: 1
+      },
+      () => {
+        this.handleViews();
+      }
+    );
+  };
+
   fetchTeamOperationLogs = () => {
     const { dispatch } = this.props;
     const { logsPage, logsPageSize, name, startTime, endTime } = this.state;
@@ -152,7 +195,7 @@ export default class Index extends PureComponent {
       name,
       startTime,
       endTime,
-      operationType
+      service_alias
     } = this.state;
     dispatch({
       type: 'groupControl/fetchAppLogs',
@@ -164,7 +207,7 @@ export default class Index extends PureComponent {
         end_time: endTime,
         team_name: globalUtil.getCurrTeamName(),
         group_id: appID,
-        operation_type: operationType
+        service_alias
       },
       callback: res => {
         if (res && res._code === 200) {
@@ -248,6 +291,29 @@ export default class Index extends PureComponent {
         if (res && res._code === 200) {
           this.setState({
             adminList: res.list || []
+          });
+        }
+      }
+    });
+  };
+  loadComponents = () => {
+    const { dispatch, appID } = this.props;
+    const { service_alias } = this.state;
+    dispatch({
+      type: 'groupControl/fetchApps',
+      payload: {
+        team_name: globalUtil.getCurrTeamName(),
+        region_name: globalUtil.getCurrRegionName(),
+        group_id: appID,
+        query: service_alias,
+        page: 1,
+        page_size: 99
+      },
+      callback: res => {
+        if (res && res._code == 200) {
+          this.setState({
+            loading: false,
+            apps: res.list || []
           });
         }
       }
@@ -354,12 +420,11 @@ export default class Index extends PureComponent {
       logList,
       logsPage,
       logsPageSize,
-      logsTotal
+      logsTotal,
+      apps
     } = this.state;
 
     const logs = logsUtil.fetchOperationType();
-    const applogs = logsUtil.fetchAppOperationType();
-    const operations = views === 'app' ? applogs : logs;
     const formItemLayout = {
       labelCol: {
         xs: {
@@ -402,7 +467,7 @@ export default class Index extends PureComponent {
         }
       }
     ];
-    if (views !== 'teams') {
+    if (views === 'enterprise') {
       columns.push({
         title: '操作类型',
         align: 'center',
@@ -410,6 +475,31 @@ export default class Index extends PureComponent {
         dataIndex: 'operation_type',
         render: val => {
           return <span>{logs[val] || '-'}</span>;
+        }
+      });
+    }
+    if (views === 'app') {
+      columns.push({
+        title: '组件名称',
+        align: 'center',
+        width: 150,
+        dataIndex: 'service_cname',
+        render: (val, data) => {
+          return (
+            <div>
+              {val ? (
+                <Link
+                  to={`/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/components/${
+                    data.service_alias
+                  }/overview`}
+                >
+                  {val}
+                </Link>
+              ) : (
+                '-'
+              )}
+            </div>
+          );
         }
       });
     }
@@ -483,7 +573,7 @@ export default class Index extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            {views !== 'teams' && (
+            {views === 'enterprise' && (
               <Col span={4}>
                 <FormItem {...formItemLayout}>
                   {getFieldDecorator('operation_type', {
@@ -501,7 +591,7 @@ export default class Index extends PureComponent {
                       <Option key={0} value="">
                         所有类型
                       </Option>
-                      {Object.keys(operations).map(item => (
+                      {Object.keys(logs).map(item => (
                         <Option value={item}>{logs[item]}</Option>
                       ))}
                     </Select>
@@ -509,6 +599,36 @@ export default class Index extends PureComponent {
                 </FormItem>
               </Col>
             )}
+
+            <Col span={4}>
+              <FormItem {...formItemLayout}>
+                {getFieldDecorator('service_alias')(
+                  <Select
+                    showSearch
+                    placeholder="请选择组件"
+                    defaultActiveFirstOption={false}
+                    filterOption={false}
+                    notFoundContent={null}
+                    onSearch={this.handleSearchComponent}
+                    onChange={this.handleChangeComponent}
+                  >
+                    <Option key={0} value="">
+                      所有组件
+                    </Option>
+                    {apps &&
+                      apps.length > 0 &&
+                      apps.map(item => {
+                        const { service_alias, service_cname } = item;
+                        return (
+                          <Option key={service_alias} value={service_alias}>
+                            {service_cname}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
             <Col span={8}>
               <FormItem {...formItemLayout}>
                 {getFieldDecorator('times', {
@@ -533,7 +653,7 @@ export default class Index extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={views !== 'teams' ? 4 : 8}>
+            <Col span={views === 'teams' ? 8 : 4}>
               <Button
                 onClick={this.handleSubmit}
                 type="primary"

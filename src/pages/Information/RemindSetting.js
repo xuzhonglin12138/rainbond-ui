@@ -1,6 +1,6 @@
-import { Spin, Switch } from 'antd';
-import { connect } from 'dva';
 import React, { PureComponent } from 'react';
+import { Spin, Switch, Tag } from 'antd';
+import { connect } from 'dva';
 import styles from './index.less';
 
 @connect(({ global, user }) => ({
@@ -84,18 +84,22 @@ export default class RemindSetting extends PureComponent {
           {list &&
             list.length > 0 &&
             list.map(item => {
-              const { ID, category, enable } = item;
+              const { ID, category, enable, email } = item;
               return (
                 <div className={styles.customTitle} key={ID}>
                   <ul className={styles.customContent}>
                     <li>{categoryMap[category] || category}</li>
                     <li>
                       <Switch
+                        style={{ marginRight: '5px' }}
                         checked={enable}
                         onChange={() => {
                           this.onChange(item);
                         }}
                       />
+                      {email && (
+                        <Tag color={enable ? 'blue' : '#cccccc'}>{email}</Tag>
+                      )}
                     </li>
                   </ul>
                 </div>

@@ -5,9 +5,7 @@ const OperationType = {
   enterprise_manage: '企业管理',
   cluster_manage: '集群管理',
   component_library_manage: '组件库管理',
-  team_manage: '团队管理'
-};
-const AppOperationType = {
+  team_manage: '团队管理',
   application_manage: '应用管理',
   component_manage: '组件管理'
 };
@@ -19,10 +17,7 @@ const AppOperationType = {
 
 export default {
   fetchOperationType() {
-    return Object.assign({}, OperationType, AppOperationType);
-  },
-  fetchAppOperationType() {
-    return AppOperationType;
+    return OperationType;
   },
   // eslint-disable-next-line consistent-return
   fetchLogsContent(val) {

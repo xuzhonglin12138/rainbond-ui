@@ -10,6 +10,7 @@ import {
   Row,
   Spin,
   Tag,
+  Tooltip,
   Select
 } from 'antd';
 import { connect } from 'dva';
@@ -166,7 +167,7 @@ class EditGroupName extends PureComponent {
                   style={{ width: '100%' }}
                 >
                   {members.map(d => (
-                    <Option key={d.nick_name}>{d.user_name}</Option>
+                    <Option key={d.nick_name}>{d.real_name}</Option>
                   ))}
                 </Select>
               )}
@@ -638,14 +639,31 @@ class Main extends PureComponent {
                 />
               )}
               {currApp.principal && (
-                <Tag
-                  style={{
-                    margin: '0 10px'
-                  }}
-                  color="green"
+                <Tooltip
+                  placement="bottom"
+                  title={
+                    <div className={styles.principalBox}>
+                      <div>
+                        <span>负责人</span>：{currApp.principal}
+                      </div>
+                      <div>
+                        <span>账户</span>：{currApp.username}
+                      </div>
+                      <div>
+                        <span>邮箱</span>：{currApp.email}
+                      </div>
+                    </div>
+                  }
                 >
-                  {currApp.principal}
-                </Tag>
+                  <Tag
+                    style={{
+                      margin: '0 10px'
+                    }}
+                    color="green"
+                  >
+                    {currApp.principal}
+                  </Tag>
+                </Tooltip>
               )}
             </div>
             <div className={styles.content_Box}>

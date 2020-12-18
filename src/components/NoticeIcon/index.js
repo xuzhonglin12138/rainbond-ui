@@ -20,12 +20,18 @@ export default class NoticeIcon extends PureComponent {
     emptyImage:
       'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg'
   };
+  // eslint-disable-next-line react/sort-comp
   static Tab = TabPane;
   constructor(props) {
     super(props);
     this.state = {};
-    if (props.children && props.children[0]) {
-      this.state.tabType = props.children[0].props.name;
+    if (props.children && props.children.length > 1) {
+      const list = props.children;
+      let tabType = list[0].props.name;
+      if (list[0].props.count < 1 && list[1].props.count > 0) {
+        tabType = list[1].props.name;
+      }
+      this.state.tabType = tabType;
     }
   }
   onItemClick = (item, tabProps) => {
@@ -62,9 +68,16 @@ export default class NoticeIcon extends PureComponent {
         </TabPane>
       );
     });
+    const type =
+      tabType.indexOf('alertInfo') > -1 ? 'alertInfo/.0' : 'systemInfo/.1';
+
     return (
       <Spin spinning={loading} delay={0}>
-        <Tabs className={styles.tabs} onChange={this.onTabChange}>
+        <Tabs
+          defaultActiveKey={type}
+          className={styles.tabs}
+          onChange={this.onTabChange}
+        >
           {panes}
         </Tabs>
       </Spin>
