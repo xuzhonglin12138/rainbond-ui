@@ -1,8 +1,9 @@
-import React, { PureComponent } from 'react';
+/* eslint-disable no-underscore-dangle */
+import { Button, Card, Col, Form, Input, notification, Row, Table } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
-import { Button, Card, Col, Form, Input, notification, Row, Table } from 'antd';
+import React, { PureComponent } from 'react';
 import ConfirmModal from '../../components/ConfirmModal';
 import CreatUser from '../../components/CreatUserForm';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -87,8 +88,18 @@ export default class EnterpriseUsers extends PureComponent {
         }
       },
       handleError: res => {
-        cloud.handleCloudAPIError(res);
-      },
+        if (
+          res &&
+          res.data &&
+          res.data.code &&
+          res.data.code < 600 &&
+          res.data.msg_show
+        ) {
+          notification.warning({ message: res.data.msg_show });
+        } else {
+          cloud.handleCloudAPIError(res);
+        }
+      }
     });
   };
 
@@ -96,8 +107,9 @@ export default class EnterpriseUsers extends PureComponent {
     const { userInfo } = this.state;
     const info = userInfo;
     info.real_name = values.real_name;
-    info.password = values.password;
-
+    if (values.password) {
+      info.password = values.password;
+    }
     const {
       dispatch,
       match: {
@@ -357,7 +369,6 @@ export default class EnterpriseUsers extends PureComponent {
           )}
 
           <Table
-            size="middle"
             pagination={{
               current: page,
               pageSize,
