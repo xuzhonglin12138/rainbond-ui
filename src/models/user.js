@@ -23,7 +23,7 @@ import {
   fetchAccessToken,
   addAccessToken,
   putAccessToken,
-  deleteAccessToke,
+  deleteAccessToke
 } from '../services/user';
 import { setAuthority } from '../utils/authority';
 import userUtil from '../utils/global';
@@ -38,7 +38,7 @@ export default {
     list: [],
     currentUser: null,
     notifyCount: 0,
-    register: null,
+    register: null
   },
 
   effects: {
@@ -213,8 +213,8 @@ export default {
         yield put(routerRedux.push('/user/login'));
       }
     },
-    *register({ payload, complete }, { call, put, select }) {
-      const response = yield call(register, payload);
+    *register({ payload, complete, handleError }, { call, put, select }) {
+      const response = yield call(register, payload, handleError);
 
       if (response) {
         // 非常粗暴的跳转,登陆成功之后权限会变成user或admin,会自动重定向到主页 Login success after permission
@@ -245,8 +245,8 @@ export default {
             routerRedux.push({
               pathname: '/user/register-result',
               state: {
-                account: response.bean.nick_name,
-              },
+                account: response.bean.nick_name
+              }
             })
           );
         } else {
@@ -289,7 +289,7 @@ export default {
       if (response) {
         callback && callback(response.bean);
       }
-    },
+    }
   },
 
   reducers: {
@@ -297,7 +297,7 @@ export default {
       return {
         ...state,
         register: payload,
-        redirect,
+        redirect
       };
     },
     changeLoginStatus(state, { payload }) {
@@ -305,7 +305,7 @@ export default {
       return {
         ...state,
         status: payload.status,
-        type: payload.type,
+        type: payload.type
       };
     },
     tologout(state, action) {
@@ -314,13 +314,13 @@ export default {
     save(state, action) {
       return {
         ...state,
-        list: action.payload,
+        list: action.payload
       };
     },
     saveCurrentUser(state, action) {
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser: action.payload
       };
     },
     saveOtherTeam(state, action) {
@@ -328,14 +328,14 @@ export default {
       currentUser.teams.push(action.team);
       return {
         ...state,
-        currentUser: Object.assign({}, currentUser),
+        currentUser: Object.assign({}, currentUser)
       };
     },
     changeNotifyCount(state, action) {
       return {
         ...state,
-        notifyCount: action.payload,
+        notifyCount: action.payload
       };
-    },
-  },
+    }
+  }
 };
