@@ -1,19 +1,11 @@
 /* eslint-disable camelcase */
-import {
-  Card,
-  Col,
-  Form,
-  Modal,
-  Popconfirm,
-  Row,
-  Select,
-  Table
-} from 'antd';
+import { Card, Col, Form, Modal, Popconfirm, Row, Select, Table } from 'antd';
 import { connect } from 'dva';
 import React, { Fragment, PureComponent } from 'react';
 import globalUtil from '../../../utils/global';
 import roleUtil from '../../../utils/role';
 import Logs from '@/components/Logs';
+import styles from './index.less';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -175,16 +167,26 @@ export default class EventList extends PureComponent {
                         data.is_pass === 0 &&
                         isCreate && (
                           <Fragment>
-                            <a onClick={() => this.handleJoinShow(data)}>
+                            <span
+                              className={styles.linkText}
+                              onClick={() => this.handleJoinShow(data)}
+                            >
                               通过
-                            </a>
+                            </span>
                             <Popconfirm
                               title="确定要拒绝用户么?"
                               onConfirm={() => {
                                 this.handleRefused(data);
                               }}
                             >
-                              <a style={{ marginLeft: 6 }}>拒绝</a>
+                              <span
+                                className={styles.linkText}
+                                style={{
+                                  marginLeft: 6
+                                }}
+                              >
+                                拒绝
+                              </span>
                             </Popconfirm>
                           </Fragment>
                         )
