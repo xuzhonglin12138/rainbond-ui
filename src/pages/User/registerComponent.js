@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable jsx-a11y/alt-text */
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
@@ -12,7 +14,7 @@ const FormItem = Form.Item;
 const passwordProgressMap = {
   ok: 'success',
   pass: 'normal',
-  poor: 'exception',
+  poor: 'exception'
 };
 
 @connect(({ user, loading, global }) => ({
@@ -20,7 +22,7 @@ const passwordProgressMap = {
   rainbondInfo: global.rainbondInfo,
   isRegist: global.isRegist,
   submitting: loading.effects['user/register'],
-  thirdsubmitting: loading.effects['user/thirdRegister'],
+  thirdsubmitting: loading.effects['user/thirdRegister']
 }))
 @Form.create()
 export default class RegisterComponent extends Component {
@@ -31,7 +33,7 @@ export default class RegisterComponent extends Component {
     visible: false,
     help: '',
     prefix: '86',
-    time: Date.now(),
+    time: Date.now()
   };
 
   componentWillUnmount() {
@@ -67,11 +69,14 @@ export default class RegisterComponent extends Component {
     const { form, onSubmit } = this.props;
     form.validateFields(
       {
-        force: true,
+        force: true
       },
       (err, values) => {
         if (!err) {
           userUtil.removeCookie();
+          if (!values.name) {
+            values.name = values.user_name;
+          }
           onSubmit && onSubmit(values);
         }
       }
@@ -81,7 +86,7 @@ export default class RegisterComponent extends Component {
   handleConfirmBlur = e => {
     const { value } = e.target;
     this.setState({
-      confirmDirty: this.state.confirmDirty || !!value,
+      confirmDirty: this.state.confirmDirty || !!value
     });
   };
 
@@ -98,20 +103,20 @@ export default class RegisterComponent extends Component {
     if (!value) {
       this.setState({
         help: '请输入密码！',
-        visible: !!value,
+        visible: !!value
       });
       callback('error');
     } else {
       this.setState({ help: '' });
       if (!this.state.visible) {
         this.setState({
-          visible: !!value,
+          visible: !!value
         });
       }
       if (value.length < 8) {
         this.setState({
           help: '密码不能少于8位！',
-          visible: !!value,
+          visible: !!value
         });
         callback('error');
       } else {
@@ -127,7 +132,11 @@ export default class RegisterComponent extends Component {
   changePrefix = value => {
     this.setState({ prefix: value });
   };
-
+  changeTime = () => {
+    this.setState({
+      time: Date.now()
+    });
+  };
   renderPasswordProgress = () => {
     const { form } = this.props;
     const value = form.getFieldValue('password');
@@ -144,19 +153,15 @@ export default class RegisterComponent extends Component {
       </div>
     ) : null;
   };
-  changeTime = () => {
-    this.setState({
-      time: Date.now(),
-    });
-  };
+
   render() {
     const {
       form,
       submitting,
       thirdsubmitting,
       type,
-      user_info,
-      rainbondInfo,
+      user_info: userInfo,
+      rainbondInfo
     } = this.props;
     const { getFieldDecorator } = form;
     const firstRegist = !rainbondUtil.fetchIsFirstRegist(rainbondInfo);
@@ -169,45 +174,49 @@ export default class RegisterComponent extends Component {
               rules: [
                 {
                   required: true,
-                  message: '请输入企业名称',
-                },
-              ],
+                  message: '请输入企业名称'
+                }
+              ]
             })(<Input size="large" placeholder="企业名称" />)}
           </FormItem>
         )}
         <FormItem>
           {getFieldDecorator('user_name', {
-            initialValue: user_info ? user_info.oauth_user_name : '',
+            initialValue: (userInfo && userInfo.oauth_user_name) || '',
             rules: [
+              { required: true, message: '请填写用户名!' },
               {
-                required: true,
-                message: '请输入用户名！',
-              },
-            ],
+                pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
+                message: '只支持字母、数字、中文、_和-组合'
+              }
+            ]
           })(<Input size="large" placeholder="用户名" />)}
         </FormItem>
         <FormItem>
+          {getFieldDecorator('name')(<Input size="large" placeholder="姓名" />)}
+        </FormItem>
+        <FormItem>
           {getFieldDecorator('email', {
-            initialValue: user_info ? user_info.oauth_user_email : '',
+            initialValue: (userInfo && userInfo.oauth_user_email) || '',
             rules: [
               {
                 required: true,
-                message: '请输入邮箱地址！',
+                message: '请输入邮箱地址！'
               },
               {
                 type: 'email',
-                message: '邮箱地址格式错误！',
-              },
-            ],
+                message: '邮箱地址格式错误！'
+              }
+            ]
           })(<Input size="large" placeholder="邮箱" />)}
         </FormItem>
         <FormItem help={help}>
           {getFieldDecorator('password', {
             rules: [
               {
-                validator: this.checkPassword,
-              },
-            ],
+                validator: this.checkPassword
+              }
+            ]
           })(
             <Input
               size="large"
@@ -221,12 +230,12 @@ export default class RegisterComponent extends Component {
             rules: [
               {
                 required: true,
-                message: '请确认密码！',
+                message: '请确认密码！'
               },
               {
-                validator: this.checkConfirm,
-              },
-            ],
+                validator: this.checkConfirm
+              }
+            ]
           })(<Input size="large" type="password" placeholder="确认密码" />)}
         </FormItem>
         <FormItem>
@@ -236,9 +245,9 @@ export default class RegisterComponent extends Component {
                 rules: [
                   {
                     required: true,
-                    message: '请输入验证码！',
-                  },
-                ],
+                    message: '请输入验证码！'
+                  }
+                ]
               })(<Input size="large" placeholder="验证码" />)}
             </Col>
             <Col span={8}>
@@ -247,7 +256,7 @@ export default class RegisterComponent extends Component {
                 src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
                 style={{
                   width: '100%',
-                  height: 40,
+                  height: 40
                 }}
               />
             </Col>
