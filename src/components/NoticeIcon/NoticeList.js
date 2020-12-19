@@ -9,10 +9,11 @@ export default function NoticeList({
   data = [],
   onJump,
   onClear,
-  title,
+  name,
   locale,
   emptyText,
-  emptyImage
+  emptyImage,
+  tabType
 }) {
   if (data.length === 0) {
     return (
@@ -33,7 +34,7 @@ export default function NoticeList({
             [styles.read]: item.read
           });
           return (
-            <List.Item className={itemCls} key={item.key || i}>
+            <List.Item className={itemCls} key={item.ID || i}>
               <List.Item.Meta
                 className={styles.meta}
                 avatar={
@@ -42,7 +43,7 @@ export default function NoticeList({
                   ) : null
                 }
                 title={
-                  <div className={styles.title} onClick={() => onJump()}>
+                  <div className={styles.title} onClick={() => onJump(tabType)}>
                     <div className={styles.extra}>
                       {item.is_read === false ? <Badge status="error" /> : null}
                     </div>

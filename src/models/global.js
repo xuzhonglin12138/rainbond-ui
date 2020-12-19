@@ -47,6 +47,8 @@ import {
   fetchEnterpriseUsers,
   fetchOperationLogs,
   fetchInternalMessages,
+  fetchSetRemind,
+  putSetRemind,
   putInternalMessages,
   fetchLoginLogs,
   deleteEnterpriseUsers,
@@ -117,6 +119,7 @@ export default {
     enterprise: null,
     enterpriseInfo: null,
     isRegist: false,
+    messageList:[],
     memoryTip: '',
     is_enterprise_version: false,
     nouse: false,
@@ -558,6 +561,22 @@ export default {
     *fetchInternalMessages({ payload, callback }, { put, call }) {
       const response = yield call(fetchInternalMessages, payload);
       if (response) {
+        yield put({
+          type: 'saveMessages',
+          payload: response.list || [],
+        });
+        callback && callback(response);
+      }
+    },
+    *fetchSetRemind({ payload, callback }, { put, call }) {
+      const response = yield call(fetchSetRemind, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *putSetRemind({ payload, callback }, { put, call }) {
+      const response = yield call(putSetRemind, payload);
+      if (response) {
         callback && callback(response);
       }
     },
@@ -885,6 +904,12 @@ export default {
       return {
         ...state,
         nouse: payload,
+      };
+    },
+    saveMessages(state, { payload }) {
+      return {
+        ...state,
+        messageList: payload,
       };
     },
     saveEnterpriseInfo(state, { payload }) {

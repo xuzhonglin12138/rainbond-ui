@@ -14,8 +14,8 @@ export async function getBackupStatus(
     {
       method: 'get',
       params: {
-        backup_id: body.backup_id,
-      },
+        backup_id: body.backup_id
+      }
     }
   );
 }
@@ -31,8 +31,8 @@ export async function getBackup(body = { team_name, group_id }) {
       params: {
         group_id: body.group_id,
         page: body.page,
-        page_size: body.page_size,
-      },
+        page_size: body.page_size
+      }
     }
   );
 }
@@ -48,8 +48,8 @@ export async function queryAllBackup(param) {
       method: 'get',
       params: {
         page: param.pageNum || 1,
-        page_size: param.pageSize || 10,
-      },
+        page_size: param.pageSize || 10
+      }
     }
   );
 }
@@ -60,8 +60,8 @@ export async function queryRestoreState(param) {
     {
       method: 'get',
       params: {
-        group_uuid: param.group_uuid,
-      },
+        group_uuid: param.group_uuid
+      }
     }
   );
 }
@@ -76,9 +76,9 @@ export async function backup(body = { team_name, group_id }, handleError) {
       data: {
         note: body.note,
         mode: body.mode,
-        force: body.force,
+        force: body.force
       },
-      handleError,
+      handleError
     }
   );
 }
@@ -86,14 +86,17 @@ export async function backup(body = { team_name, group_id }, handleError) {
 /*
   查询这个组的所有可监控应用的响应时间和吞吐率
 */
-export async function groupMonitorData(body = { team_name, group_id }, handleError) {
+export async function groupMonitorData(
+  body = { team_name, group_id },
+  handleError
+) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/monitor/batch_query`,
     {
       method: 'get',
       showLoading: false,
       showMessage: false,
-      handleError,
+      handleError
     }
   );
 }
@@ -108,14 +111,14 @@ export async function editAppCreateCompose(
     team_name,
     group_id,
     group_name,
-    compose_content,
+    compose_content
   }
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}/compose_update`,
     {
       method: 'put',
-      data: body,
+      data: body
     }
   );
 }
@@ -126,14 +129,30 @@ export async function editAppCreateCompose(
 export async function getGroupDetail(
   body = {
     team_name,
-    group_id,
+    group_id
   },
   handleError
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}`,
     {
-      handleError,
+      handleError
+    }
+  );
+}
+export async function getAppLogs(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/apps/${body.group_id}/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        username: body.name,
+        page: body.page,
+        page_size: body.page_size,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        service_alias: body.service_alias
+      }
     }
   );
 }
@@ -147,7 +166,7 @@ export async function getGroupApps(
     region_name,
     group_id,
     page,
-    page_size,
+    page_size
   }
 ) {
   return request(
@@ -158,9 +177,9 @@ export async function getGroupApps(
         group_id: body.group_id,
         page: body.page || 1,
         page_size: body.page_size || 100,
-        query: body.query,
+        query: body.query
       },
-      showLoading: false,
+      showLoading: false
     }
   );
 }
@@ -171,13 +190,13 @@ export async function getGroupApps(
 export async function deleteGroup(
   body = {
     team_name,
-    group_id,
+    group_id
   }
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}`,
     {
-      method: 'delete',
+      method: 'delete'
     }
   );
 }
@@ -189,7 +208,7 @@ export async function deleteCompose(
   body = {
     team_name,
     group_id,
-    compose_id,
+    compose_id
   }
 ) {
   return request(
@@ -197,8 +216,8 @@ export async function deleteCompose(
     {
       method: 'delete',
       data: {
-        compose_id: body.compose_id,
-      },
+        compose_id: body.compose_id
+      }
     }
   );
 }
@@ -211,7 +230,7 @@ export async function editGroup(
     team_name,
     group_id,
     group_name,
-    group_note,
+    group_note
   }
 ) {
   return request(
@@ -219,9 +238,10 @@ export async function editGroup(
     {
       method: 'put',
       data: {
+        username: body.username,
         group_name: body.group_name,
-        group_note: body.group_note,
-      },
+        group_note: body.group_note
+      }
     }
   );
 }
@@ -245,7 +265,7 @@ export async function addGroup(
         group_name: body.group_name,
         group_note: body.group_note,
         region_name: body.region_name
-      },
+      }
     }
   );
 }
@@ -261,8 +281,8 @@ export async function queryCopyComponent(body = {}) {
       method: 'get',
       data: {
         tenantName,
-        group_id,
-      },
+        group_id
+      }
     }
   );
 }
@@ -270,14 +290,14 @@ export async function queryCopyComponent(body = {}) {
 /*
   添加复制应用
 */
-export async function AddCopyTeamApps(body = {},handleError) {
+export async function AddCopyTeamApps(body = {}, handleError) {
   const { tenantName, group_id } = body;
   return request(
     `${apiconfig.baseUrl}/console/teams/${tenantName}/groupapp/${group_id}/copy`,
     {
       handleError,
       method: 'post',
-      data: body,
+      data: body
     }
   );
 }
@@ -288,7 +308,7 @@ export async function AddCopyTeamApps(body = {},handleError) {
 export async function recordShare(
   body = {
     team_name,
-    group_id,
+    group_id
   }
 ) {
   return request(
@@ -297,8 +317,8 @@ export async function recordShare(
       method: 'get',
       params: {
         team_name: body.team_name,
-        group_id: body.group_id,
-      },
+        group_id: body.group_id
+      }
     }
   );
 }
@@ -309,7 +329,7 @@ export async function recordShare(
 export async function createShare(
   body = {
     team_name,
-    group_id,
+    group_id
   }
 ) {
   return request(
@@ -319,8 +339,8 @@ export async function createShare(
       data: {
         group_id: body.group_id,
         scope: body.scope,
-        target: body.target,
-      },
+        target: body.target
+      }
     }
   );
 }
@@ -328,7 +348,7 @@ export async function createShare(
 export async function getShareRecords(
   body = {
     team_name,
-    app_id,
+    app_id
   }
 ) {
   return request(
@@ -337,8 +357,8 @@ export async function getShareRecords(
       method: 'get',
       params: {
         page: body.page,
-        page_size: body.page_size,
-      },
+        page_size: body.page_size
+      }
     }
   );
 }
@@ -348,13 +368,13 @@ export async function getShareRecord(
   body = {
     team_name,
     app_id,
-    record_id,
+    record_id
   }
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.app_id}/share/record/${body.record_id}`,
     {
-      method: 'get',
+      method: 'get'
     }
   );
 }
@@ -364,13 +384,13 @@ export async function deleteShareRecord(
   body = {
     team_name,
     app_id,
-    record_id,
+    record_id
   }
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.app_id}/share/record/${body.record_id}`,
     {
-      method: 'delete',
+      method: 'delete'
     }
   );
 }
@@ -381,7 +401,7 @@ export async function deleteShareRecord(
 export async function giveupShare(
   body = {
     team_name,
-    share_id,
+    share_id
   }
 ) {
   return request(
@@ -396,13 +416,13 @@ export async function giveupShare(
 export async function getShare(
   body = {
     team_name,
-    shareId,
+    shareId
   }
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/share/${body.shareId}/info`,
     {
-      method: 'get',
+      method: 'get'
     }
   );
 }
@@ -415,7 +435,7 @@ export async function submitShare(
     team_name,
     share_id,
     new_info,
-    use_force,
+    use_force
   },
   handleError
 ) {
@@ -426,8 +446,8 @@ export async function submitShare(
       data: body.new_info,
       handleError,
       params: {
-        use_force: body.use_force,
-      },
+        use_force: body.use_force
+      }
     }
   );
 }
@@ -439,7 +459,7 @@ export async function buildCompose(
   body = {
     team_name,
     group_id,
-    compose_id,
+    compose_id
   }
 ) {
   return request(
@@ -447,8 +467,8 @@ export async function buildCompose(
     {
       method: 'post',
       data: {
-        compose_id: body.compose_id,
-      },
+        compose_id: body.compose_id
+      }
     }
   );
 }
@@ -459,7 +479,7 @@ export async function buildCompose(
 export async function getShareEventInfo(
   body = {
     team_name,
-    share_id,
+    share_id
   }
 ) {
   return request(
@@ -475,7 +495,7 @@ export async function startShareEvent(
   body = {
     team_name,
     share_id,
-    event_id,
+    event_id
   }
 ) {
   return request(
@@ -491,7 +511,7 @@ export async function startPluginShareEventInShareApp(
   body = {
     team_name,
     share_id,
-    event_id,
+    event_id
   }
 ) {
   return request(
@@ -507,7 +527,7 @@ export async function getPluginShareEventInShareApp(
   body = {
     team_name,
     share_id,
-    event_id,
+    event_id
   }
 ) {
   return request(
@@ -523,7 +543,7 @@ export async function getShareStatus(
   body = {
     team_name,
     share_id,
-    event_id,
+    event_id
   }
 ) {
   return request(
@@ -539,7 +559,7 @@ export async function completeShare(
   body = {
     team_name,
     share_id,
-    event_id,
+    event_id
   }
 ) {
   return request(
@@ -560,7 +580,7 @@ export async function migrateApp(
     group_id,
     migrate_type,
     event_id,
-    notRecovered_restore_id,
+    notRecovered_restore_id
   }
 ) {
   return request(
@@ -573,8 +593,8 @@ export async function migrateApp(
         backup_id: body.backup_id,
         migrate_type: body.migrate_type,
         event_id: body.event_id,
-        restore_id: body.notRecovered_restore_id,
-      },
+        restore_id: body.notRecovered_restore_id
+      }
     }
   );
 }
@@ -590,8 +610,8 @@ export async function queryMigrateApp(
     {
       method: 'get',
       params: {
-        restore_id: body.restore_id,
-      },
+        restore_id: body.restore_id
+      }
     }
   );
 }
@@ -605,8 +625,8 @@ export async function delRestore(body = { team_name, group_id, new_group_id }) {
     {
       method: 'DELETE',
       data: {
-        new_group_id: body.new_group_id,
-      },
+        new_group_id: body.new_group_id
+      }
     }
   );
 }
@@ -620,8 +640,8 @@ export async function delBackup(body = { team_name, group_id, backup_id }) {
     {
       method: 'DELETE',
       data: {
-        backup_id: body.backup_id,
-      },
+        backup_id: body.backup_id
+      }
     }
   );
 }
@@ -637,8 +657,8 @@ export async function delFailureBackup(
     {
       method: 'DELETE',
       data: {
-        backup_id: body.backup_id,
-      },
+        backup_id: body.backup_id
+      }
     }
   );
 }

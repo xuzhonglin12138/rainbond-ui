@@ -10,7 +10,8 @@ import {
   Row,
   Button,
   Table,
-  Pagination
+  Pagination,
+  Tooltip
 } from 'antd';
 import moment from 'moment';
 import styles from '../index.less';
@@ -36,7 +37,7 @@ export default class LoginLog extends PureComponent {
     this.state = {
       username: '',
       page: 1,
-      page_size: 10,
+      page_size: 999,
       loading: true,
       logList: [],
       logsPage: 1,
@@ -262,13 +263,13 @@ export default class LoginLog extends PureComponent {
                   rules: [
                     {
                       required: false,
-                      message: '请选择成员'
+                      message: '请选择用户'
                     }
                   ]
                 })(
                   <Select
                     showSearch
-                    placeholder="请选择成员"
+                    placeholder="请选择用户"
                     defaultActiveFirstOption={false}
                     filterOption={false}
                     notFoundContent={null}
@@ -276,7 +277,7 @@ export default class LoginLog extends PureComponent {
                     onChange={this.handleChange}
                   >
                     <Option key={0} value="">
-                      所有成员
+                      所有用户
                     </Option>
                     {adminList &&
                       adminList.length > 0 &&
@@ -336,10 +337,25 @@ export default class LoginLog extends PureComponent {
           dataSource={logList || []}
           columns={[
             {
-              title: '成员',
+              title: '用户',
               align: 'center',
-              dataIndex: 'username',
-              width: 130
+              dataIndex: 'real_name',
+              width: 130,
+              render: (val, data) => {
+                return (
+                  <Tooltip
+                    placement="top"
+                    title={
+                      <div>
+                        <div>账户：{data.username}</div>
+                        <div>邮箱：{data.email}</div>
+                      </div>
+                    }
+                  >
+                    {val}
+                  </Tooltip>
+                );
+              }
             },
 
             {

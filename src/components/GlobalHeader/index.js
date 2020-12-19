@@ -4,7 +4,7 @@
 import rainbondUtil from '@/utils/rainbond';
 import { Avatar, Dropdown, Icon, Layout, Menu, notification, Spin } from 'antd';
 import { connect } from 'dva';
-import { routerRedux, Link } from 'dva/router';
+import { routerRedux } from 'dva/router';
 import Debounce from 'lodash-decorators/debounce';
 import React, { PureComponent } from 'react';
 import userIcon from '../../../public/images/user-icon-small.png';
@@ -14,10 +14,11 @@ import styles from './index.less';
 
 const { Header } = Layout;
 
-@connect(({ user, global, appControl, order }) => ({
+@connect(({ user, global, appControl }) => ({
   rainbondInfo: global.rainbondInfo,
   appDetail: appControl.appDetail,
-  currentUser: user.currentUser
+  currentUser: user.currentUser,
+  messageList: global.messageList
   // enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class GlobalHeader extends PureComponent {
@@ -25,9 +26,7 @@ export default class GlobalHeader extends PureComponent {
     super(props);
     this.state = {
       showChangePassword: false,
-      loading: true,
-      List: [],
-      total: 0
+      loading: true
     };
   }
   componentDidMount() {
@@ -35,7 +34,6 @@ export default class GlobalHeader extends PureComponent {
   }
   loadInternalMessages = () => {
     const { dispatch } = this.props;
-
     dispatch({
       type: 'global/fetchInternalMessages',
       payload: {
@@ -45,9 +43,7 @@ export default class GlobalHeader extends PureComponent {
       callback: res => {
         if (res && res._code === 200) {
           this.setState({
-            loading: false,
-            List: res.list,
-            total: res.total
+            loading: false
           });
         }
       }
@@ -94,9 +90,10 @@ export default class GlobalHeader extends PureComponent {
     dispatch(routerRedux.push(`/enterprise/${eid}/orders/overviewService`));
   };
 
-  handleJump = () => {
+  handleJump = tabType => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push(`/information/management/notice/all`));
+    const type = tabType.indexOf('alertInfo') > -1 ? 'alarm' : 'notice';
+    dispatch(routerRedux.push(`/information/management/${type}/all`));
   };
   render() {
     const {
@@ -105,10 +102,26 @@ export default class GlobalHeader extends PureComponent {
       customHeader,
       rainbondInfo,
       collapsed,
-      dispatch
+      messageList
       // enterpriseServiceInfo
     } = this.props;
-    const { List, loading, total } = this.state;
+    const { loading } = this.state;
+    let total = 0;
+    let alertList = [];
+    let systemList = [];
+    if (messageList && messageList.length > 0) {
+      alertList = messageList.filter(
+        item => !item.is_read && item.category === 'alert'
+      );
+      systemList = messageList.filter(
+        item => !item.is_read && item.category === 'system'
+      );
+    }
+    if (messageList.length > 0) {
+      const msg = messageList.filter(item => !item.is_read);
+      total = msg.length;
+    }
+
     if (!currentUser) {
       return null;
     }
@@ -215,7 +228,6 @@ export default class GlobalHeader extends PureComponent {
         </Menu>
       </div>
     );
-    const isInformation = window.location.href.indexOf('information') > -1;
     return (
       <Header className={styles.header}>
         <Icon
@@ -244,27 +256,33 @@ export default class GlobalHeader extends PureComponent {
               </a>
             </Tooltip>
           )} */}
-          {!isInformation && (
-            <NoticeIcon
-              className={styles.action}
-              count={total}
-              loading={loading}
-              onClear={this.handleJump}
-              onJump={this.handleJump}
-              // onClear={onNoticeClear}
-              // onLoadMore={this.fetchMoreNotices}
-              // onPopupVisibleChange={onNoticeVisibleChange}
-            >
-              <NoticeIcon.Tab
-                count={1}
-                list={List}
-                title="通知"
-                name="notification"
-                emptyText="你已查看所有通知"
-                emptyImage={emptyImage}
-              />
-            </NoticeIcon>
-          )}
+          <NoticeIcon
+            className={styles.action}
+            count={total}
+            loading={loading}
+            onClear={this.handleJump}
+            onJump={this.handleJump}
+            // onClear={onNoticeClear}
+            // onLoadMore={this.fetchMoreNotices}
+            // onPopupVisibleChange={onNoticeVisibleChange}
+          >
+            <NoticeIcon.Tab
+              count={alertList.length}
+              list={alertList}
+              title="报警信息"
+              name="alertInfo"
+              emptyText="你已查看所有报警信息"
+              emptyImage={emptyImage}
+            />
+            <NoticeIcon.Tab
+              count={systemList.length}
+              list={systemList}
+              title="通知信息"
+              name="systemInfo"
+              emptyText="你已查看所有通知信息"
+              emptyImage={emptyImage}
+            />
+          </NoticeIcon>
           <a
             className={styles.action}
             style={{ color: '#fff' }}

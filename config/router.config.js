@@ -182,7 +182,13 @@ export default [
             authority: ['admin', 'user'],
             title: '云市应用升级'
           },
-
+          {
+            path: '/team/:teamName/region/:regionName/apps/:appID/dynamics',
+            component: './AppLogs',
+            name: 'AppLogs',
+            authority: ['admin', 'user'],
+            title: '动态'
+          },
           {
             path: '/team/:teamName/region/:regionName/apps/:appID/backup',
             component: './Group/Backup',

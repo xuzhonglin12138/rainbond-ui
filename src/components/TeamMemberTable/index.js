@@ -17,12 +17,19 @@ class TeamMemberTable extends PureComponent {
 
     const columns = [
       {
-        title: '用户名',
+        title: '用户名称',
         dataIndex: 'nick_name',
+        align: 'center',
+      },
+      {
+        title: '姓名',
+        dataIndex: 'real_name',
+        align: 'center',
       },
       {
         title: '邮箱',
         dataIndex: 'email',
+        align: 'center',
       },
       {
         title: '角色',

@@ -8,10 +8,10 @@ const { TabPane } = Tabs;
 
 export default class NoticeIcon extends PureComponent {
   static defaultProps = {
-    onItemClick: () => {},
-    onPopupVisibleChange: () => {},
-    onTabChange: () => {},
-    onClear: () => {},
+    // onItemClick: () => {},
+    // onPopupVisibleChange: () => {},
+    // onTabChange: () => {},
+    // onClear: () => {},
     loading: false,
     locale: {
       emptyText: '暂无数据',
@@ -20,12 +20,18 @@ export default class NoticeIcon extends PureComponent {
     emptyImage:
       'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg'
   };
+  // eslint-disable-next-line react/sort-comp
   static Tab = TabPane;
   constructor(props) {
     super(props);
     this.state = {};
-    if (props.children && props.children[0]) {
-      this.state.tabType = props.children[0].props.title;
+    if (props.children && props.children.length > 1) {
+      const list = props.children;
+      let tabType = list[0].props.name;
+      if (list[0].props.count < 1 && list[1].props.count > 0) {
+        tabType = list[1].props.name;
+      }
+      this.state.tabType = tabType;
     }
   }
   onItemClick = (item, tabProps) => {
@@ -34,35 +40,44 @@ export default class NoticeIcon extends PureComponent {
   };
   onTabChange = tabType => {
     this.setState({ tabType });
-    this.props.onTabChange(tabType);
+    // this.props.onTabChange(tabType);
   };
   getNotificationBox() {
-    const { children, loading, locale } = this.props;
+    const { children, loading, locale, onClear } = this.props;
+    const { tabType } = this.state;
     if (!children) {
       return null;
     }
     const panes = React.Children.map(children, child => {
       const title =
         child.props.list && child.props.list.length > 0
-          ? `${child.props.title} (${child.props.list.length})`
+          ? `${child.props.title} (${child.props.count})`
           : child.props.title;
       return (
-        <TabPane tab={title} key={child.props.title}>
+        <TabPane tab={title} key={child.props.name}>
           <List
             {...this.props}
             {...child.props}
             data={child.props.list}
             onClick={item => this.onItemClick(item, child.props)}
-            onClear={() => this.props.onClear(child.props.title)}
+            onClear={() => onClear(child.props.name)}
             title={child.props.title}
             locale={locale}
+            tabType={tabType}
           />
         </TabPane>
       );
     });
+    const type =
+      tabType.indexOf('alertInfo') > -1 ? 'alertInfo/.0' : 'systemInfo/.1';
+
     return (
       <Spin spinning={loading} delay={0}>
-        <Tabs className={styles.tabs} onChange={this.onTabChange}>
+        <Tabs
+          defaultActiveKey={type}
+          className={styles.tabs}
+          onChange={this.onTabChange}
+        >
           {panes}
         </Tabs>
       </Spin>

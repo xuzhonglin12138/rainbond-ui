@@ -128,7 +128,23 @@ const upgradeIcon = (
     </svg>
   </i>
 );
-
+const dynamicSvg = (
+  <i className="anticon">
+    <svg
+      t="1608277476831"
+      viewBox="0 0 1024 1024"
+      p-id="7077"
+      width="20"
+      height="20"
+    >
+      <path
+        d="M844.8 512c0-96-51.2-179.2-128-224-6.4 0-12.8-6.4-19.2-6.4-19.2 0-32 12.8-32 32 0 12.8 6.4 19.2 12.8 25.6 57.6 32 96 96 96 166.4 0 76.8-38.4 140.8-102.4 172.8-6.4 6.4-12.8 12.8-12.8 25.6 0 19.2 12.8 32 32 32 6.4 0 12.8-6.4 12.8-6.4 83.2-38.4 140.8-121.6 140.8-217.6z m-38.4-377.6c-6.4 0-12.8-6.4-19.2-6.4-19.2 0-32 12.8-32 32 0 12.8 6.4 19.2 19.2 25.6C883.2 249.6 960 371.2 960 512c0 140.8-76.8 262.4-185.6 326.4-12.8 6.4-19.2 12.8-19.2 25.6 0 19.2 12.8 32 32 32 6.4 0 12.8 0 19.2-6.4 128-76.8 217.6-217.6 217.6-377.6 0-160-89.6-300.8-217.6-377.6zM76.8 300.8h153.6c19.2 0 51.2-6.4 185.6-108.8 25.6-19.2 44.8-38.4 70.4-51.2v396.8c0 19.2 12.8 32 32 32s32-12.8 32-32V83.2c0-12.8-6.4-25.6-19.2-32-19.2 0-32 0-44.8 6.4L371.2 147.2C268.8 224 236.8 236.8 230.4 236.8h-192c-25.6 0-38.4 12.8-38.4 32v486.4c0 19.2 12.8 32 32 32H256c6.4 0 32 12.8 128 89.6l102.4 89.6c6.4 6.4 12.8 6.4 25.6 6.4 6.4 0 12.8 0 12.8-6.4 12.8-6.4 19.2-19.2 19.2-32v-172.8c0-12.8-12.8-25.6-32-25.6s-32 12.8-32 32v108.8c-12.8-12.8-32-25.6-44.8-44.8-121.6-102.4-153.6-108.8-172.8-108.8H96c-19.2 0-25.6-6.4-25.6-25.6V326.4c-12.8-19.2-6.4-25.6 6.4-25.6z"
+        p-id="7078"
+        fill="#979797"
+      />
+    </svg>
+  </i>
+);
 function menuData(teamName, regionName, appID, permissionsInfo) {
   const appPermissions = roleUtil.querySpecifiedPermissionsInfo(
     permissionsInfo,
@@ -144,8 +160,8 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.dashboard' }),
       icon: 'dashboard',
       path: `team/${teamName}/region/${regionName}/apps/${appID}`,
-      authority: ['admin', 'user'],
-    },
+      authority: ['admin', 'user']
+    }
   ];
 
   function addMenuArr(obj) {
@@ -157,7 +173,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.publish' }),
       icon: publishIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/publish`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
 
@@ -166,7 +182,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.backup' }),
       icon: backupIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/backup`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
   if (control) {
@@ -174,7 +190,7 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.gateway' }),
       icon: 'gateway',
       path: `team/${teamName}/region/${regionName}/apps/${appID}/gateway`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
 
@@ -183,10 +199,15 @@ function menuData(teamName, regionName, appID, permissionsInfo) {
       name: formatMessage({ id: 'menu.app.upgrade' }),
       icon: upgradeIcon,
       path: `team/${teamName}/region/${regionName}/apps/${appID}/upgrade`,
-      authority: ['admin', 'user'],
+      authority: ['admin', 'user']
     });
   }
-
+  addMenuArr({
+    name: formatMessage({ id: 'menu.app.dynamic' }),
+    icon: dynamicSvg,
+    path: `team/${teamName}/region/${regionName}/apps/${appID}/dynamics`,
+    authority: ['admin', 'user']
+  });
   return menuArr;
 }
 
@@ -199,7 +220,7 @@ function formatter(data, parentPath = '', parentAuthority) {
     const result = {
       ...item,
       path,
-      authority: item.authority || parentAuthority,
+      authority: item.authority || parentAuthority
     };
     if (item.children) {
       result.children = formatter(
