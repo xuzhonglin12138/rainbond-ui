@@ -460,19 +460,19 @@ class Index extends PureComponent {
                           </div>
                         </div>
                         <div className={`${styles.linefour}`}>
-                          {/* {plan_version && ( */}
-                          <span>
-                            <a
-                              style={{ fontSize: '12px' }}
-                              onClick={() => {
-                                this.editorPlanVersion(item);
-                              }}
-                            >
-                              编辑
-                            </a>
-                            <Divider type="vertical" />
-                          </span>
-                          {/* )} */}
+                          {plan_version && (
+                            <span>
+                              <a
+                                style={{ fontSize: '12px' }}
+                                onClick={() => {
+                                  this.editorPlanVersion(item);
+                                }}
+                              >
+                                编辑
+                              </a>
+                              <Divider type="vertical" />
+                            </span>
+                          )}
                           <span>
                             <a
                               style={{ fontSize: '12px' }}
