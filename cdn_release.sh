@@ -1,6 +1,6 @@
 #!/bin/bash
-osstool="ossutil64"
-
+osstool="./ossutil64"
+os=$(uname -s)
 osstool_install() {
     if [ ! -f ${osstool} ]; then
         echo "installing ossutil binary"
@@ -9,6 +9,7 @@ osstool_install() {
         else
             wget http://gosspublic.alicdn.com/ossutil/1.6.3/ossutil64 -O ${osstool}
         fi
+        chmod +x ${osstool}
         cat >~/.ossutilconfig <<EOF
 [Credentials]
 language=CH
