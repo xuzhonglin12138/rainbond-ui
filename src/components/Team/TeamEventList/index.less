@@ -1,6 +1,9 @@
-@import "~antd/lib/style/themes/default.less";
-@import "../../../utils/utils.less";
-
+@import '~antd/lib/style/themes/default.less';
+@import '../../../utils/utils.less';
+.linkText {
+  color: #1890ff;
+  cursor: pointer;
+}
 .activitiesList {
   .username {
     color: @text-color;
@@ -15,30 +18,30 @@
   display: flex;
 
   .avatar {
-    flex         : 0 1 72px;
+    flex: 0 1 72px;
     margin-bottom: 8px;
 
-    &>span {
+    & > span {
       border-radius: 72px;
-      display      : block;
-      width        : 72px;
-      height       : 72px;
+      display: block;
+      width: 72px;
+      height: 72px;
     }
   }
 
   .content {
-    position   : relative;
-    top        : 4px;
+    position: relative;
+    top: 4px;
     margin-left: 24px;
-    flex       : 1 1 auto;
-    color      : @text-color-secondary;
+    flex: 1 1 auto;
+    color: @text-color-secondary;
     line-height: 22px;
 
     .contentTitle {
-      font-size    : 20px;
-      line-height  : 28px;
-      font-weight  : 500;
-      color        : @heading-color;
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 500;
+      color: @heading-color;
       margin-bottom: 12px;
     }
   }
@@ -46,41 +49,41 @@
 
 .extraContent {
   .clearfix();
-  float      : right;
+  float: right;
   white-space: nowrap;
 
   .statItem {
-    padding : 0 32px;
+    padding: 0 32px;
     position: relative;
-    display : inline-block;
+    display: inline-block;
 
-    >p:first-child {
-      color        : @text-color-secondary;
-      font-size    : @font-size-base;
-      line-height  : 22px;
+    > p:first-child {
+      color: @text-color-secondary;
+      font-size: @font-size-base;
+      line-height: 22px;
       margin-bottom: 4px;
     }
 
-    >p {
-      color      : @heading-color;
-      font-size  : 30px;
+    > p {
+      color: @heading-color;
+      font-size: 30px;
       line-height: 38px;
-      margin     : 0;
+      margin: 0;
 
-      >span {
-        color    : @text-color-secondary;
+      > span {
+        color: @text-color-secondary;
         font-size: 20px;
       }
     }
 
     &:after {
       background-color: @border-color-split;
-      position        : absolute;
-      top             : 8px;
-      right           : 0;
-      width           : 1px;
-      height          : 40px;
-      content         : "";
+      position: absolute;
+      top: 8px;
+      right: 0;
+      width: 1px;
+      height: 40px;
+      content: '';
     }
 
     &:last-child {
@@ -103,21 +106,21 @@
 
 .members {
   a {
-    display    : block;
-    margin     : 12px 0;
+    display: block;
+    margin: 12px 0;
     line-height: 24px;
-    height     : 24px;
+    height: 24px;
     .textOverflow();
 
     .member {
-      font-size     : @font-size-base;
-      color         : @text-color;
-      line-height   : 24px;
-      max-width     : 100px;
+      font-size: @font-size-base;
+      color: @text-color;
+      line-height: 24px;
+      max-width: 100px;
       vertical-align: top;
-      margin-left   : 12px;
-      transition    : all 0.3s;
-      display       : inline-block;
+      margin-left: 12px;
+      transition: all 0.3s;
+      display: inline-block;
       .textOverflow();
     }
 
@@ -132,10 +135,10 @@
 .projectList {
   :global {
     .ant-card-meta-description {
-      color      : @text-color-secondary;
-      height     : 44px;
+      color: @text-color-secondary;
+      height: 44px;
       line-height: 22px;
-      overflow   : hidden;
+      overflow: hidden;
     }
   }
 
@@ -143,13 +146,13 @@
     font-size: 0;
 
     a {
-      color         : @heading-color;
-      margin-left   : 12px;
-      line-height   : 24px;
-      height        : 24px;
-      display       : inline-block;
+      color: @heading-color;
+      margin-left: 12px;
+      line-height: 24px;
+      height: 24px;
+      display: inline-block;
       vertical-align: top;
-      font-size     : @font-size-base;
+      font-size: @font-size-base;
 
       &:hover {
         color: @primary-color;
@@ -162,19 +165,19 @@
   }
 
   .projectItemContent {
-    display    : flex;
-    margin-top : 8px;
-    overflow   : hidden;
-    font-size  : 12px;
-    height     : 20px;
-    text-align : right;
+    display: flex;
+    margin-top: 8px;
+    overflow: hidden;
+    font-size: 12px;
+    height: 20px;
+    text-align: right;
     line-height: 20px;
     .textOverflow();
 
     a {
-      color  : @text-color-secondary;
+      color: @text-color-secondary;
       display: inline-block;
-      flex   : 1 1 0;
+      flex: 1 1 0;
       .textOverflow();
 
       &:hover {
@@ -183,9 +186,9 @@
     }
 
     .datetime {
-      color  : @disabled-color;
+      color: @disabled-color;
       display: block;
-      float  : right;
+      float: right;
     }
   }
 }
@@ -232,11 +235,11 @@
   }
 
   .extraContent {
-    float       : none;
+    float: none;
     margin-right: 0;
 
     .statItem {
-      padding   : 0 16px;
+      padding: 0 16px;
       text-align: left;
 
       &:after {
@@ -296,12 +299,12 @@
   :global {
     .ant-form-item {
       margin-bottom: 24px;
-      margin-right : 0;
-      display      : flex;
+      margin-right: 0;
+      display: flex;
 
-      >.ant-form-item-label {
-        width        : auto;
-        line-height  : 32px;
+      > .ant-form-item-label {
+        width: auto;
+        line-height: 32px;
         padding-right: 8px;
       }
 
@@ -316,7 +319,7 @@
   }
 
   .submitButtons {
-    white-space  : nowrap;
+    white-space: nowrap;
     margin-bottom: 24px;
   }
 }
