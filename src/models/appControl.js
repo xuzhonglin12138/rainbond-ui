@@ -85,6 +85,7 @@ import {
   editPluginConfigs,
   getAnalyzePlugins,
   getAppResource,
+  putPlanVersion,
   getAutoDeployStatus,
   cancelAutoDeploy,
   openAutoDeploy,
@@ -258,6 +259,13 @@ export default {
         callback && callback(response);
       }
     },
+    *putPlanVersion({ payload, callback }, { call, put }) {
+      const response = yield call(putPlanVersion, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    
     *getAnalyzePlugins({ payload, callback }, { call, put }) {
       const response = yield call(getAnalyzePlugins, payload);
       if (response) {
