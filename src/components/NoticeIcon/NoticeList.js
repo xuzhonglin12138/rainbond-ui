@@ -16,7 +16,7 @@ export default function NoticeList({
   tabType
 }) {
   const text =
-    tabType.indexOf('alertInfo') > -1 ? '查看更多报警消息' : '查看更多通知信息';
+    tabType.indexOf('alertInfo') > -1 ? '查看更多报警信息' : '查看更多通知信息';
 
   if (data.length === 0) {
     return (
