@@ -15,13 +15,18 @@ export default function NoticeList({
   emptyImage,
   tabType
 }) {
+  const text =
+    tabType.indexOf('alertInfo') > -1 ? '查看更多报警消息' : '查看更多通知信息';
+
   if (data.length === 0) {
     return (
       <div style={{ textAlign: 'center' }}>
         <div style={{ padding: '20px 0' }}> {emptyImage || null}</div>
-        <div style={{ padding: '0 0 20px 0' }}>{emptyText || locale.emptyText}</div>
+        <div style={{ padding: '0 0 20px 0' }}>
+          {emptyText || locale.emptyText}
+        </div>
         <div className={styles.clear} onClick={onClear}>
-          查看历史消息
+          {text}
         </div>
       </div>
     );
@@ -33,6 +38,9 @@ export default function NoticeList({
           const itemCls = classNames(styles.item, {
             [styles.read]: item.read
           });
+          if (i > 4) {
+            return null;
+          }
           return (
             <List.Item className={itemCls} key={item.ID || i}>
               <List.Item.Meta
@@ -69,7 +77,7 @@ export default function NoticeList({
         })}
       </List>
       <div className={styles.clear} onClick={onClear}>
-        查看历史消息
+        {text}
       </div>
     </div>
   );

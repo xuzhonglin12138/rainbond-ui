@@ -18,7 +18,10 @@ const { Header } = Layout;
   rainbondInfo: global.rainbondInfo,
   appDetail: appControl.appDetail,
   currentUser: user.currentUser,
-  messageList: global.messageList
+  systemList: global.systemList,
+  systemTotal: global.systemTotal,
+  alertList: global.alertList,
+  alertTotal: global.alertTotal
   // enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class GlobalHeader extends PureComponent {
@@ -26,24 +29,51 @@ export default class GlobalHeader extends PureComponent {
     super(props);
     this.state = {
       showChangePassword: false,
-      loading: true
+      systemLoading: true,
+      alertLoading: true
     };
   }
+  
   componentDidMount() {
-    this.loadInternalMessages();
+    this.loadSystemMessages();
+    this.loadAlertMessages();
   }
-  loadInternalMessages = () => {
+
+  loadSystemMessages = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'global/fetchInternalMessages',
+      type: 'global/fetchSystemMessages',
       payload: {
+        page: 1,
+        page_size: 5,
         is_read: 'False',
-        create_time: ''
+        create_time: '',
+        category: 'system'
       },
       callback: res => {
         if (res && res._code === 200) {
           this.setState({
-            loading: false
+            systemLoading: false
+          });
+        }
+      }
+    });
+  };
+  loadAlertMessages = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchAlertMessages',
+      payload: {
+        page: 1,
+        page_size: 5,
+        is_read: 'False',
+        create_time: '',
+        category: 'alert'
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          this.setState({
+            alertLoading: false
           });
         }
       }
@@ -102,26 +132,14 @@ export default class GlobalHeader extends PureComponent {
       customHeader,
       rainbondInfo,
       collapsed,
-      messageList
+      alertList,
+      systemList,
+      alertTotal,
+      systemTotal
       // enterpriseServiceInfo
     } = this.props;
-    const { loading } = this.state;
-    let total = 0;
-    let alertList = [];
-    let systemList = [];
-    if (messageList && messageList.length > 0) {
-      alertList = messageList.filter(
-        item => !item.is_read && item.category === 'alert'
-      );
-      systemList = messageList.filter(
-        item => !item.is_read && item.category === 'system'
-      );
-    }
-    if (messageList.length > 0) {
-      const msg = messageList.filter(item => !item.is_read);
-      total = msg.length;
-    }
-
+    const { systemLoading, alertLoading } = this.state;
+    const total = alertTotal + systemTotal;
     if (!currentUser) {
       return null;
     }
@@ -259,7 +277,7 @@ export default class GlobalHeader extends PureComponent {
           <NoticeIcon
             className={styles.action}
             count={total}
-            loading={loading}
+            loading={systemLoading || alertLoading}
             onClear={this.handleJump}
             onJump={this.handleJump}
             // onClear={onNoticeClear}
@@ -267,7 +285,7 @@ export default class GlobalHeader extends PureComponent {
             // onPopupVisibleChange={onNoticeVisibleChange}
           >
             <NoticeIcon.Tab
-              count={alertList.length}
+              count={alertTotal}
               list={alertList}
               title="报警信息"
               name="alertInfo"
@@ -275,7 +293,7 @@ export default class GlobalHeader extends PureComponent {
               emptyImage={emptyImage}
             />
             <NoticeIcon.Tab
-              count={systemList.length}
+              count={systemTotal}
               list={systemList}
               title="通知信息"
               name="systemInfo"
