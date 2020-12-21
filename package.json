@@ -7,7 +7,7 @@
     "start": "umi dev",
     "start:no-mock": "cross-env MOCK=none umi dev",
     "build": "umi build",
-    "postinstall": "./cdn_release.sh",
+    "postbuild": "./cdn_release.sh",
     "image": "umi build && docker build -t registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond-ui:v5.3.0-pre-release .",
     "site": "roadhog-api-doc static && gh-pages -d dist",
     "analyze": "cross-env ANALYZE=true roadhog build"
