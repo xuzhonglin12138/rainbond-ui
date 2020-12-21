@@ -29,7 +29,7 @@ export default class Alarm extends PureComponent {
   }
 
   componentDidMount() {
-    this.loadInternalMessages();
+    this.loadAlertMessages();
   }
   onChange = key => {
     this.setState(
@@ -39,20 +39,20 @@ export default class Alarm extends PureComponent {
         isRead: key === 'unread' ? 'False' : null
       },
       () => {
-        this.loadInternalMessages();
+        this.loadAlertMessages();
       }
     );
   };
   onPageChange = page => {
     this.setState({ page }, () => {
-      this.loadInternalMessages();
+      this.loadAlertMessages();
     });
   };
-  loadInternalMessages = () => {
+  loadAlertMessages = () => {
     const { dispatch } = this.props;
     const { page, pageSize, isRead } = this.state;
     dispatch({
-      type: 'global/fetchInternalMessages',
+      type: 'global/fetchAlertMessages',
       payload: {
         page,
         page_size: pageSize,
@@ -82,6 +82,7 @@ export default class Alarm extends PureComponent {
   };
   putInternalMessages = messageIds => {
     const { dispatch } = this.props;
+    const { isRead } = this.state;
     dispatch({
       type: 'global/putInternalMessages',
       payload: {
@@ -92,8 +93,25 @@ export default class Alarm extends PureComponent {
           modifyLoading: false
         });
         if (res && res._code === 200) {
-          this.loadInternalMessages();
+          if (isRead !== 'False') {
+            this.updataAlertMessages();
+          }
+          this.loadAlertMessages();
         }
+      }
+    });
+  };
+
+  updataAlertMessages = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchAlertMessages',
+      payload: {
+        page: 1,
+        page_size: 5,
+        is_read: 'False',
+        create_time: '',
+        category: 'alert'
       }
     });
   };
@@ -115,7 +133,7 @@ export default class Alarm extends PureComponent {
         onRow={record => {
           return {
             onClick: () => {
-              if (!record.is_read && activeKey === 'all') {
+              if (!record.is_read) {
                 this.putInternalMessages([record.message_id]);
               }
             } // 点击行
@@ -195,10 +213,9 @@ export default class Alarm extends PureComponent {
       <div>
         <div className={styles.boxs}>
           <div className={styles.title}>报警信息</div>
-          {activeKey === 'unread' && (
+          {activeKey === 'unread' && !loading && dataList.length !== 0 && (
             <Button
               type="primary"
-              disabled={loading || dataList.length === 0}
               loading={modifyLoading}
               onClick={this.handleRead}
             >
@@ -206,7 +223,7 @@ export default class Alarm extends PureComponent {
             </Button>
           )}
         </div>
-        <Tabs onChange={this.onChange} activeKey={activeKey}>
+        <Tabs onChange={this.onChange} animated={false} activeKey={activeKey}>
           <TabPane tab="所有通知" key="all">
             {this.handleTable()}
           </TabPane>

@@ -45,9 +45,6 @@ export default {
         {boxs}
         {startVal}
         <Link
-          onClick={event => {
-            event.stopPropagation();
-          }}
           to={url}
         >
           {obj.name}

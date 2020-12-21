@@ -46,7 +46,7 @@ export default class Index extends PureComponent {
       logList: [],
       logsPage: 1,
       logsPageSize: 10,
-      logsTotal: 0,
+      logsTotal: 1,
       adminList: [],
       apps: [],
       startTime: '',

@@ -29,7 +29,7 @@ export default class Notice extends PureComponent {
   }
 
   componentDidMount() {
-    this.loadInternalMessages();
+    this.loadSystemMessages();
   }
   onChange = key => {
     this.setState(
@@ -39,20 +39,20 @@ export default class Notice extends PureComponent {
         isRead: key === 'unread' ? 'False' : null
       },
       () => {
-        this.loadInternalMessages();
+        this.loadSystemMessages();
       }
     );
   };
   onPageChange = page => {
     this.setState({ page }, () => {
-      this.loadInternalMessages();
+      this.loadSystemMessages();
     });
   };
-  loadInternalMessages = () => {
+  loadSystemMessages = () => {
     const { dispatch } = this.props;
     const { page, pageSize, isRead } = this.state;
     dispatch({
-      type: 'global/fetchInternalMessages',
+      type: 'global/fetchSystemMessages',
       payload: {
         page,
         page_size: pageSize,
@@ -82,6 +82,7 @@ export default class Notice extends PureComponent {
   };
   putInternalMessages = messageIds => {
     const { dispatch } = this.props;
+    const { isRead } = this.state;
     dispatch({
       type: 'global/putInternalMessages',
       payload: {
@@ -92,12 +93,27 @@ export default class Notice extends PureComponent {
           modifyLoading: false
         });
         if (res && res._code === 200) {
-          this.loadInternalMessages();
+          if (isRead !== 'False') {
+            this.updataSystemMessages();
+          }
+          this.loadSystemMessages();
         }
       }
     });
   };
-
+  updataSystemMessages = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchSystemMessages',
+      payload: {
+        page: 1,
+        page_size: 5,
+        is_read: 'False',
+        create_time: '',
+        category: 'system'
+      }
+    });
+  };
   start = () => {
     this.setState({ loading: true });
     // ajax request after empty completing
@@ -109,13 +125,13 @@ export default class Notice extends PureComponent {
   };
 
   handleTable = () => {
-    const { total, loading, page, pageSize, dataList, activeKey } = this.state;
+    const { total, loading, page, pageSize, dataList } = this.state;
     return (
       <Table
         onRow={record => {
           return {
             onClick: () => {
-              if (!record.is_read && activeKey === 'all') {
+              if (!record.is_read) {
                 this.putInternalMessages([record.message_id]);
               }
             } // 点击行
@@ -195,7 +211,7 @@ export default class Notice extends PureComponent {
       <div>
         <div className={styles.boxs}>
           <div className={styles.title}>通知信息</div>
-          {activeKey === 'unread' && (
+          {activeKey === 'unread' && !loading && dataList.length !== 0 && (
             <Button
               type="primary"
               disabled={loading || dataList.length === 0}
@@ -206,7 +222,7 @@ export default class Notice extends PureComponent {
             </Button>
           )}
         </div>
-        <Tabs onChange={this.onChange} activeKey={activeKey}>
+        <Tabs onChange={this.onChange} animated={false}  activeKey={activeKey}>
           <TabPane tab="所有通知" key="all">
             {this.handleTable()}
           </TabPane>
