@@ -1,7 +1,6 @@
-/* eslint-disable no-useless-escape */
-import React, { PureComponent } from 'react';
+import { Form, Input, Modal, Select } from 'antd';
 import { connect } from 'dva';
-import { Form, Input, Select, Modal } from 'antd';
+import React, { PureComponent } from 'react';
 import TenantSelect from '../../components/TenantSelect';
 import styles from '../CreateTeam/index.less';
 
@@ -43,9 +42,9 @@ class CreateUserForm extends PureComponent {
       }
     });
   };
-  checkAccount = (rule, value, callback) => {
+  checkAccountPass = (rule, value, callback) => {
     if (!value) {
-      callback('请填写密码');
+      callback();
     } else if (value && value.length < 8) {
       callback('密码长度至少为8位');
     } else {
@@ -67,7 +66,6 @@ class CreateUserForm extends PureComponent {
       title,
       userInfo,
       form,
-      realName,
       loading = false
     } = this.props;
     const { getFieldDecorator } = form;
@@ -110,21 +108,37 @@ class CreateUserForm extends PureComponent {
 
           <FormItem {...formItemLayout} label="姓名">
             {getFieldDecorator('real_name', {
-              initialValue: (userInfo && userInfo.real_name) || realName || ''
+              initialValue: (userInfo && userInfo.real_name) || '',
+              rules: [{ required: true, message: '请填写姓名!' }]
             })(<Input type="text" placeholder="请填写姓名!" />)}
           </FormItem>
 
-          <FormItem {...formItemLayout} label="密码">
-            {getFieldDecorator('password', {
-              initialValue: (userInfo && userInfo.password) || '',
-              rules: [
-                {
-                  required: true,
-                  validator: this.checkAccount
-                }
-              ]
-            })(<Input.Password placeholder="请填写密码" />)}
-          </FormItem>
+          {!userInfo && (
+            <FormItem {...formItemLayout} label="密码">
+              {getFieldDecorator('password', {
+                initialValue: (userInfo && userInfo.password) || '',
+                rules: [
+                  {
+                    required: true,
+                    validator: this.checkAccountPass
+                  }
+                ]
+              })(<Input.Password placeholder="请填写密码" />)}
+            </FormItem>
+          )}
+
+          {userInfo && (
+            <FormItem {...formItemLayout} label="设置新密码">
+              {getFieldDecorator('password', {
+                initialValue: (userInfo && userInfo.password) || '',
+                rules: [
+                  {
+                    validator: this.checkAccountPass
+                  }
+                ]
+              })(<Input.Password placeholder="留空则不修改密码" />)}
+            </FormItem>
+          )}
 
           {!userInfo && (
             <div>
