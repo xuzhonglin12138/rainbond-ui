@@ -273,15 +273,17 @@ class Index extends PureComponent {
                                   cursor: 'auto'
                                 }}
                               >
-                                <font
-                                  className={styles.nowarpCorolText}
-                                  title={plan_version}
-                                  style={{
-                                    width: '90%'
-                                  }}
-                                >
-                                  {plan_version && plan_version}
-                                </font>
+                                {plan_version && (
+                                  <font
+                                    className={styles.nowarpCorolText}
+                                    title={`${plan_version}`}
+                                    style={{
+                                      width: '90%'
+                                    }}
+                                  >
+                                    {`${plan_version}`}
+                                  </font>
+                                )}
                               </a>
                             </div>
                             <div

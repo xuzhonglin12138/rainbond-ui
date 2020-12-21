@@ -47,7 +47,7 @@ class TeamPermissions extends React.PureComponent {
       notification.warning({
         message: '请先加入团队',
       });
-      return router.push('/');
+      return router.go(-1);
     }
     dispatch({
       type: 'teamControl/fetchCurrentTeamPermissions',
