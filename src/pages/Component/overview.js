@@ -738,7 +738,7 @@ export default class Index extends PureComponent {
             current_version={current_version}
             dataList={dataList}
             appAlias={this.props.appAlias}
-            load={this.fetchAppDiskAndMemory}
+            reload={this.getVersionList}
             handleDel={this.handleDel}
             onRollback={this.handleRollback}
             socket={this.props.socket && this.props.socket}

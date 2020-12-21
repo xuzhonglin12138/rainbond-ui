@@ -18,7 +18,9 @@ import styles from '../../Index.less';
 import LogShow from '../LogShow';
 import PlanVersion from '@/components/PlanVersion';
 
-@connect()
+@connect(({ loading }) => ({
+  planVersionLoading: loading.effects['appControl/putPlanVersion']
+}))
 @Form.create()
 class Index extends PureComponent {
   constructor(props) {
@@ -57,7 +59,7 @@ class Index extends PureComponent {
   };
   handleOkPlanVersion = val => {
     const { info } = this.state;
-    const { dispatch, appAlias, load } = this.props;
+    const { dispatch, appAlias, reload } = this.props;
     dispatch({
       type: 'appControl/putPlanVersion',
       payload: {
@@ -68,8 +70,8 @@ class Index extends PureComponent {
       },
       callback: data => {
         if (data) {
-          load();
           this.handleCancelPlanVersion();
+          reload && reload();
         }
       }
     });
@@ -108,6 +110,7 @@ class Index extends PureComponent {
     const {
       dataList,
       current_version,
+      planVersionLoading,
       componentPermissions: { isRollback, isDelete }
     } = this.props;
     const { EventID, logVisible, visible, info } = this.state;
@@ -272,6 +275,7 @@ class Index extends PureComponent {
                               >
                                 <font
                                   className={styles.nowarpCorolText}
+                                  title={plan_version}
                                   style={{
                                     width: '90%'
                                   }}
@@ -460,19 +464,17 @@ class Index extends PureComponent {
                           </div>
                         </div>
                         <div className={`${styles.linefour}`}>
-                          {plan_version && (
-                            <span>
-                              <a
-                                style={{ fontSize: '12px' }}
-                                onClick={() => {
-                                  this.editorPlanVersion(item);
-                                }}
-                              >
-                                编辑
-                              </a>
-                              <Divider type="vertical" />
-                            </span>
-                          )}
+                          <span>
+                            <a
+                              style={{ fontSize: '12px' }}
+                              onClick={() => {
+                                this.editorPlanVersion(item);
+                              }}
+                            >
+                              编辑
+                            </a>
+                            <Divider type="vertical" />
+                          </span>
                           <span>
                             <a
                               style={{ fontSize: '12px' }}
@@ -541,6 +543,7 @@ class Index extends PureComponent {
         {visible && (
           <PlanVersion
             info={info}
+            loading={planVersionLoading}
             onOk={this.handleOkPlanVersion}
             onCancel={this.handleCancelPlanVersion}
           />

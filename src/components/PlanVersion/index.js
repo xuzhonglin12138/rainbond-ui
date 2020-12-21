@@ -42,7 +42,7 @@ class PlanVersionForm extends PureComponent {
     return (
       <Modal
         visible
-        loading={loading}
+        confirmLoading={loading}
         className={styles.TelescopicModal}
         title="编辑规划版本"
         onOk={this.handleSubmit}
@@ -50,7 +50,13 @@ class PlanVersionForm extends PureComponent {
       >
         <FormItem {...formItemLayout} label="规划版本">
           {getFieldDecorator('plan_version', {
-            rules: [{ required: true, message: '请输入规划版本!' }],
+            rules: [
+              { required: true, message: '请输入规划版本!' },
+              {
+                max: 255,
+                message: '最大长度255位'
+              }
+            ],
             initialValue: info.plan_version || ''
           })(<Input placeholder="请输入规划版本" />)}
         </FormItem>

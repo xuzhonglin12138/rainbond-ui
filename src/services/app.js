@@ -2762,7 +2762,7 @@ export async function getAppResource(body = { team_name, app_alias }) {
 }
 export async function putPlanVersion(body = {}) {
   return request(
-    `${apiconfig.baseUrl}/console/teams/${body.team_name}/apps/${body.app_alias}/version/${body.buildVersion}}`,
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/apps/${body.app_alias}/version/${body.buildVersion}`,
     {
       method: 'put',
       data: body
