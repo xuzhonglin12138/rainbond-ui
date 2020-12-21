@@ -20,6 +20,7 @@ import moment from 'moment';
 import globalUtil from '@/utils/global';
 import logsUtil from '@/utils/logs';
 import styles from './index.less';
+import locale from 'antd/es/date-picker/locale/zh_CN';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -321,8 +322,11 @@ export default class Index extends PureComponent {
   };
 
   disabledDate = current => {
-    // Can not select days before today and today
-    return current && current > moment().endOf('day');
+    return (
+      current &&
+      (moment().subtract('days', 7) > current ||
+        current > moment().endOf('day'))
+    );
   };
 
   range = (start, end) => {
@@ -636,6 +640,7 @@ export default class Index extends PureComponent {
                   initialValue: ''
                 })(
                   <RangePicker
+                    locale={locale}
                     style={{ width: '100%' }}
                     separator="至"
                     disabledDate={this.disabledDate}
