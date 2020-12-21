@@ -936,7 +936,7 @@ export async function fetchOperationLogs(param) {
   );
 }
 
-export async function fetchInternalMessages(param) {
+export async function getInternalMessages(param) {
   return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
     method: 'get',
     params: param
