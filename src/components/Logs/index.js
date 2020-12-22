@@ -20,7 +20,7 @@ import moment from 'moment';
 import globalUtil from '@/utils/global';
 import logsUtil from '@/utils/logs';
 import styles from './index.less';
-import locale from 'antd/es/date-picker/locale/zh_CN';
+import locale from 'antd/lib/date-picker/locale/zh_CN'
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 
