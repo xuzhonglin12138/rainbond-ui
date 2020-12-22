@@ -20,17 +20,17 @@ export default {
     return OperationType;
   },
   // eslint-disable-next-line consistent-return
-  fetchLogsContent(val) {
+  fetchLogsContent(val, handleJump) {
     const start = val.indexOf('<<{');
     if (start > -1) {
-      return this.fetchInterception(val, '');
+      return this.fetchInterception(val, '', handleJump);
     }
     return (
       // eslint-disable-next-line react/react-in-jsx-scope
       <span>{val}</span>
     );
   },
-  fetchInterception(val, boxs) {
+  fetchInterception(val, boxs, handleJump) {
     const start = val.indexOf('<<{');
     const end = val.indexOf('}>>');
     const startVal = val.substring(0, start);
@@ -44,11 +44,16 @@ export default {
       <span>
         {boxs}
         {startVal}
-        <Link
-          to={url}
+        <a
+          href="javascript:;"
+          onClick={event => {
+            event.stopPropagation();
+            // eslint-disable-next-line no-unused-expressions
+            handleJump && handleJump(url, obj && obj.team_name);
+          }}
         >
           {obj.name}
-        </Link>
+        </a>
       </span>
     );
     if (nextVal && nextVal.indexOf('}>>') > -1) {

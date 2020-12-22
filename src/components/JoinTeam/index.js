@@ -8,30 +8,30 @@ const Option = Select.Option;
 
 @Form.create()
 @connect(({ user }) => ({
-  currUser: user.currentUser,
+  currUser: user.currentUser
 }))
 export default class JoinTeam extends PureComponent {
   constructor(arg) {
     super(arg);
     this.state = {
-      teams: [],
+      teams: []
     };
   }
   componentDidMount() {
     this.loadTeams();
   }
   loadTeams = () => {
-    const { enterpriseID } = this.props
+    const { enterpriseID } = this.props;
     this.props.dispatch({
       type: 'global/getUserCanJoinTeams',
       payload: {
-        enterpriseID: enterpriseID,
+        enterpriseID: enterpriseID
       },
       callback: data => {
         if (data) {
           this.setState({ teams: data.list });
         }
-      },
+      }
     });
   };
 
@@ -44,33 +44,33 @@ export default class JoinTeam extends PureComponent {
     });
   };
   render() {
-    const { onCancel, form } = this.props;
+    const { onCancel, form, title = '', loading = false } = this.props;
     const { getFieldDecorator } = form;
     const { teams } = this.state;
     const teamList = teams && teams.length > 0 && teams;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 6 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 14 },
-      },
+        sm: { span: 14 }
+      }
     };
 
     return (
       <Modal
-        title="加入团队"
+        title={title || '加入团队'}
         visible
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}
         onCancel={onCancel}
         footer={[
           <Button onClick={onCancel}> 取消 </Button>,
-          <Button type="primary" onClick={this.handleSubmit}>
+          <Button type="primary" loading={loading} onClick={this.handleSubmit}>
             确定
-          </Button>,
+          </Button>
         ]}
       >
         <Form onSubmit={this.handleSubmit} layout="horizontal" hideRequiredMark>
@@ -80,9 +80,9 @@ export default class JoinTeam extends PureComponent {
               rules: [
                 {
                   required: true,
-                  message: '请选择团队',
-                },
-              ],
+                  message: '请选择团队'
+                }
+              ]
             })(
               <Select
                 style={{ width: '100%' }}

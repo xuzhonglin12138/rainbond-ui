@@ -1,7 +1,6 @@
 import React from 'react';
 import { Avatar, List, Badge } from 'antd';
 import logsUtil from '@/utils/logs';
-import { Link } from 'dva/router';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
 
@@ -9,7 +8,7 @@ export default function NoticeList({
   data = [],
   onJump,
   onClear,
-  name,
+  handleJump,
   locale,
   emptyText,
   emptyImage,
@@ -17,7 +16,6 @@ export default function NoticeList({
 }) {
   const text =
     tabType.indexOf('alertInfo') > -1 ? '查看更多报警信息' : '查看更多通知信息';
-
   if (data.length === 0) {
     return (
       <div style={{ textAlign: 'center' }}>
@@ -55,7 +53,7 @@ export default function NoticeList({
                     <div className={styles.extra}>
                       {item.is_read === false ? <Badge status="error" /> : null}
                     </div>
-                    {logsUtil.fetchLogsContent(item.content)}
+                    {logsUtil.fetchLogsContent(item.content, handleJump)}
                   </div>
                 }
                 description={
