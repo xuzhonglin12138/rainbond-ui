@@ -16,6 +16,8 @@ import {
 import moment from 'moment';
 import styles from '../index.less';
 import locale from 'antd/es/date-picker/locale/zh_CN';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 
 const FormItem = Form.Item;
 const { Option } = Select;
