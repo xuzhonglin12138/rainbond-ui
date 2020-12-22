@@ -14,7 +14,7 @@ import {
   Tag,
   Tooltip
 } from 'antd';
-import { Link } from 'dva/router';
+import { Link, routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import moment from 'moment';
 import globalUtil from '@/utils/global';
@@ -67,6 +67,30 @@ export default class Index extends PureComponent {
     this.handleViews();
     this.handleUser();
   }
+  handleJump = (url, teamName) => {
+    const { dispatch, views } = this.props;
+    if (views === 'enterprise' && url && teamName) {
+      this.handleJoinTeams(teamName, url);
+    } else {
+      dispatch(routerRedux.push(url));
+    }
+  };
+
+  handleJoinTeams = (teamName, url) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'teamControl/joinTeam',
+      payload: {
+        team_name: teamName
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          dispatch(routerRedux.push(url));
+        }
+      }
+    });
+  };
+
   handleViews = () => {
     const { views } = this.props;
     if (views === 'enterprise') {
@@ -533,7 +557,7 @@ export default class Index extends PureComponent {
           return (
             <span>
               {data.is_openapi && <Tag color="green">OpenAPI</Tag>}
-              {logsUtil.fetchLogsContent(val)}
+              {logsUtil.fetchLogsContent(val, this.handleJump)}
             </span>
           );
         }

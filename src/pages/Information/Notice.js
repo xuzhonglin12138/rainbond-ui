@@ -1,22 +1,31 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Tabs, Table, Button, Badge } from 'antd';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import logsUtil from '@/utils/logs';
+import userUtil from '@/utils/user';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
 
-@connect()
+@connect(({ user }) => ({
+  user: user.currentUser
+}))
 export default class Notice extends PureComponent {
   constructor(props) {
     super(props);
     const {
       match: {
         params: { activeType }
-      }
+      },
+      user
     } = this.props;
+    const adminer =
+      userUtil.isSystemAdmin(user) || userUtil.isCompanyAdmin(user);
+
     this.state = {
+      adminer,
       dataList: [],
       total: 0,
       page: 1,
@@ -48,6 +57,7 @@ export default class Notice extends PureComponent {
       this.loadSystemMessages();
     });
   };
+
   loadSystemMessages = () => {
     const { dispatch } = this.props;
     const { page, pageSize, isRead } = this.state;
@@ -80,7 +90,7 @@ export default class Notice extends PureComponent {
       });
     }
   };
-  putInternalMessages = messageIds => {
+  putInternalMessages = (messageIds, url, teamName) => {
     const { dispatch } = this.props;
     const { isRead } = this.state;
     dispatch({
@@ -97,10 +107,38 @@ export default class Notice extends PureComponent {
             this.updataSystemMessages();
           }
           this.loadSystemMessages();
+          if (url) {
+            this.handleJump(url, teamName);
+          }
         }
       }
     });
   };
+
+  handleJump = (url, teamName) => {
+    const { dispatch } = this.props;
+    if (this.state.adminer && teamName) {
+      this.handleJoinTeams(teamName, url);
+    } else {
+      dispatch(routerRedux.push(url));
+    }
+  };
+
+  handleJoinTeams = (teamName, url) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'teamControl/joinTeam',
+      payload: {
+        team_name: teamName
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          dispatch(routerRedux.push(url));
+        }
+      }
+    });
+  };
+
   updataSystemMessages = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -168,7 +206,17 @@ export default class Notice extends PureComponent {
                     }}
                   >
                     <Badge status={data.is_read ? 'default' : 'error'} />
-                    {logsUtil.fetchLogsContent(val)}
+                    {logsUtil.fetchLogsContent(val, (url, teamName) => {
+                      if (!data.is_read) {
+                        this.putInternalMessages(
+                          [data.message_id],
+                          url,
+                          teamName
+                        );
+                      } else {
+                        this.handleJump(url);
+                      }
+                    })}
                   </div>
                   {data.create_time && (
                     <span
@@ -222,7 +270,7 @@ export default class Notice extends PureComponent {
             </Button>
           )}
         </div>
-        <Tabs onChange={this.onChange} animated={false}  activeKey={activeKey}>
+        <Tabs onChange={this.onChange} animated={false} activeKey={activeKey}>
           <TabPane tab="所有通知" key="all">
             {this.handleTable()}
           </TabPane>

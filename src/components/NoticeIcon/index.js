@@ -1,11 +1,18 @@
+/* eslint-disable react/no-unused-state */
 import React, { PureComponent } from 'react';
 import { Popover, Icon, Tabs, Badge, Spin } from 'antd';
+import { routerRedux } from 'dva/router';
+import { connect } from 'dva';
+import userUtil from '../../utils/user';
 import classNames from 'classnames';
 import List from './NoticeList';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
 
+@connect(({ user }) => ({
+  user: user.currentUser
+}))
 export default class NoticeIcon extends PureComponent {
   static defaultProps = {
     // onItemClick: () => {},
@@ -24,7 +31,11 @@ export default class NoticeIcon extends PureComponent {
   static Tab = TabPane;
   constructor(props) {
     super(props);
-    this.state = {};
+    const { user } = this.props;
+    const adminer =
+      userUtil.isSystemAdmin(user) || userUtil.isCompanyAdmin(user);
+
+    this.state = { adminer };
     if (props.children && props.children.length > 1) {
       const list = props.children;
       let tabType = list[0].props.name;
@@ -42,6 +53,29 @@ export default class NoticeIcon extends PureComponent {
     this.setState({ tabType });
     // this.props.onTabChange(tabType);
   };
+  handleJump = (url, teamName) => {
+    const { dispatch } = this.props;
+    if (this.state.adminer && teamName) {
+      this.handleJoinTeams(teamName, url);
+    } else {
+      dispatch(routerRedux.push(url));
+    }
+  };
+  handleJoinTeams = (teamName, url) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'teamControl/joinTeam',
+      payload: {
+        team_name: teamName
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          dispatch(routerRedux.push(url));
+        }
+      }
+    });
+  };
+
   getNotificationBox() {
     const { children, loading, locale, onClear } = this.props;
     const { tabType } = this.state;
@@ -58,6 +92,7 @@ export default class NoticeIcon extends PureComponent {
           <List
             {...this.props}
             {...child.props}
+            handleJump={this.handleJump}
             data={child.props.list}
             onClick={item => this.onItemClick(item, child.props)}
             onClear={() => onClear(child.props.name)}
@@ -74,7 +109,7 @@ export default class NoticeIcon extends PureComponent {
     return (
       <Spin spinning={loading} delay={0}>
         <Tabs
-          defaultActiveKey={type}
+          activeKey={type}
           className={styles.tabs}
           onChange={this.onTabChange}
         >
