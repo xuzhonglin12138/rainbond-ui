@@ -566,11 +566,12 @@ export async function exitTeam(
 /*
   用户查询加入状态
  */
-export async function getJoinTeamUsers(body = { team_name }) {
+export async function getJoinTeamUsers(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {
-      method: 'get'
+      method: 'get',
+      data: body
     }
   );
 }

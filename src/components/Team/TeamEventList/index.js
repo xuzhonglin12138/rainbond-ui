@@ -20,6 +20,9 @@ export default class EventList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      page: 1,
+      page_size: 5,
+      total: 1,
       roles: [],
       joinUsers: [],
       joinSettingShow: false,
@@ -30,15 +33,19 @@ export default class EventList extends PureComponent {
     this.loadJoinUsers();
     this.loadRoles();
   }
-
+  onPageChange = page => {
+    this.setState({ page }, () => {
+      this.loadJoinUsers();
+    });
+  };
   loadRoles = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'teamControl/fetchTeamRoles',
       payload: {
         team_name: globalUtil.getCurrTeamName(),
-        page_size: 10000,
-        page: 1
+        page: 1,
+        page_size: 10000
       },
       callback: data => {
         if (data) {
@@ -61,14 +68,18 @@ export default class EventList extends PureComponent {
   };
   loadJoinUsers = () => {
     const teamName = globalUtil.getCurrTeamName();
+    const { page, page_size } = this.state;
     this.props.dispatch({
       type: 'teamControl/getJoinTeamUsers',
       payload: {
+        page_size,
+        page,
         team_name: teamName
       },
       callback: data => {
         if (data) {
           this.setState({
+            total: data.total,
             joinUsers: data.list || []
           });
         }
@@ -149,7 +160,12 @@ export default class EventList extends PureComponent {
                 title="以下用户申请加入团队"
               >
                 <Table
-                  pagination={false}
+                  pagination={{
+                    current: this.state.page,
+                    pageSize: this.state.page_size,
+                    total: this.state.total,
+                    onChange: this.onPageChange
+                  }}
                   dataSource={joinUsers}
                   columns={[
                     {
