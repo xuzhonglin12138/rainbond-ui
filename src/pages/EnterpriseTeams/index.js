@@ -626,8 +626,7 @@ export default class EnterpriseTeams extends PureComponent {
         {haveNewJoinTeam && (
           <Row className={styles.teamMinTit} type="flex" align="middle">
             <Col span={6}>团队名称</Col>
-            <Col span={3}>拥有人</Col>
-            <Col span={3}>角色</Col>
+            <Col span={6}>拥有人</Col>
             <Col span={12}>状态</Col>
           </Row>
         )}
@@ -658,8 +657,7 @@ export default class EnterpriseTeams extends PureComponent {
                   key={team_id}
                 >
                   <Col span={6}>{team_alias}</Col>
-                  <Col span={3}>{owner_name}</Col>
-                  <Col span={3}>{roleUtil.actionMap(role)}</Col>
+                  <Col span={6}>{owner_name}</Col>
                   <Col
                     span={11}
                     style={{
