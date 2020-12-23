@@ -137,7 +137,7 @@ export default class LoginLog extends PureComponent {
   disabledDate = current => {
     return (
       current &&
-      (moment().subtract('days', 7) > current ||
+      (moment(new Date()).subtract(1, 'years') > current ||
         current > moment().endOf('day'))
     );
   };
