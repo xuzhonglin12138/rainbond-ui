@@ -1,8 +1,8 @@
-import React, { PureComponent } from "react";
-import { Button, Icon, Modal, Form, Checkbox, Select, Input } from "antd";
-import { getAllRegion } from "../../services/api";
-import globalUtil from "../../utils/global";
-import styles from "./index.less";
+import React, { PureComponent } from 'react';
+import { Button, Icon, Modal, Form, Checkbox, Select, Input } from 'antd';
+import { getAllRegion } from '../../services/api';
+import globalUtil from '../../utils/global';
+import styles from './index.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -23,7 +23,7 @@ class CreateTeam extends PureComponent {
     }
   }
   getUnRelationedApp = enterprise_id => {
-    getAllRegion({ enterprise_id, status: "1" }).then(data => {
+    getAllRegion({ enterprise_id, status: '1' }).then(data => {
       if (data) {
         this.setState({ regions: data.list || [] });
       }
@@ -38,7 +38,7 @@ class CreateTeam extends PureComponent {
     });
   };
   render() {
-    const { onOk, onCancel, actions, form } = this.props;
+    const { onOk, onCancel, actions, form, loading = false } = this.props;
     const { getFieldDecorator } = form;
 
     const formItemLayout = {
@@ -61,22 +61,22 @@ class CreateTeam extends PureComponent {
         onCancel={onCancel}
         footer={[
           <Button onClick={onCancel}> 取消 </Button>,
-          <Button type="primary" onClick={this.handleSubmit}>
+          <Button type="primary" loading={loading} onClick={this.handleSubmit}>
             确定
           </Button>
         ]}
       >
         <Form onSubmit={this.handleSubmit} layout="horizontal">
           <FormItem {...formItemLayout} label="团队名称" hasFeedback>
-            {getFieldDecorator("team_name", {
+            {getFieldDecorator('team_name', {
               rules: [
                 {
                   required: true,
-                  message: "请输入团队名称"
+                  message: '请输入团队名称'
                 },
                 {
                   max: 10,
-                  message: "团队名称最多10个字"
+                  message: '团队名称最多10个字'
                 }
               ]
             })(<Input autoComplete="off" placeholder="请输入团队名称" />)}
@@ -86,17 +86,17 @@ class CreateTeam extends PureComponent {
           </FormItem>
 
           <FormItem {...formItemLayout} label="集群" hasFeedback>
-            {getFieldDecorator("useable_regions", {
+            {getFieldDecorator('useable_regions', {
               rules: [
                 {
                   required: true,
-                  message: "请选择集群"
+                  message: '请选择集群'
                 }
               ]
             })(
               <Select
                 mode="multiple"
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 placeholder="选择集群"
               >
                 {(this.state.regions || []).map(item => {

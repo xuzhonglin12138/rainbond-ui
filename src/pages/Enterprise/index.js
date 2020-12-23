@@ -36,10 +36,11 @@ import Meiqia from "../../layouts/Meiqia";
 import userUtil from "../../utils/user";
 import styles from "../List/BasicList.less";
 
-@connect(({ user, global, index, order }) => ({
+@connect(({ user, global, index, loading }) => ({
   user: user.currentUser,
   rainbondInfo: global.rainbondInfo,
-  overviewInfo: index.overviewInfo
+  overviewInfo: index.overviewInfo,
+  createTeamLoading: loading.effects["teamControl/createTeam"],
   // enterpriseServiceInfo: order.enterpriseServiceInfo
 }))
 export default class Enterprise extends PureComponent {
@@ -1127,6 +1128,7 @@ export default class Enterprise extends PureComponent {
         {showAddTeam && (
           <CreateTeam
             enterprise_id={eid}
+            loading={this.props.createTeamLoading}
             onOk={this.handleCreateTeam}
             onCancel={this.cancelCreateTeam}
           />

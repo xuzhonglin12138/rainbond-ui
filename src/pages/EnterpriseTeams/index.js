@@ -30,8 +30,9 @@ import styles from './index.less';
 
 const { Search } = Input;
 
-@connect(({ user }) => ({
-  user: user.currentUser
+@connect(({ user, loading }) => ({
+  user: user.currentUser,
+  createTeamLoading: loading.effects['teamControl/createTeam']
 }))
 export default class EnterpriseTeams extends PureComponent {
   constructor(props) {
@@ -799,6 +800,7 @@ export default class EnterpriseTeams extends PureComponent {
         {this.state.showAddTeam && (
           <CreateTeam
             enterprise_id={eid}
+            loading={this.props.createTeamLoading}
             onOk={this.handleCreateTeam}
             onCancel={this.cancelCreateTeam}
           />
