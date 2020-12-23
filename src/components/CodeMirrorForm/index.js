@@ -111,18 +111,18 @@ class CodeMirrorForm extends PureComponent {
         zIndex: 4
       });
     }
-
-    const options = {
+    const defaultOptions = {
       mode: { name: mode || 'javascript', json: true },
       lineNumbers: true,
       theme: 'seti',
-      fullScreen,
       lineWrapping: true,
       smartIndent: true,
       matchBrackets: true,
       scrollbarStyle: null,
       showCursorWhenSelecting: true
     };
+    const options = Object.assign({}, defaultOptions, { fullScreen: false });
+    const optionsFull = Object.assign({}, defaultOptions, { fullScreen: true });
 
     const token = cookie.get('token');
     return (
@@ -134,7 +134,12 @@ class CodeMirrorForm extends PureComponent {
         {getFieldDecorator(name, {
           initialValue: data || '',
           rules: [{ required: true, message }]
-        })(<CodeMirror options={options} ref={this.saveRef} />)}
+        })(
+          <CodeMirror
+            options={fullScreen ? optionsFull : options}
+            ref={this.saveRef}
+          />
+        )}
         <div style={defaultFullScreenStyle}>
           <div
             style={{ lineHeight: '20px', paddingLeft: '30px', color: '#fff' }}
