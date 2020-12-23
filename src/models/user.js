@@ -311,8 +311,9 @@ export default {
         type: payload.type
       };
     },
-    tologout(state, action) {
+    tologout(state) {
       userUtil.removeCookie();
+      return { ...state };
     },
     save(state, action) {
       return {
