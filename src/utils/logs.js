@@ -49,7 +49,12 @@ export default {
           onClick={event => {
             event.stopPropagation();
             // eslint-disable-next-line no-unused-expressions
-            handleJump && handleJump(url, obj && obj.team_name);
+            const teamName =
+              obj &&
+              (obj.view_type === 'team' ||
+                obj.view_type === 'team_application') &&
+              obj.team_name;
+            handleJump && handleJump(url, teamName);
           }}
         >
           {obj.name}
@@ -57,7 +62,7 @@ export default {
       </span>
     );
     if (nextVal && nextVal.indexOf('}>>') > -1) {
-      return this.fetchInterception(nextVal, box);
+      return this.fetchInterception(nextVal, box, handleJump);
     }
     if (nextVal) {
       box = (
