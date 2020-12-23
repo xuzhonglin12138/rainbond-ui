@@ -4,6 +4,7 @@ import { Upload } from 'antd';
 import cookie from '../../utils/cookie';
 import apiconfig from '../../../config/api.config';
 import globalUtil from '../../utils/global';
+import styles from "./index.less";
 
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/seti.css');
@@ -111,35 +112,31 @@ class CodeMirrorForm extends PureComponent {
         zIndex: 4
       });
     }
-    const defaultOptions = {
+
+    const options = {
       mode: { name: mode || 'javascript', json: true },
       lineNumbers: true,
       theme: 'seti',
+      fullScreen,
       lineWrapping: true,
       smartIndent: true,
       matchBrackets: true,
       scrollbarStyle: null,
       showCursorWhenSelecting: true
     };
-    const options = Object.assign({}, defaultOptions, { fullScreen: false });
-    const optionsFull = Object.assign({}, defaultOptions, { fullScreen: true });
 
     const token = cookie.get('token');
     return (
       <Form.Item
         {...formItemLayout}
         label={label}
+        className={fullScreen && styles.fullScreens}
         style={{ overflow: 'hidden' }}
       >
         {getFieldDecorator(name, {
           initialValue: data || '',
           rules: [{ required: true, message }]
-        })(
-          <CodeMirror
-            options={fullScreen ? optionsFull : options}
-            ref={this.saveRef}
-          />
-        )}
+        })(<CodeMirror options={options} ref={this.saveRef} />)}
         <div style={defaultFullScreenStyle}>
           <div
             style={{ lineHeight: '20px', paddingLeft: '30px', color: '#fff' }}
