@@ -73,7 +73,7 @@ export default class EventList extends PureComponent {
       type: 'teamControl/getJoinTeamUsers',
       payload: {
         page_size,
-        page,
+        page_num:page,
         team_name: teamName
       },
       callback: data => {

@@ -509,7 +509,7 @@ export function getGithubInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/github`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -528,7 +528,7 @@ export function getGitlabInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/gitlab`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -571,7 +571,7 @@ export async function getJoinTeamUsers(body = {}) {
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {
       method: 'get',
-      data: body
+      params: body
     }
   );
 }
