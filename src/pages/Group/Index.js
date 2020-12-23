@@ -151,7 +151,9 @@ class EditGroupName extends PureComponent {
           {group_name && (
             <FormItem {...formItemLayout} label="负责人">
               {getFieldDecorator('username', {
-                initialValue: principal || '',
+                initialValue:
+                  (principal && !principal.is_delete && principal.real_name) ||
+                  '',
                 rules: [
                   {
                     required: true,
@@ -167,7 +169,12 @@ class EditGroupName extends PureComponent {
                   style={{ width: '100%' }}
                 >
                   {members.map(d => (
-                    <Option key={d.nick_name}>{d.real_name}</Option>
+                    <Option
+                      title={`${d.real_name}(${d.nick_name})`}
+                      key={d.nick_name}
+                    >
+                      {d.real_name}({d.nick_name})
+                    </Option>
                   ))}
                 </Select>
               )}
@@ -617,7 +624,6 @@ class Main extends PureComponent {
       stop: '停用',
       deploy: '构建'
     };
-
     const pageHeaderContent = (
       <div className={styles.pageHeaderContent}>
         <div style={{ display: 'flex' }}>
@@ -638,19 +644,20 @@ class Main extends PureComponent {
                   type="edit"
                 />
               )}
-              {currApp.principal && (
+              {currApp.principal && currApp.principal.real_name && (
                 <Tooltip
                   placement="bottom"
+                  overlayStyle={{ maxWidth: '1000px' }}
                   title={
                     <div className={styles.principalBox}>
                       <div>
-                        <span>负责人</span>：{currApp.principal}
+                        <span>负责人</span>：{currApp.principal.real_name}
                       </div>
                       <div>
-                        <span>账户</span>：{currApp.username}
+                        <span>账户</span>：{currApp.principal.username}
                       </div>
                       <div>
-                        <span>邮箱</span>：{currApp.email}
+                        <span>邮箱</span>：{currApp.principal.email}
                       </div>
                     </div>
                   }
@@ -659,9 +666,9 @@ class Main extends PureComponent {
                     style={{
                       margin: '0 10px'
                     }}
-                    color="green"
+                    color={currApp.principal.is_delete ? '#cccccc' : 'green'}
                   >
-                    {currApp.principal}
+                    {currApp.principal.real_name}
                   </Tag>
                 </Tooltip>
               )}

@@ -517,7 +517,9 @@ export default class Index extends PureComponent {
         render: (val, data) => {
           return (
             <div>
-              {val ? (
+              {data.is_delete && val ? (
+                val
+              ) : val ? (
                 <Link
                   to={`/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/components/${
                     data.service_alias
@@ -594,8 +596,12 @@ export default class Index extends PureComponent {
                       adminList.map(item => {
                         const { nick_name, real_name, user_id } = item;
                         return (
-                          <Option key={user_id} value={nick_name}>
-                            {real_name}
+                          <Option
+                            key={user_id}
+                            value={nick_name}
+                            title={`${real_name}(${nick_name})`}
+                          >
+                            {real_name}({nick_name})
                           </Option>
                         );
                       })}
