@@ -972,6 +972,12 @@ export async function putInternalMessages(param) {
     data: param
   });
 }
+export async function putReadAllMessages(param) {
+  return request(`${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users/internal-messages`, {
+    method: 'put',
+    data: param
+  });
+}
 
 export async function fetchLoginLogs(param) {
   return request(

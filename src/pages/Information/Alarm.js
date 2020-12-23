@@ -84,13 +84,9 @@ export default class Alarm extends PureComponent {
     });
   };
   handleRead = () => {
-    const { dataList } = this.state;
-    if (dataList && dataList.length > 0) {
-      const messageIds = dataList.map(item => item.message_id);
-      this.setState({ modifyLoading: true }, () => {
-        this.putInternalMessages(messageIds);
-      });
-    }
+    this.setState({ modifyLoading: true }, () => {
+      this.putReadAllMessages();
+    });
   };
   putInternalMessages = (messageIds, url, teamName) => {
     const { dispatch } = this.props;
@@ -113,6 +109,23 @@ export default class Alarm extends PureComponent {
             this.handleJump(url, teamName);
           }
         }
+      }
+    });
+  };
+
+  putReadAllMessages = () => {
+    const { dispatch, user } = this.props;
+    dispatch({
+      type: 'global/putReadAllMessages',
+      payload: {
+        enterprise_id: user && user.enterprise_id,
+        category: 'alert'
+      },
+      callback: res => {
+        this.setState({
+          modifyLoading: false
+        });
+        this.loadAlertMessages();
       }
     });
   };

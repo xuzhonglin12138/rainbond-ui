@@ -51,6 +51,7 @@ import {
   fetchSetRemind,
   putSetRemind,
   putInternalMessages,
+  putReadAllMessages,
   fetchLoginLogs,
   deleteEnterpriseUsers,
   upEnterpriseUsers,
@@ -601,6 +602,12 @@ export default {
     },
     *putInternalMessages({ payload, callback }, { put, call }) {
       const response = yield call(putInternalMessages, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *putReadAllMessages({ payload, callback }, { put, call }) {
+      const response = yield call(putReadAllMessages, payload);
       if (response) {
         callback && callback(response);
       }
