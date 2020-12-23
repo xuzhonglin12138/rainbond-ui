@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import rainbondUtil from '../../utils/rainbond';
 import cookie from '../../utils/cookie';
+import globalUtil from '../../utils/global';
 import Result from '../../components/Result';
 import { message } from 'antd';
 
@@ -74,7 +75,7 @@ export default class ThirdLogin extends Component {
         });
         return null;
       }
-
+      globalUtil.removeCookie();
       // if not login
 
       dispatch({
@@ -134,6 +135,7 @@ export default class ThirdLogin extends Component {
         },
       });
     } else {
+      globalUtil.removeCookie();
       this.props.dispatch(
         routerRedux.replace('/user/login?disable_auto_login=true')
       );

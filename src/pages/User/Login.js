@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Divider, Row, Col } from 'antd';
 import styles from './Login.less';
-import rainbondUtil from '../../utils/rainbond';
 import LoginComponent from './loginComponent';
+import rainbondUtil from '../../utils/rainbond';
+import globalUtil from '../../utils/global';
 import oauthUtil from '../../utils/oauth';
 
 @connect(({ global }) => ({
@@ -22,6 +23,11 @@ export default class LoginPage extends Component {
         rainbondInfo.oauth_services.value.length > 0 &&
         rainbondInfo.oauth_services.value,
     };
+  }
+  componentWillMount() {
+    const { dispatch } = this.props;
+    dispatch({ type: 'global/hideNeedLogin' });
+    globalUtil.removeCookie();
   }
 
   handleSubmit = values => {
@@ -42,10 +48,7 @@ export default class LoginPage extends Component {
       },
     });
   };
-  componentWillMount() {
-    const { dispatch } = this.props;
-    dispatch({ type: 'global/hideNeedLogin' });
-  }
+
 
   render() {
     const { rainbondInfo } = this.props;

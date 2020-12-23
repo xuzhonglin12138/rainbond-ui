@@ -5,6 +5,7 @@ import { notification } from 'antd';
 import styles from './Register.less';
 import RegisterComponent from './registerComponent';
 import rainbondUtil from '../../utils/rainbond';
+import globalUtil from '../../utils/global';
 import cloud from '../../utils/cloud';
 
 @connect(({ user, global }) => ({
@@ -22,7 +23,9 @@ export default class Register extends Component {
     prefix: '86',
     time: Date.now()
   };
-
+  componentWillMount() {
+    globalUtil.removeCookie();
+  }
   handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({

@@ -8,14 +8,9 @@ import styles from './Register.less';
 import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
+import axios from 'axios';
 
 const FormItem = Form.Item;
-
-const passwordProgressMap = {
-  ok: 'success',
-  pass: 'normal',
-  poor: 'exception'
-};
 
 @connect(({ user, loading, global }) => ({
   register: user.register,
@@ -32,36 +27,36 @@ export default class RegisterComponent extends Component {
     confirmDirty: false,
     visible: false,
     help: '',
-    prefix: '86',
-    time: Date.now()
+    imgUrl: ''
   };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
+  componentDidMount() {
+    this.getSetCodeImg();
   }
-
-  onGetCaptcha = () => {
-    let count = 59;
-    this.setState({ count });
-    this.interval = setInterval(() => {
-      count -= 1;
-      this.setState({ count });
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
+  getSetCodeImg = () => {
+    axios
+      .get(`${apiconfig.baseUrl}/console/captcha?_=${Date.now()}`, {
+        withCredentials: false,
+        responseType: 'arraybuffer'
+      })
+      .then(res => {
+        var img = document.createElement('img');
+        img.src = `data:image/jpeg;base64,${this.transformArrayBufferToBase64(
+          res.data
+        )}`;
+        img.width = 120;
+        img.height = 40;
+        document.getElementById('codeImg').innerHTML = '';
+        document.getElementById('codeImg').appendChild(img);
+      });
   };
-
-  getPasswordStatus = () => {
-    const { form } = this.props;
-    const value = form.getFieldValue('password');
-    if (value && value.length > 9) {
-      return 'ok';
+  transformArrayBufferToBase64 = buffer => {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    for (var len = bytes.byteLength, i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
     }
-    if (value && value.length > 5) {
-      return 'pass';
-    }
-    return 'poor';
+    return window.btoa(binary);
   };
 
   handleSubmit = e => {
@@ -81,13 +76,6 @@ export default class RegisterComponent extends Component {
         }
       }
     );
-  };
-
-  handleConfirmBlur = e => {
-    const { value } = e.target;
-    this.setState({
-      confirmDirty: this.state.confirmDirty || !!value
-    });
   };
 
   checkConfirm = (rule, value, callback) => {
@@ -129,31 +117,6 @@ export default class RegisterComponent extends Component {
     }
   };
 
-  changePrefix = value => {
-    this.setState({ prefix: value });
-  };
-  changeTime = () => {
-    this.setState({
-      time: Date.now()
-    });
-  };
-  renderPasswordProgress = () => {
-    const { form } = this.props;
-    const value = form.getFieldValue('password');
-    const passwordStatus = this.getPasswordStatus();
-    return value && value.length ? (
-      <div className={styles[`progress-${passwordStatus}`]}>
-        <Progress
-          status={passwordProgressMap[passwordStatus]}
-          className={styles.progress}
-          strokeWidth={6}
-          percent={value.length * 10 > 100 ? 100 : value.length * 10}
-          showInfo={false}
-        />
-      </div>
-    ) : null;
-  };
-
   render() {
     const {
       form,
@@ -165,7 +128,8 @@ export default class RegisterComponent extends Component {
     } = this.props;
     const { getFieldDecorator } = form;
     const firstRegist = !rainbondUtil.fetchIsFirstRegist(rainbondInfo);
-    const { time, help } = this.state;
+    const { time, help, imgUrl } = this.state;
+    console.log('imgUrl', imgUrl);
     return (
       <Form onSubmit={this.handleSubmit}>
         {firstRegist && (
@@ -251,14 +215,7 @@ export default class RegisterComponent extends Component {
               })(<Input size="large" placeholder="验证码" />)}
             </Col>
             <Col span={8}>
-              <img
-                onClick={this.changeTime}
-                src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
-                style={{
-                  width: '100%',
-                  height: 40
-                }}
-              />
+              <div id="codeImg" onClick={this.getSetCodeImg} />
             </Col>
           </Row>
         </FormItem>
