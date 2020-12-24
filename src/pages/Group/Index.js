@@ -152,7 +152,7 @@ class EditGroupName extends PureComponent {
             <FormItem {...formItemLayout} label="负责人">
               {getFieldDecorator('username', {
                 initialValue:
-                  (principal && !principal.is_delete && principal.real_name) ||
+                  (principal && !principal.is_delete && principal.username) ||
                   '',
                 rules: [
                   {
@@ -170,6 +170,7 @@ class EditGroupName extends PureComponent {
                 >
                   {members.map(d => (
                     <Option
+                      value={d.nick_name}
                       title={`${d.real_name}(${d.nick_name})`}
                       key={d.nick_name}
                     >
