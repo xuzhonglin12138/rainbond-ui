@@ -595,7 +595,7 @@ export default class Index extends PureComponent {
       columns.push({
         title: '应用名称',
         align: 'center',
-        width: 150,
+        width: 250,
         dataIndex: 'app_name',
         render: (val, data) => {
           return (
@@ -622,7 +622,7 @@ export default class Index extends PureComponent {
       columns.push({
         title: '组件名称',
         align: 'center',
-        width: 150,
+        width: 250,
         dataIndex: 'service_cname',
         render: (val, data) => {
           return (
