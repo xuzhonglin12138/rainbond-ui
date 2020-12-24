@@ -3,6 +3,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import {
+  Input,
   Form,
   Select,
   DatePicker,
@@ -22,6 +23,7 @@ moment.locale('zh-cn');
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { Search } = Input;
 
 @Form.create()
 @connect(({ user, list, loading, global, index }) => ({
@@ -167,8 +169,7 @@ export default class LoginLog extends PureComponent {
     );
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
+  handleSubmit = () => {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
@@ -257,83 +258,73 @@ export default class LoginLog extends PureComponent {
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit}>
-          <Row
-            gutter={[16, 16]}
-            type="flex"
-            justify="space-between"
-            align="middle"
-          >
-            <Col span={4}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('user_name', {
-                  rules: [
-                    {
-                      required: false,
-                      message: '请选择用户'
-                    }
-                  ]
-                })(
-                  <Select
-                    showSearch
-                    placeholder="请选择用户"
-                    defaultActiveFirstOption={false}
-                    filterOption={false}
-                    notFoundContent={null}
-                    onSearch={this.handleSearch}
-                    onChange={this.handleChange}
-                  >
-                    <Option key={0} value="">
-                      所有用户
-                    </Option>
-                    {adminList &&
-                      adminList.length > 0 &&
-                      adminList.map(item => {
-                        const { nick_name, real_name, user_id } = item;
-                        return (
-                          <Option key={user_id} value={nick_name}>
-                            {real_name}
-                          </Option>
-                        );
-                      })}
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem {...formItemLayout}>
-                {getFieldDecorator('times', {
-                  initialValue: ''
-                })(
-                  <RangePicker
-                    locale={locale}
-                    separator="至"
-                    style={{ width: '100%' }}
-                    disabledDate={this.disabledDate}
-                    onChange={value => {
-                      this.handleChangeTimes(value);
-                    }}
-                    showTime={{
-                      hideDisabledOptions: true,
-                      defaultValue: [
-                        moment('00:00:00', 'HH:mm:ss'),
-                        moment('23:59:59', 'HH:mm:ss')
-                      ]
-                    }}
-                    format="YYYY-MM-DD HH:mm:ss"
-                  />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <Button
-                onClick={this.handleSubmit}
-                type="primary"
-                htmlType="submit"
-                style={{ marginBottom: '24px' }}
-              >
-                查询
-              </Button>
-            </Col>
+          <Row type="flex" align="middle">
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('user_name', {
+                rules: [
+                  {
+                    required: false,
+                    message: '请选择用户'
+                  }
+                ]
+              })(
+                <Select
+                  showSearch
+                  placeholder="请选择用户"
+                  style={{ width: '178px', marginRight: '20px' }}
+                  defaultActiveFirstOption={false}
+                  filterOption={false}
+                  notFoundContent={null}
+                  onSearch={this.handleSearch}
+                  onChange={this.handleChange}
+                >
+                  <Option key={0} value="">
+                    所有用户
+                  </Option>
+                  {adminList &&
+                    adminList.length > 0 &&
+                    adminList.map(item => {
+                      const { nick_name, real_name, user_id } = item;
+                      return (
+                        <Option key={user_id} value={nick_name}>
+                          {real_name}
+                        </Option>
+                      );
+                    })}
+                </Select>
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('times', {
+                initialValue: ''
+              })(
+                <RangePicker
+                  locale={locale}
+                  separator="至"
+                  style={{ width: '400px', marginRight: '20px' }}
+                  disabledDate={this.disabledDate}
+                  onChange={value => {
+                    this.handleChangeTimes(value);
+                  }}
+                  showTime={{
+                    hideDisabledOptions: true,
+                    defaultValue: [
+                      moment('00:00:00', 'HH:mm:ss'),
+                      moment('23:59:59', 'HH:mm:ss')
+                    ]
+                  }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              )}
+            </FormItem>
+            <Button
+              onClick={this.handleSubmit}
+              type="primary"
+              htmlType="submit"
+              style={{ marginBottom: '24px' }}
+            >
+              查询
+            </Button>
           </Row>
         </Form>
         <Table
