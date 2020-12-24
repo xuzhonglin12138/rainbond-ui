@@ -440,7 +440,9 @@ export async function getTeamOperationLogs(body = {}) {
         page: body.page,
         page_size: body.page_size,
         start_time: body.start_time,
-        end_time: body.end_time
+        end_time: body.end_time,
+        query: body.query,
+        app_id: body.app_id
       }
     }
   );

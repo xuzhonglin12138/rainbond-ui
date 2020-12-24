@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-expressions */
 import React, { Fragment, PureComponent } from 'react';
 import {
+  Input,
   Button,
   Col,
   DatePicker,
@@ -27,6 +28,7 @@ moment.locale('zh-cn');
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { Search } = Input;
 
 @Form.create()
 @connect(({ user, list, loading, global, index }) => ({
@@ -43,6 +45,8 @@ export default class Index extends PureComponent {
     super(props);
     this.state = {
       name: '',
+      query: '',
+      appId: '',
       page: 1,
       page_size: 999,
       loading: true,
@@ -51,7 +55,14 @@ export default class Index extends PureComponent {
       logsPageSize: 10,
       logsTotal: 1,
       adminList: [],
+      adminLoading: false,
       apps: [],
+      appLoading: false,
+      teamQuery: '',
+      teamLoading: false,
+      teamApps: [],
+      teamPage: 1,
+      teamPageSize: 999,
       startTime: '',
       endTime: '',
       operationType: '',
@@ -108,6 +119,9 @@ export default class Index extends PureComponent {
     } else {
       this.loadMembers();
     }
+    if (views === 'teams') {
+      this.loadApps();
+    }
   };
   handleSearch = name => {
     this.setState(
@@ -120,6 +134,28 @@ export default class Index extends PureComponent {
       }
     );
   };
+  handleSearchApp = teamQuery => {
+    this.setState(
+      {
+        teamQuery,
+        teamPage: 1
+      },
+      () => {
+        this.handleUser();
+      }
+    );
+  };
+  handleChangeApp = appId => {
+    this.setState(
+      {
+        appId
+      },
+      () => {
+        this.handleViews();
+      }
+    );
+  };
+
   handleSearchComponent = service_alias => {
     this.setState(
       {
@@ -191,12 +227,22 @@ export default class Index extends PureComponent {
 
   fetchTeamOperationLogs = () => {
     const { dispatch } = this.props;
-    const { logsPage, logsPageSize, name, startTime, endTime } = this.state;
+    const {
+      logsPage,
+      logsPageSize,
+      name,
+      startTime,
+      endTime,
+      query,
+      appId
+    } = this.state;
 
     dispatch({
       type: 'index/fetchTeamOperationLogs',
       payload: {
+        query,
         name,
+        app_id: appId,
         page: logsPage,
         page_size: logsPageSize,
         start_time: startTime,
@@ -217,6 +263,7 @@ export default class Index extends PureComponent {
   fetchAppLogs = () => {
     const { dispatch, appID } = this.props;
     const {
+      query,
       logsPage,
       logsPageSize,
       name,
@@ -227,6 +274,7 @@ export default class Index extends PureComponent {
     dispatch({
       type: 'groupControl/fetchAppLogs',
       payload: {
+        query,
         name,
         page: logsPage,
         page_size: logsPageSize,
@@ -256,11 +304,13 @@ export default class Index extends PureComponent {
       name,
       startTime,
       endTime,
-      operationType
+      operationType,
+      query
     } = this.state;
     dispatch({
       type: 'global/fetchOperationLogs',
       payload: {
+        query,
         enterprise_id: eid,
         page: logsPage,
         page_size: logsPageSize,
@@ -294,12 +344,40 @@ export default class Index extends PureComponent {
       },
       callback: res => {
         if (res && res._code === 200) {
-          this.setState({ adminList: res.list });
+          this.setState({
+            adminList: res.list || [],
+            adminLoading: false,
+            name: ''
+          });
         }
       }
     });
   };
-
+  loadApps = () => {
+    const { dispatch } = this.props;
+    const { teamPage, teamPageSize, teamQuery } = this.state;
+    const teamName = globalUtil.getCurrTeamName();
+    const regionName = globalUtil.getCurrRegionName();
+    dispatch({
+      type: 'global/getTeamAppList',
+      payload: {
+        team_name: teamName,
+        region: regionName,
+        query: teamQuery,
+        page: teamPage,
+        page_size: teamPageSize
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          this.setState({
+            teamQuery: '',
+            teamLoading: false,
+            teamApps: res.list
+          });
+        }
+      }
+    });
+  };
   loadMembers = () => {
     const { dispatch } = this.props;
     const { page, page_size, name } = this.state;
@@ -317,6 +395,8 @@ export default class Index extends PureComponent {
       callback: res => {
         if (res && res._code === 200) {
           this.setState({
+            adminLoading: false,
+            name: '',
             adminList: res.list || []
           });
         }
@@ -339,7 +419,8 @@ export default class Index extends PureComponent {
       callback: res => {
         if (res && res._code == 200) {
           this.setState({
-            loading: false,
+            appLoading: false,
+            service_alias: '',
             apps: res.list || []
           });
         }
@@ -405,8 +486,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleSubmit = e => {
-    e.preventDefault();
+  handleSubmit = () => {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
@@ -421,8 +501,7 @@ export default class Index extends PureComponent {
             .locale('zh-cn')
             .format('YYYY-MM-DD HH:mm:ss');
         }
-        const name = values.username || '';
-        const operationType = values.operation_type || '';
+        const { name = '', operationType = '', query = '' } = values;
 
         this.setState(
           {
@@ -431,6 +510,7 @@ export default class Index extends PureComponent {
             startTime,
             endTime,
             name,
+            query,
             operationType
           },
           () => {
@@ -451,7 +531,10 @@ export default class Index extends PureComponent {
       logsPage,
       logsPageSize,
       logsTotal,
-      apps
+      apps,
+      teamApps,
+      adminLoading,
+      appLoading
     } = this.state;
 
     const logs = logsUtil.fetchOperationType();
@@ -505,6 +588,33 @@ export default class Index extends PureComponent {
         dataIndex: 'operation_type',
         render: val => {
           return <span>{logs[val] || '-'}</span>;
+        }
+      });
+    }
+    if (views === 'teams') {
+      columns.push({
+        title: '应用名称',
+        align: 'center',
+        width: 150,
+        dataIndex: 'app_name',
+        render: (val, data) => {
+          return (
+            <div>
+              {data.is_delete && val ? (
+                val
+              ) : val ? (
+                <Link
+                  to={`/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps/${
+                    data.app_id
+                  }`}
+                >
+                  {val}
+                </Link>
+              ) : (
+                '-'
+              )}
+            </div>
+          );
         }
       });
     }
@@ -566,141 +676,178 @@ export default class Index extends PureComponent {
       }
     ];
     columns = [...columns, ...operation];
-
+    const marginRight = views === 'teams' ? '8px' : '20px';
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit}>
-          <Row
-            gutter={[16, 16]}
-            type="flex"
-            justify="space-between"
-            align="middle"
-          >
-            <Col span={4}>
+          <Row type="flex" align="middle">
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('query', {
+                initialValue: ''
+              })(
+                <Search
+                  placeholder="请输入操作内容"
+                  onSearch={this.handleSubmit}
+                  style={{ width: 249, marginRight }}
+                />
+              )}
+            </FormItem>
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('name')(
+                <Select
+                  showSearch
+                  placeholder="请选择用户"
+                  loading={adminLoading}
+                  style={{ width: '178px', marginRight }}
+                  defaultActiveFirstOption={false}
+                  filterOption={false}
+                  notFoundContent={null}
+                  onSearch={this.handleSearch}
+                  onChange={this.handleChange}
+                >
+                  <Option key={0} value="">
+                    所有用户
+                  </Option>
+                  {adminList &&
+                    adminList.length > 0 &&
+                    adminList.map(item => {
+                      const { nick_name, real_name, user_id } = item;
+                      return (
+                        <Option
+                          key={user_id}
+                          value={nick_name}
+                          title={`${real_name}(${nick_name})`}
+                        >
+                          {real_name}({nick_name})
+                        </Option>
+                      );
+                    })}
+                </Select>
+              )}
+            </FormItem>
+            {views === 'enterprise' && (
               <FormItem {...formItemLayout}>
-                {getFieldDecorator('username')(
+                {getFieldDecorator('operationType', {
+                  rules: [
+                    {
+                      required: false,
+                      message: '请选择操作类型'
+                    }
+                  ]
+                })(
+                  <Select
+                    placeholder="操作类型"
+                    style={{ width: '178px', marginRight }}
+                    onChange={this.handleChangeType}
+                  >
+                    <Option key={0} value="">
+                      所有类型
+                    </Option>
+                    {Object.keys(logs).map(item => (
+                      <Option value={item}>{logs[item]}</Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            )}
+            {views === 'teams' && (
+              <FormItem {...formItemLayout}>
+                {getFieldDecorator('service_alias')(
                   <Select
                     showSearch
-                    placeholder="请选择用户"
+                    style={{
+                      width: '178px',
+                      marginRight
+                    }}
+                    placeholder="请选择应用"
+                    loading={this.state.teamLoading}
                     defaultActiveFirstOption={false}
                     filterOption={false}
                     notFoundContent={null}
-                    onSearch={this.handleSearch}
-                    onChange={this.handleChange}
+                    onSearch={this.handleSearchApp}
+                    onChange={this.handleChangeApp}
                   >
                     <Option key={0} value="">
-                      所有用户
+                      所有应用
                     </Option>
-                    {adminList &&
-                      adminList.length > 0 &&
-                      adminList.map(item => {
-                        const { nick_name, real_name, user_id } = item;
+                    {teamApps &&
+                      teamApps.length > 0 &&
+                      teamApps.map(item => {
+                        const { group_id, group_name } = item;
                         return (
-                          <Option
-                            key={user_id}
-                            value={nick_name}
-                            title={`${real_name}(${nick_name})`}
-                          >
-                            {real_name}({nick_name})
+                          <Option key={group_id} value={group_id}>
+                            {group_name}
                           </Option>
                         );
                       })}
                   </Select>
                 )}
               </FormItem>
-            </Col>
-            {views === 'enterprise' && (
-              <Col span={4}>
-                <FormItem {...formItemLayout}>
-                  {getFieldDecorator('operation_type', {
-                    rules: [
-                      {
-                        required: false,
-                        message: '请选择操作类型'
-                      }
-                    ]
-                  })(
-                    <Select
-                      placeholder="操作类型"
-                      onChange={this.handleChangeType}
-                    >
-                      <Option key={0} value="">
-                        所有类型
-                      </Option>
-                      {Object.keys(logs).map(item => (
-                        <Option value={item}>{logs[item]}</Option>
-                      ))}
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
             )}
             {views === 'app' && (
-              <Col span={4}>
-                <FormItem {...formItemLayout}>
-                  {getFieldDecorator('service_alias')(
-                    <Select
-                      showSearch
-                      placeholder="请选择组件"
-                      defaultActiveFirstOption={false}
-                      filterOption={false}
-                      notFoundContent={null}
-                      onSearch={this.handleSearchComponent}
-                      onChange={this.handleChangeComponent}
-                    >
-                      <Option key={0} value="">
-                        所有组件
-                      </Option>
-                      {apps &&
-                        apps.length > 0 &&
-                        apps.map(item => {
-                          const { service_alias, service_cname } = item;
-                          return (
-                            <Option key={service_alias} value={service_alias}>
-                              {service_cname}
-                            </Option>
-                          );
-                        })}
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-            )}
-            <Col span={8}>
               <FormItem {...formItemLayout}>
-                {getFieldDecorator('times', {
-                  initialValue: ''
-                })(
-                  <RangePicker
-                    locale={locale}
-                    style={{ width: '100%' }}
-                    separator="至"
-                    disabledDate={this.disabledDate}
-                    onChange={value => {
-                      this.handleChangeTimes(value);
-                    }}
-                    showTime={{
-                      hideDisabledOptions: true,
-                      defaultValue: [
-                        moment('00:00:00', 'HH:mm:ss'),
-                        moment('23:59:59', 'HH:mm:ss')
-                      ]
-                    }}
-                    format="YYYY-MM-DD HH:mm:ss"
-                  />
+                {getFieldDecorator('service_alias')(
+                  <Select
+                    showSearch
+                    placeholder="请选择组件"
+                    style={{ width: '178px', marginRight }}
+                    defaultActiveFirstOption={false}
+                    filterOption={false}
+                    notFoundContent={null}
+                    loading={appLoading}
+                    onSearch={this.handleSearchComponent}
+                    onChange={this.handleChangeComponent}
+                  >
+                    <Option key={0} value="">
+                      所有组件
+                    </Option>
+                    {apps &&
+                      apps.length > 0 &&
+                      apps.map(item => {
+                        const { service_alias, service_cname } = item;
+                        return (
+                          <Option key={service_alias} value={service_alias}>
+                            {service_cname}
+                          </Option>
+                        );
+                      })}
+                  </Select>
                 )}
               </FormItem>
-            </Col>
-            <Col span={views === 'teams' ? 8 : 4}>
-              <Button
-                onClick={this.handleSubmit}
-                type="primary"
-                htmlType="submit"
-                style={{ marginBottom: '24px' }}
-              >
-                查询
-              </Button>
-            </Col>
+            )}
+
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('times', {
+                initialValue: ''
+              })(
+                <RangePicker
+                  locale={locale}
+                  style={{ width: '400px', marginRight }}
+                  separator="至"
+                  disabledDate={this.disabledDate}
+                  onChange={value => {
+                    this.handleChangeTimes(value);
+                  }}
+                  showTime={{
+                    hideDisabledOptions: true,
+                    defaultValue: [
+                      moment('00:00:00', 'HH:mm:ss'),
+                      moment('23:59:59', 'HH:mm:ss')
+                    ]
+                  }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              )}
+            </FormItem>
+
+            <Button
+              onClick={this.handleSubmit}
+              type="primary"
+              htmlType="submit"
+              style={{ marginBottom: '24px' }}
+            >
+              查询
+            </Button>
           </Row>
         </Form>
         <Table
