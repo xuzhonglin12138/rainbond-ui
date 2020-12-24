@@ -681,24 +681,24 @@ export default class Index extends PureComponent {
       <Fragment>
         <Form onSubmit={this.handleSubmit}>
           <Row type="flex" align="middle">
-            <FormItem {...formItemLayout}>
+            <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
               {getFieldDecorator('query', {
                 initialValue: ''
               })(
                 <Search
                   placeholder="请输入操作内容"
                   onSearch={this.handleSubmit}
-                  style={{ width: 249, marginRight }}
+                  style={{ width: 400, marginRight }}
                 />
               )}
             </FormItem>
-            <FormItem {...formItemLayout}>
+            <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
               {getFieldDecorator('name')(
                 <Select
                   showSearch
                   placeholder="请选择用户"
                   loading={adminLoading}
-                  style={{ width: '178px', marginRight }}
+                  style={{ width: 300, marginRight }}
                   defaultActiveFirstOption={false}
                   filterOption={false}
                   notFoundContent={null}
@@ -726,7 +726,7 @@ export default class Index extends PureComponent {
               )}
             </FormItem>
             {views === 'enterprise' && (
-              <FormItem {...formItemLayout}>
+              <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
                 {getFieldDecorator('operationType', {
                   rules: [
                     {
@@ -737,7 +737,7 @@ export default class Index extends PureComponent {
                 })(
                   <Select
                     placeholder="操作类型"
-                    style={{ width: '178px', marginRight }}
+                    style={{ width: 300, marginRight }}
                     onChange={this.handleChangeType}
                   >
                     <Option key={0} value="">
@@ -751,12 +751,12 @@ export default class Index extends PureComponent {
               </FormItem>
             )}
             {views === 'teams' && (
-              <FormItem {...formItemLayout}>
+              <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
                 {getFieldDecorator('service_alias')(
                   <Select
                     showSearch
                     style={{
-                      width: '178px',
+                      width: 300,
                       marginRight
                     }}
                     placeholder="请选择应用"
@@ -785,12 +785,12 @@ export default class Index extends PureComponent {
               </FormItem>
             )}
             {views === 'app' && (
-              <FormItem {...formItemLayout}>
+              <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
                 {getFieldDecorator('service_alias')(
                   <Select
                     showSearch
                     placeholder="请选择组件"
-                    style={{ width: '178px', marginRight }}
+                    style={{ width: 300, marginRight }}
                     defaultActiveFirstOption={false}
                     filterOption={false}
                     notFoundContent={null}
@@ -816,7 +816,7 @@ export default class Index extends PureComponent {
               </FormItem>
             )}
 
-            <FormItem {...formItemLayout}>
+            <FormItem {...formItemLayout} style={{ marginBottom: '10px' }}>
               {getFieldDecorator('times', {
                 initialValue: ''
               })(
@@ -844,7 +844,7 @@ export default class Index extends PureComponent {
               onClick={this.handleSubmit}
               type="primary"
               htmlType="submit"
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               查询
             </Button>
