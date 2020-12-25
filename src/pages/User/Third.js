@@ -62,7 +62,7 @@ export default class ThirdLogin extends Component {
                   desc: ''
                 },
                 () => {
-                  dispatch(routerRedux.push(`/`));
+                  this.handleSuccess();
                 }
               );
             }
@@ -106,7 +106,7 @@ export default class ThirdLogin extends Component {
             const data = res.bean;
             if (data && data.token) {
               cookie.set('token', data.token);
-              dispatch(routerRedux.push(`/`));
+              this.handleSuccess();
               return null;
             }
             if (data && data.result) {
@@ -114,13 +114,21 @@ export default class ThirdLogin extends Component {
               if (!data.result.is_authenticated) {
                 dispatch(
                   routerRedux.push(
-                    `/user/third/register?code=${data.result.code}&service_id=${data.result.service_id}&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${data.result.oauth_type}`
+                    `/user/third/register?code=${data.result.code}&service_id=${
+                      data.result.service_id
+                    }&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${
+                      data.result.oauth_type
+                    }`
                   )
                 );
               } else {
                 dispatch(
                   routerRedux.push(
-                    `/user/third/login?code=${data.result.code}&service_id=${data.result.service_id}&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${data.result.oauth_type}`
+                    `/user/third/login?code=${data.result.code}&service_id=${
+                      data.result.service_id
+                    }&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${
+                      data.result.oauth_type
+                    }`
                   )
                 );
               }
@@ -138,6 +146,20 @@ export default class ThirdLogin extends Component {
     } else {
       globalUtil.removeCookie();
       dispatch(routerRedux.replace('/user/login?disable_auto_login=true'));
+    }
+  }
+
+  handleSuccess() {
+    const { dispatch } = this.props;
+    let redirect = window.localStorage.getItem('redirect');
+    if (!redirect || redirect == '') {
+      redirect = '/';
+    }
+    window.localStorage.setItem('redirect', '');
+    if (redirect.startsWith('/')) {
+      dispatch(routerRedux.push(redirect));
+    } else {
+      window.location.href = redirect;
     }
   }
 

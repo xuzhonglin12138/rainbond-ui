@@ -1,5 +1,5 @@
 /* eslint-disable react/sort-comp */
-import { Layout, Tooltip } from 'antd';
+import { Layout } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
@@ -153,8 +153,8 @@ class EnterpriseLayout extends PureComponent {
     return { location, breadcrumbNameMap: this.breadcrumbNameMap };
   };
 
-  matchParamsPath = (pathname) => {
-    const pathKey = Object.keys(this.breadcrumbNameMap).find((key) => {
+  matchParamsPath = pathname => {
+    const pathKey = Object.keys(this.breadcrumbNameMap).find(key => {
       return pathToRegexp(key).test(pathname);
     });
     return this.breadcrumbNameMap[pathKey];
@@ -186,13 +186,14 @@ class EnterpriseLayout extends PureComponent {
       }
     } = this.props;
     const { enterpriseList } = this.state;
-    if (!eid || eid == 'auto') {
+    if (!eid || eid === 'auto') {
       if (enterpriseList.length > 0) {
         let selectE = null;
         enterpriseList.map(item => {
-          if (item.enterprise_id == currentUser.enterprise_id) {
+          if (item.enterprise_id === currentUser.enterprise_id) {
             selectE = item;
           }
+          return item;
         });
         if (selectE == null) {
           selectE = enterpriseList[0];
@@ -208,11 +209,12 @@ class EnterpriseLayout extends PureComponent {
       }
     } else {
       enterpriseList.map(item => {
-        if (item.enterprise_id == eid) {
+        if (item.enterprise_id === eid) {
           this.fetchEnterpriseInfo(eid);
           globalUtil.putLog(Object.assign(rainbondInfo, item));
           this.setState({ enterpriseInfo: item });
         }
+        return item;
       });
     }
   };

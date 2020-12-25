@@ -4,6 +4,7 @@ import CodeMirror from 'react-codemirror';
 import apiconfig from '../../../config/api.config';
 import cookie from '../../utils/cookie';
 import globalUtil from '../../utils/global';
+import styles from './index.less';
 
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/seti.css');
@@ -25,7 +26,7 @@ class CodeMirrorForm extends PureComponent {
     };
     this.CodeMirrorRef = '';
   }
-  
+
   saveRef = (ref) => {
     this.CodeMirrorRef = ref;
   };
@@ -130,7 +131,7 @@ class CodeMirrorForm extends PureComponent {
       <Form.Item
         {...formItemLayout}
         label={label}
-        style={{ overflow: 'hidden' }}
+        className={fullScreen && styles.fullScreens}
       >
         {getFieldDecorator(name, {
           initialValue: data || '',

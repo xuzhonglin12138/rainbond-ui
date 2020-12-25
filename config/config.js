@@ -47,8 +47,8 @@ export default {
 
   routes: routerConfig,
   proxy: {
-    '/console/proxy': {
-      target: 'http://zengqg.pre.goodrain.com',
+    '/console': {
+      target: 'http://7070.gr255017.2c9v614j.17f4cc.grapps.cn',
       changeOrigin: true
     }
   }
