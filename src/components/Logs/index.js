@@ -1,7 +1,9 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-unused-expressions */
-import React, { Fragment, PureComponent } from 'react';
+import globalUtil from '@/utils/global';
+import logsUtil from '@/utils/logs';
 import {
   Button,
   Col,
@@ -14,11 +16,10 @@ import {
   Tag,
   Tooltip
 } from 'antd';
-import { Link } from 'dva/router';
 import { connect } from 'dva';
+import { Link } from 'dva/router';
 import moment from 'moment';
-import globalUtil from '@/utils/global';
-import logsUtil from '@/utils/logs';
+import React, { Fragment, PureComponent } from 'react';
 import styles from './index.less';
 
 const FormItem = Form.Item;
@@ -198,7 +199,7 @@ export default class Index extends PureComponent {
       service_alias
     } = this.state;
     dispatch({
-      type: 'groupControl/fetchAppLogs',
+      type: 'application/fetchAppLogs',
       payload: {
         name,
         page: logsPage,

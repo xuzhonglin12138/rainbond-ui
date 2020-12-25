@@ -1,6 +1,6 @@
-import React, { Fragment, PureComponent } from 'react';
-import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import Logs from '@/components/Logs';
+import PageHeaderLayout from '@/layouts/PageHeaderLayout';
+import React, { Fragment, PureComponent } from 'react';
 
 export default class AppLogs extends PureComponent {
   render() {
