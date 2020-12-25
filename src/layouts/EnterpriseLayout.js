@@ -1,5 +1,5 @@
 /* eslint-disable react/sort-comp */
-import { Layout } from 'antd';
+import { Layout, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
@@ -27,8 +27,6 @@ import globalUtil from '../utils/global';
 import rainbondUtil from '../utils/rainbond';
 import userUtil from '../utils/user';
 import Context from './MenuContext';
-
-const qs = require('query-string');
 
 const { Content } = Layout;
 
