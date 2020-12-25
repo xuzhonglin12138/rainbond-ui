@@ -1,4 +1,8 @@
 export default {
+    'header.information':'站内信',
+    'header.information.notice':'通知信息',
+    'header.information.alarm':'报警信息',
+    'header.information.remindSetting':'提醒设置',
     'header.team.re':'返回企业视图',
     'header.team.name':'团队视图',
     'header.team.search':'筛选团队',

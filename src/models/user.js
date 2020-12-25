@@ -1,35 +1,33 @@
+import { routerRedux } from 'dva/router';
 import {
-  query as queryUsers,
-  queryCurrent,
-  login,
-  getDetail,
-  logout,
-  fetchEnterpriseNoTeamUser,
-  queryOauthType,
-  register,
-  gitlabRegister,
-  createGitlabProject,
-  changePass,
-  queryThirdInfo,
-  queryThirdCertification,
-  queryCertificationThird,
-  getTeamByName,
-  queryThirdBinding,
-  queryThirdLoginBinding,
+  addAccessToken,
   addCollectionView,
-  queryCollectionViewInfo,
-  putCollectionViewInfo,
+  changePass,
+  createGitlabProject,
+  deleteAccessToke,
   deleteCollectionViewInfo,
   fetchAccessToken,
-  addAccessToken,
+  fetchEnterpriseNoTeamUser,
+  getDetail,
+  getTeamByName,
+  gitlabRegister,
+  login,
+  logout,
   putAccessToken,
-  deleteAccessToke
+  putCollectionViewInfo,
+  query as queryUsers,
+  queryCertificationThird,
+  queryCollectionViewInfo,
+  queryOauthType,
+  queryThirdBinding,
+  queryThirdCertification,
+  queryThirdInfo,
+  queryThirdLoginBinding,
+  register
 } from '../services/user';
 import { setAuthority } from '../utils/authority';
-import userUtil from '../utils/global';
-
 import cookie from '../utils/cookie';
-import { routerRedux } from 'dva/router';
+import userUtil from '../utils/global';
 
 export default {
   namespace: 'user',
@@ -187,7 +185,7 @@ export default {
         }
       }
     },
-    *thirdLogin({ payload, callback }, { call, put, select }) {
+    *thirdLogin({ payload, callback }, { call, put }) {
       const response = yield call(login, payload);
 
       if (response) {
@@ -196,27 +194,30 @@ export default {
       }
     },
 
-    *logout(_, { put, select }) {
-      try {
-        // get location pathname
-        const urlParams = new URL(window.location.href);
-        // const pathname = yield select(state => state.routing.location.pathname);
-        // add the parameters in the url
-        // urlParams.searchParams.set("redirect", pathname);
-        window.history.replaceState(null, 'login', urlParams.href);
-      } finally {
-        // yield put(routerRedux.push('/user/login')); Login out after permission
-        // changes to admin or user The refresh will automatically redirect to the login
-        // page
-        yield put({ type: 'tologout' });
+    *logout({ payload }, { call, put }) {
+      const response = yield call(logout, payload);
+      if (response) {
+        try {
+          // get location pathname
+          const urlParams = new URL(window.location.href);
+          // const pathname = yield select(state => state.routing.location.pathname);
+          // add the parameters in the url
+          // urlParams.searchParams.set("redirect", pathname);
+          window.history.replaceState(null, 'login', urlParams.href);
+        } finally {
+          // yield put(routerRedux.push('/user/login')); Login out after permission
+          // changes to admin or user The refresh will automatically redirect to the login
+          // page
+          yield put({ type: 'tologout' });
 
-        yield put({ type: 'saveCurrentUser', payload: null });
+          yield put({ type: 'saveCurrentUser', payload: null });
 
-        yield put(routerRedux.push('/user/login'));
+          yield put(routerRedux.push('/user/login'));
+        }
       }
     },
-    *register({ payload, complete }, { call, put, select }) {
-      const response = yield call(register, payload);
+    *register({ payload, complete, handleError }, { call, put, select }) {
+      const response = yield call(register, payload, handleError);
 
       if (response) {
         // 非常粗暴的跳转,登陆成功之后权限会变成user或admin,会自动重定向到主页 Login success after permission
@@ -225,7 +226,7 @@ export default {
         cookie.set('token', response.bean.token);
         const urlParams = new URL(window.location.href);
 
-        const pathname = yield select((state) => {
+        const pathname = yield select(state => {
           return (
             state &&
             state.routing &&
@@ -262,9 +263,7 @@ export default {
       const response = yield call(register, payload);
       if (response) {
         const urlParams = new URL(window.location.href);
-        const pathname = yield select(
-          (state) => state.routing.location.pathname
-        );
+        const pathname = yield select(state => state.routing.location.pathname);
         // add the parameters in the url
         const redirect = urlParams.searchParams.get('redirect', pathname);
         yield put({ type: 'registerHandle', payload: response.bean, redirect });
@@ -334,7 +333,7 @@ export default {
       };
     },
     saveOtherTeam(state, action) {
-      const {currentUser} = state;
+      const { currentUser } = state;
       currentUser.teams.push(action.team);
       return {
         ...state,

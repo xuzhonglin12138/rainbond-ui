@@ -107,7 +107,7 @@ export default class Index extends PureComponent {
           }
         });
         dispatch(
-          routerRedux.replace(`/team/${team_name}/region/${region_name}/index`)
+          routerRedux.push(`/team/${team_name}/region/${region_name}/index`)
         );
       }
     });

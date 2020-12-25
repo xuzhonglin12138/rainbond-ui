@@ -1,5 +1,12 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
+import EditGroupName from '@/components/AddOrEditGroup';
+import AppDirector from '@/components/AppDirector';
+import ApplicationGovernance from '@/components/ApplicationGovernance';
 import {
+  Badge,
   Button,
   Col,
   Divider,
@@ -7,30 +14,20 @@ import {
   Modal,
   notification,
   Row,
-  Spin,
-  Badge
+  Spin
 } from 'antd';
 import { connect } from 'dva';
-import moment from 'moment';
 import { routerRedux } from 'dva/router';
-import React, { PureComponent, Fragment } from 'react';
-import { batchOperation } from '../../services/app';
+import moment from 'moment';
+import React, { Fragment, PureComponent } from 'react';
 import ConfirmModal from '../../components/ConfirmModal';
 import RapidCopy from '../../components/RapidCopy';
 import VisterBtn from '../../components/visitBtnForAlllink';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import ApplicationGovernance from '@/components/ApplicationGovernance';
-import EditGroupName from '@/components/AddOrEditGroup';
-import AppDirector from '@/components/AppDirector';
-import sourceUtil from '../../utils/source-unit';
-import {
-  createApp,
-  createEnterprise,
-  createTeam
-} from '../../utils/breadcrumb';
+import { batchOperation } from '../../services/app';
 import cookie from '../../utils/cookie';
 import globalUtil from '../../utils/global';
 import roleUtil from '../../utils/role';
+import sourceUtil from '../../utils/source-unit';
 import AddServiceComponent from './AddServiceComponent';
 import AddThirdParty from './AddThirdParty';
 import AppShape from './AppShape';
@@ -58,7 +55,6 @@ class Main extends PureComponent {
       toDelete: false,
       toEdit: false,
       toEditAppDirector: false,
-      service_alias: [],
       serviceIds: [],
       linkList: [],
       jsonDataLength: 0,
@@ -66,7 +62,6 @@ class Main extends PureComponent {
       code: '',
       size: 'large',
       currApp: {},
-      loadingDetail: true,
       rapidCopy: false,
       componentTimer: true,
       customSwitch: false,
@@ -116,8 +111,8 @@ class Main extends PureComponent {
         team_name: teamName,
         groupId: this.getGroupId()
       },
-      callback: (res) => {
-        if (res && res._code == 200) {
+      callback: res => {
+        if (res && res._code === 200) {
           const data = res.bean;
           if (JSON.stringify(data) === '{}') {
             return;
@@ -125,10 +120,10 @@ class Main extends PureComponent {
           const serviceIds = [];
           const service_alias = [];
           const { json_data } = data;
-          Object.keys(json_data).map((key) => {
+          Object.keys(json_data).map(key => {
             serviceIds.push(key);
             if (
-              json_data[key].cur_status == 'running' &&
+              json_data[key].cur_status === 'running' &&
               json_data[key].is_internet == true
             ) {
               service_alias.push(json_data[key].service_alias);
@@ -138,7 +133,6 @@ class Main extends PureComponent {
           this.setState(
             {
               jsonDataLength: Object.keys(json_data).length,
-              service_alias,
               serviceIds
             },
             () => {
@@ -158,7 +152,7 @@ class Main extends PureComponent {
         service_alias: serviceAlias,
         team_name: globalUtil.getCurrTeamName()
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -180,7 +174,7 @@ class Main extends PureComponent {
           );
         }
       },
-      handleError: (err) => {
+      handleError: err => {
         this.handleError(err);
         this.handleTimers(
           'timer',
@@ -194,7 +188,7 @@ class Main extends PureComponent {
       }
     });
   }
-  handleError = (err) => {
+  handleError = err => {
     const { componentTimer } = this.state;
     if (!componentTimer) {
       return null;
@@ -219,7 +213,6 @@ class Main extends PureComponent {
   fetchAppDetail = () => {
     const { dispatch } = this.props;
     const { teamName, regionName, appID } = this.props.match.params;
-    this.setState({ loadingDetail: true });
     dispatch({
       type: 'application/fetchGroupDetail',
       payload: {
@@ -227,15 +220,14 @@ class Main extends PureComponent {
         region_name: regionName,
         group_id: appID
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
-            currApp: res.bean,
-            loadingDetail: false
+            currApp: res.bean
           });
         }
       },
-      handleError: (res) => {
+      handleError: res => {
         const { componentTimer } = this.state;
         if (!componentTimer) {
           return null;
@@ -260,7 +252,7 @@ class Main extends PureComponent {
         team_name: teamName,
         group_id: appID
       },
-      callback: (res) => {
+      callback: res => {
         this.setState({
           resources: res.list
         });
@@ -273,11 +265,11 @@ class Main extends PureComponent {
     form.resetFields();
     this.loadApps();
   };
-  handleSearch = (e) => {
+  handleSearch = e => {
     e.preventDefault();
     this.loadApps();
   };
-  changeType = (type) => {
+  changeType = type => {
     this.setState({ type });
   };
   toDelete = () => {
@@ -309,7 +301,7 @@ class Main extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         group_id: this.getGroupId()
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code == 200) {
           notification.success({ message: '删除成功' });
           this.closeComponentTimer();
@@ -324,13 +316,13 @@ class Main extends PureComponent {
     });
   };
 
-  newAddress = (grid) => {
+  newAddress = grid => {
     this.props.dispatch({
       type: 'global/fetchGroups',
       payload: {
         team_name: globalUtil.getCurrTeamName()
       },
-      callback: (list) => {
+      callback: list => {
         if (list && list.length) {
           if (grid == list[0].group_id) {
             this.newAddress(grid);
@@ -365,7 +357,7 @@ class Main extends PureComponent {
   cancelEditAppDirector = () => {
     this.setState({ toEditAppDirector: false });
   };
-  handleEdit = (vals) => {
+  handleEdit = vals => {
     const { dispatch } = this.props;
     dispatch({
       type: 'application/editGroup',
@@ -376,7 +368,7 @@ class Main extends PureComponent {
         note: vals.note,
         username: vals.username
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code == 200) {
           notification.success({ message: '修改成功' });
         }
@@ -402,7 +394,7 @@ class Main extends PureComponent {
   };
 
   /** 构建拓扑图 */
-  handleTopology = (code) => {
+  handleTopology = code => {
     this.setState({
       promptModal: true,
       code
@@ -429,7 +421,7 @@ class Main extends PureComponent {
         action: code,
         team_name: globalUtil.getCurrTeamName(),
         serviceIds: serviceIds && serviceIds.join(',')
-      }).then((res) => {
+      }).then(res => {
         if (res && res._code === 200) {
           notification.success({
             message: '重启成功'
@@ -446,7 +438,7 @@ class Main extends PureComponent {
           group_id: this.getGroupId(),
           action: code
         },
-        callback: (res) => {
+        callback: res => {
           if (res && res._code === 200) {
             notification.success({
               message: res.msg_show || '构建成功',
@@ -466,7 +458,7 @@ class Main extends PureComponent {
       code: ''
     });
   };
-  handleSizeChange = (e) => {
+  handleSizeChange = e => {
     this.setState({ size: e.target.value });
   };
 
@@ -476,7 +468,7 @@ class Main extends PureComponent {
     });
   };
 
-  handleJump = (target) => {
+  handleJump = target => {
     const { dispatch, appID } = this.props;
     dispatch(
       routerRedux.push(
@@ -485,12 +477,10 @@ class Main extends PureComponent {
     );
   };
   render() {
+    const { teamName, regionName } = this.props.match.params;
     const {
       groupDetail,
-      appID,
-      currentEnterprise,
-      currentTeam,
-      currentRegionName,
+      editGroupLoading,
       appPermissions: {
         isShare,
         isBackup,
@@ -504,7 +494,6 @@ class Main extends PureComponent {
         isCopy
       },
       buildShapeLoading,
-      editGroupLoading,
       deleteLoading,
       appConfigGroupPermissions: { isAccess: isConfigGroup },
       componentPermissions,
@@ -517,7 +506,6 @@ class Main extends PureComponent {
       }
     } = this.props;
     const {
-      loadingDetail,
       currApp,
       resources,
       rapidCopy,
@@ -802,8 +790,6 @@ class Main extends PureComponent {
         </div>
       </div>
     );
-    const teamName = globalUtil.getCurrTeamName();
-    const regionName = globalUtil.getCurrRegionName();
     return (
       <Fragment>
         <Row>{pageHeaderContent}</Row>
@@ -933,7 +919,7 @@ class Main extends PureComponent {
         {type === 'spin' && <Spin />}
         {type === 'shapes' && (
           <EditorTopology
-            changeType={(types) => {
+            changeType={types => {
               this.changeType(types);
             }}
             group_id={this.getGroupId()}
@@ -951,6 +937,8 @@ class Main extends PureComponent {
         )}
         {toEdit && (
           <EditGroupName
+            teamName={teamName}
+            regionName={regionName}
             group_name={groupDetail.group_name}
             note={groupDetail.note}
             loading={editGroupLoading}
@@ -1025,7 +1013,7 @@ export default class Index extends PureComponent {
     const { params } = this.props.match;
     return params.appID;
   }
-  handlePermissions = (type) => {
+  handlePermissions = type => {
     const { currentTeamPermissionsInfo } = this.props;
     return roleUtil.querySpecifiedPermissionsInfo(
       currentTeamPermissionsInfo,

@@ -1,13 +1,13 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/alt-text */
-import React, { Component } from 'react';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Form, Input, Button, Row, Col, Progress } from 'antd';
-import styles from './Register.less';
+import React, { Component } from 'react';
 import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
+import styles from './Register.less';
 
 const FormItem = Form.Item;
 
@@ -52,7 +52,7 @@ export default class RegisterComponent extends Component {
     return 'poor';
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     const { form, onSubmit } = this.props;
     form.validateFields(
@@ -63,12 +63,15 @@ export default class RegisterComponent extends Component {
         if (!err && onSubmit) {
           userUtil.removeCookie();
           onSubmit(values);
+          if (!values.name) {
+            values.name = values.user_name;
+          }
         }
       }
     );
   };
 
-  handleConfirmBlur = (e) => {
+  handleConfirmBlur = e => {
     const { value } = e.target;
     this.setState({
       confirmDirty: this.state.confirmDirty || !!value
@@ -125,7 +128,7 @@ export default class RegisterComponent extends Component {
       submitting,
       thirdsubmitting,
       type,
-      user_info,
+      user_info: userInfo,
       rainbondInfo
     } = this.props;
     const { getFieldDecorator } = form;
@@ -147,7 +150,7 @@ export default class RegisterComponent extends Component {
         )}
         <FormItem>
           {getFieldDecorator('user_name', {
-            initialValue: user_info ? user_info.oauth_user_name : '',
+            initialValue: (userInfo && userInfo.oauth_user_name) || '',
             rules: [
               { required: true, message: '请输入用户名!' },
               {
@@ -158,8 +161,11 @@ export default class RegisterComponent extends Component {
           })(<Input size="large" placeholder="用户名" />)}
         </FormItem>
         <FormItem>
+          {getFieldDecorator('name')(<Input size="large" placeholder="姓名" />)}
+        </FormItem>
+        <FormItem>
           {getFieldDecorator('email', {
-            initialValue: user_info ? user_info.oauth_user_email : '',
+            initialValue: (userInfo && userInfo.oauth_user_email) || '',
             rules: [
               {
                 required: true,

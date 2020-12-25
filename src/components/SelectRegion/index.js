@@ -1,10 +1,11 @@
 import { Dropdown, Icon, notification } from 'antd';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
+import { Link, routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import { formatMessage, FormattedMessage } from 'umi-plugin-locale';
 import OpenRegion from '../OpenRegion';
 import style from '../SelectTeam/index.less';
+
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -51,7 +52,7 @@ export default class SelectRegion extends PureComponent {
           type: 'user/fetchCurrent',
           callback: () => {
             this.props.dispatch(
-              routerRedux.replace(
+              routerRedux.push(
                 `/team/${currentTeam.team_name}/region/${regions[0]}/index`
               )
             );

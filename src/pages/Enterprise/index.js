@@ -103,7 +103,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             overviewMonitorInfo: res.bean,
@@ -123,7 +123,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             overviewTeamInfo: res.bean,
@@ -143,7 +143,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             overviewInfo: res.bean,
@@ -163,7 +163,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             overviewAppInfo:
@@ -184,7 +184,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             enterpriseInfo: res.bean,
@@ -219,7 +219,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             total: res.list.length,
@@ -243,7 +243,7 @@ export default class Enterprise extends PureComponent {
       payload: {
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           if (
             res.list.length > 0 &&
@@ -260,7 +260,7 @@ export default class Enterprise extends PureComponent {
     });
   };
 
-  handleCreateTeam = (values) => {
+  handleCreateTeam = values => {
     this.props.dispatch({
       type: 'teamControl/createTeam',
       payload: values,
@@ -300,7 +300,7 @@ export default class Enterprise extends PureComponent {
     return null;
   };
 
-  handleJoinTeam = (values) => {
+  handleJoinTeam = values => {
     this.props.dispatch({
       type: 'global/joinTeam',
       payload: values,
@@ -333,7 +333,7 @@ export default class Enterprise extends PureComponent {
     this.setState({ editorConvenient: !this.state.editorConvenient });
   };
 
-  deleteConvenient = (collectionInfo) => {
+  deleteConvenient = collectionInfo => {
     this.setState({
       delcollectionVisible: true,
       collectionInfo
@@ -349,7 +349,7 @@ export default class Enterprise extends PureComponent {
         favorite_id: collectionInfo && collectionInfo.favorite_id,
         enterprise_id: eid
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code == 200) {
           notification.success({ message: '删除成功' });
           this.fetchCollectionViewInfo();
@@ -852,7 +852,7 @@ export default class Enterprise extends PureComponent {
                       </Card>
                     </Col>
                     <Col span={11} offset={1}>
-                      {active_teams.map((item) => {
+                      {active_teams.map(item => {
                         const { team_name, region, team_alias } = item;
                         return (
                           <Card
@@ -1053,9 +1053,7 @@ export default class Enterprise extends PureComponent {
                               onClick={() => {
                                 editorConvenient
                                   ? this.deleteConvenient(item)
-                                  : this.props.dispatch(
-                                      routerRedux.push(url)
-                                    );
+                                  : this.props.dispatch(routerRedux.push(url));
                               }}
                             >
                               <Card

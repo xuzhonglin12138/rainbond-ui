@@ -4,8 +4,8 @@ export default [
     component: '../layouts/OauthLayout',
     routes: [
       // 第三方认证
-      { path: '/oauth/callback', component: './User/Third' },
-    ],
+      { path: '/oauth/callback', component: './User/Third' }
+    ]
   },
   // user
   {
@@ -22,12 +22,12 @@ export default [
       // 第三方登录
       { path: '/user/third/login', component: './User/ThirdLogin' },
       // 第三方注册
-      { path: '/user/third/register', component: './User/ThirdRegister' },
-    ],
+      { path: '/user/third/register', component: './User/ThirdRegister' }
+    ]
   },
   {
     path: '/exception/trigger',
-    component: './Exception/triggerException',
+    component: './Exception/triggerException'
   },
   // main route config
   {
@@ -38,7 +38,7 @@ export default [
       // enterprise view layout
       {
         path: '/',
-        redirect: '/enterprise/auto',
+        redirect: '/enterprise/auto'
       },
       {
         path: '/enterprise/:eid',
@@ -50,88 +50,94 @@ export default [
             path: '/enterprise/:eid/index',
             component: './Enterprise',
             name: 'enterpriseOverview',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/teams',
             component: './EnterpriseTeams',
             name: 'EnterpriseTeams',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/users',
             component: './EnterpriseUsers',
             name: 'EnterpriseUsers',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/clusters',
             component: './EnterpriseClusters',
             name: 'EnterpriseClusters',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/clusters/:clusterID/dashboard',
             component: './EnterpriseClusterDashboard',
             name: 'EnterpriseClusterDashboard',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/orders/:orderType',
             component: './EnterpriseOrders',
             name: 'EnterpriseOrders',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/orders/:orderType/details',
             component: './EnterpriseOrders',
             name: 'EnterpriseServiceOverview',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/orders/:orderType/orderDetails/:orderId',
             component: './EnterpriseOrders',
             name: 'EnterpriseOorderDetails',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/setting',
             component: './EnterpriseSetting',
             name: 'EnterpriseSetting',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
+          },
+          {
+            path: '/enterprise/:eid/logs',
+            component: './LogManagement',
+            name: 'LogManagement',
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/shared',
             component: './EnterpriseShared',
             name: 'EnterpriseShared',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/shared/app/:appId',
             component: './EnterpriseShared/Details',
             name: 'AppTemplate',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/shared/cloudMarket',
             component: './EnterpriseCloudMarket',
             name: 'EnterpriseCloudMarket',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/shared/import',
             component: './EnterpriseImport',
             name: 'EnterpriseImport',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/enterprise/:eid/addCluster',
             component: './AddCluster',
             name: 'AddCluster',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
-          { component: '404' },
-        ],
+          { component: '404' }
+        ]
       },
       // team view layout
       {
@@ -146,55 +152,63 @@ export default [
             path: '/team/:teamName/region/:regionName/index',
             component: './TeamDashboard/Index',
             name: 'teamOverview',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/team/:teamName/region/:regionName/message',
             component: './Message/Index',
             name: 'Message',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/allbackup',
             component: './Group/AllBackup',
             name: 'AllBackup',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/team',
             component: './Team',
             name: 'Team',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/team/:teamName/region/:regionName/apps',
             component: './AppList',
             name: 'appList',
             authority: ['admin', 'user'],
-            title: '应用列表',
+            title: '应用列表'
           },
           {
             path: '/team/:teamName/region/:regionName/apps/:appID/upgrade',
             component: './Upgrade',
             name: 'Upgrade',
             authority: ['admin', 'user'],
-            title: '云市应用升级',
+            title: '云市应用升级'
+          },
+          {
+            path: '/team/:teamName/region/:regionName/apps/:appID/dynamics',
+            component: './AppLogs',
+            name: 'AppLogs',
+            authority: ['admin', 'user'],
+            title: '动态'
           },
           {
             path: '/team/:teamName/region/:regionName/apps/:appID/configgroups',
             component: './Configuration',
             name: 'Configuration',
             authority: ['admin', 'user'],
-            title: '应用配置组管理',
+            title: '应用配置组管理'
           },
           {
-            path: '/team/:teamName/region/:regionName/apps/:appID/configgroups/details/:id',
+            path:
+              '/team/:teamName/region/:regionName/apps/:appID/configgroups/details/:id',
             component: './Configuration/Details',
             name: 'ConfigurationDetails',
             authority: ['admin', 'user'],
-            title: '应用配置详情',
+            title: '应用配置详情'
           },
           {
             path: '/team/:teamName/region/:regionName/apps/:appID/backup',
@@ -202,7 +216,7 @@ export default [
             name: 'Backup',
             menu: 'app.backup',
             authority: ['admin', 'user'],
-            title: '备份管理',
+            title: '备份管理'
           },
 
           {
@@ -210,7 +224,7 @@ export default [
             component: './Group/Publish',
             name: 'publish',
             authority: ['admin', 'user'],
-            title: '发布管理',
+            title: '发布管理'
           },
 
           {
@@ -218,14 +232,14 @@ export default [
             component: './Group/Gateway',
             name: 'publish',
             authority: ['admin', 'user'],
-            title: '应用网关',
+            title: '应用网关'
           },
 
           {
             path: '/team/:teamName/region/:regionName/apps/:appID',
             component: './Group/Index',
             name: 'Groups',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -233,7 +247,7 @@ export default [
               '/team/:teamName/region/:regionName/apps/:appID/share/:shareId/one',
             component: './Group/AppShare',
             name: 'AppShares',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -241,7 +255,7 @@ export default [
               '/team/:teamName/region/:regionName/apps/:appID/share/:shareId/two',
             component: './Group/AppShareLoading',
             name: 'AppShareLoading',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -249,21 +263,21 @@ export default [
               '/team/:teamName/region/:regionName/apps/:appID/share/:shareId/three',
             component: './Group/AppShareFinish',
             name: 'AppShareFinish',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path:
               '/team/:teamName/region/:regionName/components/:appAlias/webconsole',
             component: './Component/WebConsole',
             name: 'WebConsole',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path:
               '/team/:teamName/region/:regionName/components/:appAlias/:type?',
             component: './Component',
             name: 'Component',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -271,7 +285,7 @@ export default [
               '/team/:teamName/region/:regionName/create/code/:type?/:code?',
             component: './Create/code',
             name: 'code',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -279,14 +293,14 @@ export default [
               '/team/:teamName/region/:regionName/create/outer/:type?/:outer?',
             component: './Create/outer',
             name: 'outer',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/create/market/:keyword?',
             component: './Create/market',
             name: 'market',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -294,7 +308,7 @@ export default [
             component: './Plugin',
             name: 'Plugin',
             targetAuthority: ['plugns'],
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -302,7 +316,7 @@ export default [
               '/team/:teamName/region/:regionName/shareplugin/step-one/:pluginId/:shareId',
             component: './Plugin/share-stepone',
             name: 'stepone',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -310,14 +324,14 @@ export default [
               '/team/:teamName/region/:regionName/shareplugin/step-two/:pluginId/:shareId',
             component: './Plugin/share-steptwo',
             name: 'steptwo',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/create-plugin',
             component: './Plugin/Create',
             name: 'plugin',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -325,7 +339,7 @@ export default [
               '/team/:teamName/region/:regionName/create/create-check/:appAlias',
             component: './Create/create-check',
             name: 'check',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -333,7 +347,7 @@ export default [
               '/team/:teamName/region/:regionName/create/create-compose-check/:appID/:composeId',
             component: './Create/create-compose-check',
             name: 'compose',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -341,7 +355,7 @@ export default [
               '/team/:teamName/region/:regionName/create/image/:type?/:image?',
             component: './Create/image',
             name: 'imagesss',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -349,7 +363,7 @@ export default [
               '/team/:teamName/region/:regionName/create/create-setting/:appAlias',
             component: './Create/create-setting',
             name: 'setting',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -357,14 +371,14 @@ export default [
               '/team/:teamName/region/:regionName/create/create-moreService/:appAlias/:check_uuid',
             component: './Create/create-moreService',
             name: 'moreService',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/guide',
             component: './Guide/index',
             name: 'setting',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -372,41 +386,41 @@ export default [
               '/team/:teamName/region/:regionName/create/create-compose-setting/:appID/:composeId',
             component: './Create/create-compose-setting',
             name: 'compose',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/result/success',
             component: './Result/Success',
             name: 'Success',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
           {
             path: '/result/fail',
             component: './Result/Error',
             name: 'Error',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/exception/403',
             component: './Exception/403',
             name: '403',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/exception/404',
             component: './Exception/404',
             name: '404',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/exception/500',
             component: './Exception/500',
             name: '500',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
@@ -414,17 +428,17 @@ export default [
               '/team/:teamName/region/:regionName/gateway/control/:types?/:isopen?',
             component: './GateWay/control',
             name: 'control',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
 
           {
             path: '/team/:teamName/region/:regionName/gateway/license',
             component: './GateWay/license',
             name: 'license',
-            authority: ['admin', 'user'],
+            authority: ['admin', 'user']
           },
-          { component: '404' },
-        ],
+          { component: '404' }
+        ]
       },
       // account view layout
       {
@@ -441,21 +455,56 @@ export default [
             routes: [
               {
                 path: '/account/center',
-                redirect: '/account/center/binding',
+                redirect: '/account/center/binding'
               },
               {
                 path: '/account/center/binding',
-                component: './Account/Center/BindingView',
+                component: './Account/Center/BindingView'
               },
               {
                 path: '/account/center/accesstoken',
-                component: './Account/Center/AccesstokenView',
-              },
-            ],
+                component: './Account/Center/AccesstokenView'
+              }
+            ]
           },
-          { component: '404' },
-        ],
+          { component: '404' }
+        ]
       },
-    ],
-  },
+      {
+        // Stand inside letter
+        icon: 'user',
+        path: '/information',
+        component: '../layouts/AccountLayout',
+        name: 'InformationLayout',
+        authority: ['admin', 'user'],
+        routes: [
+          {
+            path: '/information/management',
+            name: 'InformationManagement',
+            component: './Information',
+            routes: [
+              {
+                path: '/information/management',
+                redirect: '/information/management/notice/all'
+              },
+              {
+                path: '/information/management/notice/:activeType',
+                name: 'noticeInformation',
+                component: './Information/Notice'
+              },
+              {
+                path: '/information/management/alarm/:activeType',
+                component: './Information/Alarm'
+              },
+              {
+                path: '/information/management/remind/:activeType',
+                component: './Information/RemindSetting'
+              }
+            ]
+          },
+          { component: '404' }
+        ]
+      }
+    ]
+  }
 ];

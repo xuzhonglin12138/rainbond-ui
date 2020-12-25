@@ -1,9 +1,9 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/sort-comp */
 /*
    快速复制
 */
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
 import {
   Button,
   Checkbox,
@@ -17,6 +17,9 @@ import {
   Spin,
   Tooltip
 } from 'antd';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import React, { PureComponent } from 'react';
 import appUtil from '../../utils/app';
 import globalUtil from '../../utils/global';
 import AddGroup from '../AddOrEditGroup';
@@ -49,6 +52,7 @@ export default class Index extends PureComponent {
       checkAllList: [],
       indeterminate: false,
       checkAll: true,
+      errInput: '',
       addGroup: false
     };
   }
@@ -60,12 +64,12 @@ export default class Index extends PureComponent {
   onAddGroup = () => {
     this.setState({ addGroup: true });
   };
-  onSelectChange = (value) => {
+  onSelectChange = value => {
     this.handleOpenLoging();
     const { form } = this.props;
     const { userTeamList } = this.state;
     const { setFieldsValue } = form;
-    const arr = userTeamList.filter((item) => item.name === value);
+    const arr = userTeamList.filter(item => item.name === value);
     if (arr) {
       if (arr.length > 0) {
         this.fetchTeamApps(arr[0].value[0], arr[0].value[1]);
@@ -75,7 +79,7 @@ export default class Index extends PureComponent {
       }
     }
   };
-  onGroupChange = (checkedList) => {
+  onGroupChange = checkedList => {
     const { checkAllList } = this.state;
     this.setState({
       checkedList,
@@ -85,7 +89,7 @@ export default class Index extends PureComponent {
     });
   };
 
-  onCheckAllChange = (e) => {
+  onCheckAllChange = e => {
     const { checkAllList } = this.state;
     this.setState({
       checkedList: e.target.checked ? checkAllList : [],
@@ -105,13 +109,13 @@ export default class Index extends PureComponent {
         page: 1,
         page_size: 999
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           const { list } = res;
           const arr = [];
           if (list && list.length > 0) {
-            list.map((team) => {
-              team.region_list.map((region) => {
+            list.map(team => {
+              team.region_list.map(region => {
                 const item = {
                   name: `${team.team_alias} | ${region.region_alias}`,
                   value: [team.team_name, region.region_name]
@@ -145,7 +149,7 @@ export default class Index extends PureComponent {
         tenantName: globalUtil.getCurrTeamName(),
         group_id: groupDetail.app_id
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           const { list } = res;
           const arr = [];
@@ -167,11 +171,11 @@ export default class Index extends PureComponent {
     });
   };
 
-  handleAddGroup = (vals) => {
+  handleAddGroup = vals => {
     const { getFieldValue } = this.props.form;
     const { userTeamList } = this.state;
     const teamRegion = getFieldValue('teamRegion');
-    const arrs = userTeamList.filter((item) => item.name === teamRegion);
+    const arrs = userTeamList.filter(item => item.name === teamRegion);
     let teamName = '';
     let regionName = '';
     if (arrs.length > 0) {
@@ -186,8 +190,7 @@ export default class Index extends PureComponent {
         region_name: regionName || globalUtil.getCurrRegionName(),
         ...vals
       },
-      callback: (group) => {
-        console.log('group', group);
+      callback: group => {
         if (group) {
           // 获取群组
           this.fetchTeamApps(teamName, regionName, group.group_id);
@@ -212,7 +215,7 @@ export default class Index extends PureComponent {
         page: app_page,
         page_size: app_page_size
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           if (teamName) {
             setFieldsValue({
@@ -235,18 +238,18 @@ export default class Index extends PureComponent {
     });
   };
 
-  AddCopyTeamApps = (values) => {
+  AddCopyTeamApps = values => {
     const { dispatch, groupDetail, onCancel } = this.props;
     const { dataSource, checkedList, userTeamList } = this.state;
     const obj = {};
     const { apps, teamRegion } = values;
     obj.tar_group_id = apps;
-    const arrs = userTeamList.filter((item) => item.name === teamRegion);
+    const arrs = userTeamList.filter(item => item.name === teamRegion);
     obj.tar_team_name = arrs && arrs[0].value[0];
     obj.tar_region_name = arrs && arrs[0].value[1];
 
     const arr = [];
-    checkedList.map((item) => {
+    checkedList.map(item => {
       const { service_id, build_source } = dataSource[item];
       const { code_version, version } = build_source;
       const isCodeApp = appUtil.isCodeAppByBuildSource(build_source);
@@ -265,7 +268,7 @@ export default class Index extends PureComponent {
         group_id: groupDetail.app_id,
         ...obj
       },
-      callback: (res) => {
+      callback: res => {
         this.handleCloseLoading();
         if (res && res._code === 200) {
           notification.success({ message: '复制成功' });
@@ -278,7 +281,7 @@ export default class Index extends PureComponent {
           onCancel();
         }
       },
-      handleError: (err) => {
+      handleError: err => {
         if (err && err.data && err.data.msg_show) {
           notification.warning({ message: err.data.msg_show });
         }
@@ -291,11 +294,9 @@ export default class Index extends PureComponent {
     this.setState({ Loading: false, loading: false });
   };
 
-  handleSave = (row) => {
+  handleSave = row => {
     const newData = [...this.state.dataSource];
-    const index = newData.findIndex(
-      (item) => row.service_id === item.service_id
-    );
+    const index = newData.findIndex(item => row.service_id === item.service_id);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -304,7 +305,56 @@ export default class Index extends PureComponent {
     this.setState({ inputValue: '', dataSource: newData });
   };
 
-  handleOverDiv = (content) => {
+  // 团队
+  getUserTeams = () => {
+    const { dispatch, currentUser, currentEnterprise } = this.props;
+    dispatch({
+      type: 'global/fetchUserTeams',
+      payload: {
+        enterprise_id: currentEnterprise.enterprise_id,
+        user_id: currentUser.user_id,
+        page: 1,
+        page_size: 999
+      },
+      callback: res => {
+        if (res && res._code === 200) {
+          const { list } = res;
+          const arr = [];
+
+          list &&
+            list.length > 0 &&
+            list.map(team => {
+              team.region_list.map(region => {
+                const item = {
+                  name: `${team.team_alias} | ${region.region_alias}`,
+                  value: [team.team_name, region.region_name]
+                };
+                arr.push(item);
+              });
+            });
+          this.setState({
+            userTeamList: arr
+          });
+        }
+      }
+    });
+  };
+
+  onSelectChange = value => {
+    const { form } = this.props;
+    const { userTeamList } = this.state;
+    const { setFieldsValue } = form;
+    const arr = userTeamList.filter(item => item.name === value);
+    if (arr) {
+      if (arr.length > 0) {
+        this.fetchTeamApps(arr[0].value[0], arr[0].value[1]);
+      } else {
+        setFieldsValue({ apps: '' });
+      }
+    }
+  };
+
+  handleOverDiv = content => {
     return <div>{content}</div>;
   };
 
@@ -318,6 +368,25 @@ export default class Index extends PureComponent {
       return;
     }
     callback();
+  };
+
+  onGroupChange = checkedList => {
+    const { checkAllList } = this.state;
+    this.setState({
+      checkedList,
+      indeterminate:
+        !!checkedList.length && checkedList.length < checkAllList.length,
+      checkAll: checkedList.length === checkAllList.length
+    });
+  };
+
+  onCheckAllChange = e => {
+    const { checkAllList } = this.state;
+    this.setState({
+      checkedList: e.target.checked ? checkAllList : [],
+      indeterminate: false,
+      checkAll: e.target.checked
+    });
   };
 
   save = (item, isCodeApp) => {
@@ -340,14 +409,15 @@ export default class Index extends PureComponent {
       Loading,
       addGroup,
       indeterminate,
-      checkAll
+      checkAll,
+      errInput
     } = this.state;
     const userTeams = userTeamList && userTeamList.length > 0 && userTeamList;
     let defaultTeamRegion = '';
     const team_name = globalUtil.getCurrTeamName();
     const region_name = globalUtil.getCurrRegionName();
     if (userTeams) {
-      userTeamList.map((item) => {
+      userTeamList.map(item => {
         if (item.value[0] === team_name && item.value[1] === region_name) {
           defaultTeamRegion = item.name;
         }
@@ -418,7 +488,7 @@ export default class Index extends PureComponent {
                           onChange={this.onSelectChange}
                           placeholder="团队/集群"
                         >
-                          {userTeams.map((item) => {
+                          {userTeams.map(item => {
                             return (
                               <Option value={item.name}>{item.name}</Option>
                             );
@@ -438,7 +508,8 @@ export default class Index extends PureComponent {
                       rules: [
                         {
                           required: true,
-                          message: '请选择应用'
+                          message: '请选择应用',
+                          validator: this.checkTeams
                         }
                       ]
                     })(
@@ -447,7 +518,7 @@ export default class Index extends PureComponent {
                         placeholder="请选择应用"
                       >
                         {appList &&
-                          appList.map((item) => (
+                          appList.map(item => (
                             <Option key={item.group_id} value={item.group_id}>
                               {item.group_name}
                             </Option>
@@ -546,8 +617,9 @@ export default class Index extends PureComponent {
                           style={{
                             width: '268px'
                           }}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({
+                              errInput: e.target.value,
                               inputValue: e.target.value
                             });
                           }}

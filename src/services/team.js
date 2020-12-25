@@ -168,19 +168,10 @@ export async function createTeam(
 /*
 	获取团队下的所有成员
 */
-export async function getMembers(
-  body = {
-    team_name,
-    page,
-    pageSize
-  }
-) {
+export async function getMembers(body = {}) {
   return request(`${apiconfig.baseUrl}/console/teams/${body.team_name}/users`, {
     method: 'get',
-    params: {
-      page: body.page,
-      page_size: body.pageSize
-    }
+    params: body
   });
 }
 
@@ -439,6 +430,21 @@ export async function getNewestEvent(
     }
   );
 }
+export async function getTeamOperationLogs(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        username: body.name,
+        page: body.page,
+        page_size: body.page_size,
+        start_time: body.start_time,
+        end_time: body.end_time
+      }
+    }
+  );
+}
 
 /*
   获取团队未开通的集群列表
@@ -572,7 +578,9 @@ export async function getJoinTeamUsers(body = { team_name }) {
 /*
   审批用户加入
  */
-export async function setJoinTeamUsers(body = {}) {
+export async function setJoinTeamUsers(
+  body = { team_name, user_id, action, role_ids }
+) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {

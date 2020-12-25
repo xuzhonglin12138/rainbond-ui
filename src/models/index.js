@@ -5,6 +5,7 @@ import {
   getTeamRegionOverview,
   getTeamRegionGroup,
   getNewestEvent,
+  getTeamOperationLogs,
 } from '../services/team';
 import cookie from '../utils/cookie';
 
@@ -40,6 +41,14 @@ export default {
           type: 'saveEvents',
           payload: response,
         });
+        if (callback) {
+          callback(response);
+        }
+      }
+    },
+    *fetchTeamOperationLogs({ payload, callback }, { call }) {
+      const response = yield call(getTeamOperationLogs, payload);
+      if (response) {
         if (callback) {
           callback(response);
         }

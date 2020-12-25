@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import { notification } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
+import React, { Component } from 'react';
+import cloud from '../../utils/cloud';
+import rainbondUtil from '../../utils/rainbond';
 import styles from './Register.less';
 import RegisterComponent from './registerComponent';
-import rainbondUtil from '../../utils/rainbond';
 
 @connect(({ user, global }) => ({
   register: user.register,
@@ -12,21 +14,28 @@ import rainbondUtil from '../../utils/rainbond';
 }))
 export default class Register extends Component {
   // first user, to register admin
-  state = {
-    time: Date.now()
-  };
+  state = {};
 
-  handleSubmit = (values) => {
+  handleSubmit = values => {
     const { dispatch } = this.props;
     dispatch({
       type: 'user/register',
       payload: {
         ...values
       },
-      complete: () => {
-        this.setState({
-          time: Date.now()
-        });
+      complete: () => {},
+      handleError: res => {
+        if (
+          res &&
+          res.data &&
+          res.data.code &&
+          res.data.code < 600 &&
+          res.data.msg_show
+        ) {
+          notification.warning({ message: res.data.msg_show });
+        } else {
+          cloud.handleCloudAPIError(res);
+        }
       }
     });
   };

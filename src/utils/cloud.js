@@ -409,7 +409,7 @@ const providers = [
 const cloud = {
   getAliyunRegionName(id) {
     let regionName = id;
-    aliyunRegionNames.map((item) => {
+    aliyunRegionNames.map(item => {
       if (item.RegionId == id) {
         regionName = item.LocalName;
       }
@@ -501,7 +501,7 @@ const cloud = {
     };
     let complete = false;
     const steps = [];
-    events.map((item) => {
+    events.map(item => {
       let step = createKubernetesSteps[item.type];
       if (step == undefined) {
         step = {
@@ -532,7 +532,7 @@ const cloud = {
     };
     let complete = false;
     const steps = [];
-    events.map((item) => {
+    events.map(item => {
       let step = initRainbondSteps[item.type];
       if (step == undefined) {
         step = {
@@ -591,7 +591,7 @@ const cloud = {
   },
   getProviderShowName(id) {
     let name = id;
-    providers.map((item) => {
+    providers.map(item => {
       if (item.id == id) {
         name = item.name;
       }
