@@ -4,9 +4,6 @@ import { message } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import React, { Component } from 'react';
-import rainbondUtil from '../../utils/rainbond';
-import cookie from '../../utils/cookie';
-import globalUtil from '../../utils/global';
 import Result from '../../components/Result';
 import cookie from '../../utils/cookie';
 import globalUtil from '../../utils/global';
@@ -30,10 +27,10 @@ export default class ThirdLogin extends Component {
     if (
       code &&
       service_id &&
-      code != 'None' &&
-      service_id != 'None' &&
-      code != '' &&
-      service_id != ''
+      code !== 'None' &&
+      service_id !== 'None' &&
+      code !== '' &&
+      service_id !== ''
     ) {
       const token = cookie.get('token');
       // if user login
@@ -117,21 +114,13 @@ export default class ThirdLogin extends Component {
               if (!data.result.is_authenticated) {
                 dispatch(
                   routerRedux.push(
-                    `/user/third/register?code=${data.result.code}&service_id=${
-                      data.result.service_id
-                    }&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${
-                      data.result.oauth_type
-                    }`
+                    `/user/third/register?code=${data.result.code}&service_id=${data.result.service_id}&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${data.result.oauth_type}`
                   )
                 );
               } else {
                 dispatch(
                   routerRedux.push(
-                    `/user/third/login?code=${data.result.code}&service_id=${
-                      data.result.service_id
-                    }&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${
-                      data.result.oauth_type
-                    }`
+                    `/user/third/login?code=${data.result.code}&service_id=${data.result.service_id}&oauth_user_id=${data.result.oauth_user_id}&oauth_type=${data.result.oauth_type}`
                   )
                 );
               }
