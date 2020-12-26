@@ -1,27 +1,27 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable prettier/prettier */
-import React, { Fragment, Component } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
 import {
   Badge,
   Button,
   Card,
+  Dropdown,
+  Icon,
+  Menu,
   notification,
   Table,
-  Tooltip,
-  Dropdown,
-  Menu,
-  Icon
+  Tooltip
 } from 'antd';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
 import moment from 'moment';
-import ScrollerX from '../../components/ScrollerX';
-import styles from './ComponentList.less';
+import React, { Component, Fragment } from 'react';
 import MoveGroup from '../../components/AppMoveGroup';
 import BatchDelete from '../../components/BatchDelete';
+import ScrollerX from '../../components/ScrollerX';
 import { batchOperation } from '../../services/app';
 import appUtil from '../../utils/app';
 import globalUtil from '../../utils/global';
+import styles from './ComponentList.less';
 
 @connect(
   ({ global, loading }) => ({
@@ -67,19 +67,19 @@ export default class ComponentList extends Component {
       type: 'application/clearApps'
     });
   }
-  onSelectChange = (selectedRowKeys) => {
+  onSelectChange = selectedRowKeys => {
     this.setState({
       selectedRowKeys
     });
   };
   getSelectedKeys() {
     const selected = this.getSelected();
-    return selected.map((item) => item.service_id);
+    return selected.map(item => item.service_id);
   }
 
   getSelected() {
     const key = this.state.selectedRowKeys;
-    const res = key.map((item) => this.state.apps[item]);
+    const res = key.map(item => this.state.apps[item]);
     return res;
   }
   updateApp = () => {
@@ -103,7 +103,7 @@ export default class ComponentList extends Component {
         page: current,
         page_size: pageSize
       },
-      callback: (data) => {
+      callback: data => {
         if (data && data._code == 200) {
           this.setState({
             apps: data.list || [],
@@ -126,8 +126,8 @@ export default class ComponentList extends Component {
         page: current,
         page_size: pageSize
       },
-      callback: (data) => {
-        if (data && data._code == 200) {
+      callback: data => {
+        if (data && data._code === 200) {
           this.setState(
             {
               apps: data.list || [],
@@ -155,7 +155,7 @@ export default class ComponentList extends Component {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: data.service_alias
       },
-      callback: (res) => {
+      callback: res => {
         if (res) {
           notification.success({
             message: operationMap[state]
@@ -165,10 +165,10 @@ export default class ComponentList extends Component {
     });
   };
 
-  handleOperationState = (operationState) => {
+  handleOperationState = operationState => {
     this.setState({ operationState });
   };
-  handleBatchOperation = (action) => {
+  handleBatchOperation = action => {
     const ids = this.getSelectedKeys();
     const map = {
       stop: '批量关闭中',
@@ -181,7 +181,7 @@ export default class ComponentList extends Component {
       action,
       team_name: globalUtil.getCurrTeamName(),
       serviceIds: ids && ids.join(',')
-    }).then((data) => {
+    }).then(data => {
       this.handleOperationState(false);
       if (data && map[action]) {
         notification.success({
@@ -216,7 +216,7 @@ export default class ComponentList extends Component {
       }
     });
   };
-  handleBatchMove = (groupID) => {
+  handleBatchMove = groupID => {
     const ids = this.getSelectedKeys();
     const { dispatch } = this.props;
     dispatch({
@@ -226,7 +226,7 @@ export default class ComponentList extends Component {
         serviceIds: ids.join(','),
         move_group_id: groupID
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           notification.success({
             message: '批量移动中'
@@ -285,8 +285,8 @@ export default class ComponentList extends Component {
       pageSize,
       current,
       total,
-      showSizeChanger:true,
-      onChange: (page) => {
+      showSizeChanger: true,
+      onChange: page => {
         this.setState(
           {
             current: page,
@@ -394,8 +394,10 @@ export default class ComponentList extends Component {
       {
         title: '更新时间',
         dataIndex: 'update_time',
-        render: (val) =>
-          moment(val).locale('zh-cn').format('YYYY-MM-DD HH:mm:ss')
+        render: val =>
+          moment(val)
+            .locale('zh-cn')
+            .format('YYYY-MM-DD HH:mm:ss')
       },
       {
         title: '操作',
@@ -483,7 +485,7 @@ export default class ComponentList extends Component {
     ];
     const menu = (
       <Menu>
-        {customBox.map((item) => {
+        {customBox.map(item => {
           const { permissions, name, action, customMethods } = item;
           return (
             permissions && (

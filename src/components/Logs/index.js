@@ -301,7 +301,7 @@ export default class Index extends PureComponent {
     const { dispatch, appID } = this.props;
     const { service_alias } = this.state;
     dispatch({
-      type: 'groupControl/fetchApps',
+      type: 'application/fetchApps',
       payload: {
         team_name: globalUtil.getCurrTeamName(),
         region_name: globalUtil.getCurrRegionName(),
@@ -311,7 +311,7 @@ export default class Index extends PureComponent {
         page_size: 99
       },
       callback: res => {
-        if (res && res._code == 200) {
+        if (res && res._code === 200) {
           this.setState({
             loading: false,
             apps: res.list || []
