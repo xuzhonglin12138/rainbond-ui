@@ -8,11 +8,13 @@ import {
   addPort,
   addRunningProbe,
   addStartProbe,
-
-  // addVariable,
-  // putVariable,
   addTags,
   addVolume,
+  batchDelete,
+  batchMove,
+  batchReStart,
+  batchStart,
+  batchStop,
   bindDomain,
   cancelAutoDeploy,
   changeApplicationState,
@@ -31,6 +33,7 @@ import {
   deleteTag,
   deleteVariable,
   deleteVolume,
+  deploy,
   editAppCreateInfo,
   editEvns,
   editMavensettings,
@@ -113,32 +116,26 @@ import {
   putAutoDeploySecret,
   putLanguage,
   putMirrorCommand,
+  putPlanVersion,
   putTransfer,
   queryScalingRecord,
+  restart,
   setCodeBranch,
   setMemberAction,
-  startPlugin,
-  stopPlugin,
-  updatePluginMemory,
-  deploy,
-  updateRolling,
-  batchReStart,
-  batchDelete,
-  batchStart,
-  batchStop,
-  batchMove,
-  restart,
   start,
+  startPlugin,
   stop,
+  stopPlugin,
   SubDomain,
   SubPort,
   TelescopicInfo,
   unbindDomain,
   unInstallPlugin,
   updateComponentDeployType,
-  updateServiceName,
+  updatePluginMemory,
+  updateRolling,
+  updateServiceName
 } from '../services/app';
-
 import { getGroupApps } from '../services/application';
 import { addCertificate, getCertificates } from '../services/team';
 
@@ -334,7 +331,14 @@ export default {
         callback(response);
       }
     },
-    *getAnalyzePlugins({ payload, callback }, { call }) {
+    *putPlanVersion({ payload, callback }, { call, put }) {
+      const response = yield call(putPlanVersion, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+
+    *getAnalyzePlugins({ payload, callback }, { call, put }) {
       const response = yield call(getAnalyzePlugins, payload);
       if (response && callback) {
         callback(response);

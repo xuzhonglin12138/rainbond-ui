@@ -870,13 +870,14 @@ export async function fetchOperationLogs(param) {
         page_size: param.page_size,
         username: param.name,
         start_time: param.start_time,
-        end_time: param.end_time
+        end_time: param.end_time,
+        query: param.query
       }
     }
   );
 }
 
-export async function fetchInternalMessages(param) {
+export async function getInternalMessages(param) {
   return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
     method: 'get',
     params: param
@@ -911,6 +912,15 @@ export async function putInternalMessages(param) {
     method: 'put',
     data: param
   });
+}
+export async function putReadAllMessages(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users/internal-messages`,
+    {
+      method: 'put',
+      data: param
+    }
+  );
 }
 
 export async function fetchLoginLogs(param) {

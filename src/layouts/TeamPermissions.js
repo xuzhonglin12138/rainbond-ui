@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import { notification } from 'antd';
 import PageLoading from '../components/PageLoading';
+import JoinTeam from '../components/JoinTeam';
 import Exception from '../pages/Exception/403';
 import roleUtil from '../utils/role';
 import userUtil from '../utils/user';
@@ -11,8 +12,11 @@ class TeamPermissions extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      joinTeam: false,
       teamView: true,
+      joinTeamLoading: false,
       loading: true,
+      eid: ''
     };
   }
   componentWillMount() {
@@ -27,15 +31,22 @@ class TeamPermissions extends React.PureComponent {
         type: 'user/fetchCurrent',
         callback: res => {
           if (res && res._code === 200) {
-            this.handleResults(res.bean.teams, teamName);
+            this.setState(
+              {
+                eid: res.bean && res.bean.enterprise_id
+              },
+              () => {
+                this.handleResults(res.bean.teams, teamName);
+              }
+            );
           }
         },
         handleError: () => {
           this.setState({
             loading: false,
-            teamView: false,
+            teamView: false
           });
-        },
+        }
       });
     }
   };
@@ -44,36 +55,65 @@ class TeamPermissions extends React.PureComponent {
     const { dispatch } = this.props;
     const teamPermissions = userUtil.getTeamByTeamPermissions(teams, teamName);
     if (teamPermissions && teamPermissions.length === 0) {
-      notification.warning({
-        message: '请先加入团队',
+      this.setState({
+        loading: false,
+        teamView: true,
+        joinTeam: true
       });
-      return router.push('/');
+    } else {
+      dispatch({
+        type: 'teamControl/fetchCurrentTeamPermissions',
+        payload: teamPermissions
+      });
+      const results = roleUtil.queryTeamUserPermissionsInfo(
+        teamPermissions,
+        'teamBasicInfo',
+        'describe'
+      );
+      this.setState({ teamView: results, loading: false });
     }
+  };
+
+  handleJoinTeam = values => {
+    this.setState({ joinTeamLoading: true });
+    const { dispatch } = this.props;
+    const { eid } = this.state;
     dispatch({
-      type: 'teamControl/fetchCurrentTeamPermissions',
-      payload: teamPermissions,
+      type: 'global/joinTeam',
+      payload: values,
+      callback: () => {
+        notification.success({ message: '申请成功，请等待审核' });
+        router.push(`/enterprise/${eid}/teams`);
+      }
     });
-    const results = roleUtil.queryTeamUserPermissionsInfo(
-      teamPermissions,
-      'teamBasicInfo',
-      'describe'
-    );
-    this.setState({ teamView: results, loading: false });
+  };
+  cancelJoinTeam = () => {
+    return router.go(-1);
   };
 
   render() {
     const { children } = this.props;
-    const { teamView, loading } = this.state;
-
+    const { teamView, loading, joinTeam, eid, joinTeamLoading } = this.state;
     if (loading) {
       return <PageLoading />;
     }
     if (!teamView) {
       return <Exception />;
     }
+
     return (
       <div>
-        <div>{children}</div>
+        {joinTeam ? (
+          <JoinTeam
+            title="请先加入团队"
+            enterpriseID={eid}
+            loading={joinTeamLoading}
+            onOk={this.handleJoinTeam}
+            onCancel={this.cancelJoinTeam}
+          />
+        ) : (
+          <div>{children}</div>
+        )}
       </div>
     );
   }

@@ -98,8 +98,8 @@ class CreateUserForm extends PureComponent {
                 rules: [
                   { required: true, message: '请填写用户名!' },
                   {
-                    pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
-                    message: '只支持字母、数字、中文、_和-组合'
+                    pattern: /^[a-z0-9_\-]+$/,
+                    message: '只支持小写英文字母、数字、下划线、中划线'
                   }
                 ]
               })(<Input placeholder="请填写用户名!" />)}

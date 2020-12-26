@@ -440,7 +440,9 @@ export async function getTeamOperationLogs(body = {}) {
         page: body.page,
         page_size: body.page_size,
         start_time: body.start_time,
-        end_time: body.end_time
+        end_time: body.end_time,
+        query: body.query,
+        app_id: body.app_id
       }
     }
   );
@@ -509,7 +511,7 @@ export function getGithubInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/github`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -528,7 +530,7 @@ export function getGitlabInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/gitlab`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -566,11 +568,12 @@ export async function exitTeam(
 /*
   用户查询加入状态
  */
-export async function getJoinTeamUsers(body = { team_name }) {
+export async function getJoinTeamUsers(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {
-      method: 'get'
+      method: 'get',
+      params: body
     }
   );
 }

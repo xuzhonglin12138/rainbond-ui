@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable eqeqeq */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
@@ -128,6 +129,7 @@ class Main extends PureComponent {
             ) {
               service_alias.push(json_data[key].service_alias);
             }
+            return key;
           });
 
           this.setState(

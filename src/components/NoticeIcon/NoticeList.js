@@ -1,7 +1,6 @@
 import React from 'react';
 import { Avatar, List, Badge } from 'antd';
 import logsUtil from '@/utils/logs';
-import { Link } from 'dva/router';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
 
@@ -9,19 +8,23 @@ export default function NoticeList({
   data = [],
   onJump,
   onClear,
-  name,
+  handleJump,
   locale,
   emptyText,
   emptyImage,
   tabType
 }) {
+  const text =
+    tabType.indexOf('alertInfo') > -1 ? '查看更多报警信息' : '查看更多通知信息';
   if (data.length === 0) {
     return (
       <div style={{ textAlign: 'center' }}>
         <div style={{ padding: '20px 0' }}> {emptyImage || null}</div>
-        <div style={{ padding: '0 0 20px 0' }}>{emptyText || locale.emptyText}</div>
+        <div style={{ padding: '0 0 20px 0' }}>
+          {emptyText || locale.emptyText}
+        </div>
         <div className={styles.clear} onClick={onClear}>
-          查看历史消息
+          {text}
         </div>
       </div>
     );
@@ -33,6 +36,9 @@ export default function NoticeList({
           const itemCls = classNames(styles.item, {
             [styles.read]: item.read
           });
+          if (i > 4) {
+            return null;
+          }
           return (
             <List.Item className={itemCls} key={item.ID || i}>
               <List.Item.Meta
@@ -47,7 +53,7 @@ export default function NoticeList({
                     <div className={styles.extra}>
                       {item.is_read === false ? <Badge status="error" /> : null}
                     </div>
-                    {logsUtil.fetchLogsContent(item.content)}
+                    {logsUtil.fetchLogsContent(item.content, handleJump)}
                   </div>
                 }
                 description={
@@ -69,7 +75,7 @@ export default function NoticeList({
         })}
       </List>
       <div className={styles.clear} onClick={onClear}>
-        查看历史消息
+        {text}
       </div>
     </div>
   );

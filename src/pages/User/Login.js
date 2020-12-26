@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable compat/compat */
 /* eslint-disable camelcase */
 import { Divider, Row, Tooltip } from 'antd';

@@ -4,18 +4,11 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import React, { Component } from 'react';
-import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Register.less';
 
 const FormItem = Form.Item;
-
-const passwordProgressMap = {
-  ok: 'success',
-  pass: 'normal',
-  poor: 'exception'
-};
 
 @connect(({ user, loading, global }) => ({
   register: user.register,
@@ -30,8 +23,7 @@ export default class RegisterComponent extends Component {
   state = {
     confirmDirty: false,
     visible: false,
-    help: '',
-    time: Date.now()
+    help: ''
   };
   componentDidMount() {
     userUtil.removeCookie();
@@ -39,18 +31,6 @@ export default class RegisterComponent extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-
-  getPasswordStatus = () => {
-    const { form } = this.props;
-    const value = form.getFieldValue('password');
-    if (value && value.length > 9) {
-      return 'ok';
-    }
-    if (value && value.length > 5) {
-      return 'pass';
-    }
-    return 'poor';
-  };
 
   handleSubmit = e => {
     e.preventDefault();
@@ -69,13 +49,6 @@ export default class RegisterComponent extends Component {
         }
       }
     );
-  };
-
-  handleConfirmBlur = e => {
-    const { value } = e.target;
-    this.setState({
-      confirmDirty: this.state.confirmDirty || !!value
-    });
   };
 
   checkConfirm = (rule, value, callback) => {
@@ -117,11 +90,6 @@ export default class RegisterComponent extends Component {
     }
   };
 
-  changeTime = () => {
-    this.setState({
-      time: Date.now()
-    });
-  };
   render() {
     const {
       form,
@@ -133,7 +101,7 @@ export default class RegisterComponent extends Component {
     } = this.props;
     const { getFieldDecorator } = form;
     const firstRegist = !rainbondUtil.fetchIsFirstRegist(rainbondInfo);
-    const { time, help } = this.state;
+    const { help } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
         {firstRegist && (
@@ -154,8 +122,8 @@ export default class RegisterComponent extends Component {
             rules: [
               { required: true, message: '请输入用户名!' },
               {
-                pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
-                message: '只支持字母、数字、中文、_和-组合'
+                pattern: /^[a-z0-9_\-]+$/,
+                message: '只支持小写英文字母、数字、下划线、中划线'
               }
             ]
           })(<Input size="large" placeholder="用户名" />)}
@@ -219,14 +187,7 @@ export default class RegisterComponent extends Component {
               })(<Input size="large" placeholder="验证码" />)}
             </Col>
             <Col span={8}>
-              <img
-                onClick={this.changeTime}
-                src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
-                style={{
-                  width: '100%',
-                  height: 40
-                }}
-              />
+              <div id="codeImg" onClick={this.getSetCodeImg} />
             </Col>
           </Row>
         </FormItem>

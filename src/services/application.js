@@ -184,7 +184,8 @@ export async function getAppLogs(body = {}) {
         page_size: body.page_size,
         start_time: body.start_time,
         end_time: body.end_time,
-        service_alias: body.service_alias
+        service_alias: body.service_alias,
+        query: body.query
       }
     }
   );

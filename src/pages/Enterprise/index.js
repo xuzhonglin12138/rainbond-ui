@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 /* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
@@ -39,10 +40,11 @@ import Meiqia from '../../layouts/Meiqia';
 import userUtil from '../../utils/user';
 import styles from '../List/BasicList.less';
 
-@connect(({ user, global, index }) => ({
+@connect(({ user, global, index, loading }) => ({
   user: user.currentUser,
   rainbondInfo: global.rainbondInfo,
-  overviewInfo: index.overviewInfo
+  overviewInfo: index.overviewInfo,
+  createTeamLoading: loading.effects['teamControl/createTeam']
 }))
 export default class Enterprise extends PureComponent {
   constructor(props) {
@@ -350,7 +352,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code == 200) {
+        if (res && res._code === 200) {
           notification.success({ message: '删除成功' });
           this.fetchCollectionViewInfo();
           this.handleCloseDelCollectionVisible();
@@ -1139,6 +1141,7 @@ export default class Enterprise extends PureComponent {
         {showAddTeam && (
           <CreateTeam
             enterprise_id={eid}
+            loading={this.props.createTeamLoading}
             onOk={this.handleCreateTeam}
             onCancel={this.cancelCreateTeam}
           />

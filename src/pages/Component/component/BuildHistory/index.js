@@ -1,8 +1,10 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-nested-ternary */
 
+import PlanVersion from '@/components/PlanVersion';
 import {
   Card,
   Col,
@@ -20,34 +22,69 @@ import globalUtil from '../../../../utils/global';
 import styles from '../../Index.less';
 import LogShow from '../LogShow';
 
-@connect()
+@connect(({ loading }) => ({
+  planVersionLoading: loading.effects['appControl/putPlanVersion']
+}))
 @Form.create()
 class Index extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      info: {},
       logVisible: false,
-      EventID: '',
+      visible: false,
+      EventID: ''
     };
   }
   componentDidMount() {}
-
+  editorPlanVersion = info => {
+    this.setState({
+      info,
+      visible: true
+    });
+  };
   showModal = EventID => {
     this.setState({
       EventID,
-      logVisible: true,
+      logVisible: true
     });
   };
 
   handleOk = () => {
     this.setState({
-      logVisible: false,
+      logVisible: false
     });
   };
 
   handleCancel = () => {
     this.setState({
-      logVisible: false,
+      logVisible: false
+    });
+  };
+  handleOkPlanVersion = val => {
+    const { info } = this.state;
+    const { dispatch, appAlias, reload } = this.props;
+    dispatch({
+      type: 'appControl/putPlanVersion',
+      payload: {
+        team_name: globalUtil.getCurrTeamName(),
+        app_alias: appAlias,
+        buildVersion: info.build_version,
+        plan_version: val
+      },
+      callback: data => {
+        if (data) {
+          this.handleCancelPlanVersion();
+          reload && reload();
+        }
+      }
+    });
+  };
+
+  handleCancelPlanVersion = () => {
+    this.setState({
+      info: {},
+      visible: false
     });
   };
 
@@ -82,13 +119,14 @@ class Index extends PureComponent {
       dataList,
       current_version,
       componentPermissions: { isRollback, isDelete },
+      planVersionLoading,
       pages,
       pageSize,
       total,
       onPageChange,
-      onShowSizeChange,
+      onShowSizeChange
     } = this.props;
-    const { EventID, logVisible } = this.state;
+    const { EventID, logVisible, visible, info } = this.state;
     return (
       <Row gutter={24}>
         {logVisible && (
@@ -114,7 +152,7 @@ class Index extends PureComponent {
                     const {
                       code_commit_msg,
                       image_domain,
-                      build_user,
+                      plan_version,
                       code_version,
                       status,
                       create_time,
@@ -125,7 +163,7 @@ class Index extends PureComponent {
                       image_repo,
                       code_branch,
                       image_tag,
-                      kind,
+                      kind
                     } = item;
 
                     return (
@@ -144,9 +182,7 @@ class Index extends PureComponent {
                             className={`${styles.rowRtem} ${styles.buildInfo}`}
                           >
                             <div
-                              className={` ${styles.alcen}  ${
-                                styles.rowBranch
-                              }`}
+                              className={` ${styles.alcen}  ${styles.rowBranch}`}
                             >
                               <span className={`${styles.statusIcon} `}>
                                 {status === 'success' ? (
@@ -158,7 +194,7 @@ class Index extends PureComponent {
                                       textAlign: 'center',
                                       color: '#db4545',
                                       display: 'inline-block',
-                                      lineHeight: 1,
+                                      lineHeight: 1
                                     }}
                                   >
                                     !
@@ -168,9 +204,7 @@ class Index extends PureComponent {
                                 )}
                               </span>
                               <a
-                                className={` ${styles.alcen} ${
-                                  styles.passeda
-                                } `}
+                                className={` ${styles.alcen} ${styles.passeda} `}
                               >
                                 <font
                                   className={styles.nowarpCorolText}
@@ -181,7 +215,7 @@ class Index extends PureComponent {
                                         ? '#39aa56'
                                         : status === 'failure'
                                         ? '#db4545'
-                                        : '#9d9d9d',
+                                        : '#9d9d9d'
                                   }}
                                 >
                                   {build_version}
@@ -193,9 +227,7 @@ class Index extends PureComponent {
                               </a>
                             </div>
                             <div
-                              className={` ${styles.alcen} ${
-                                styles.rowMessage
-                              } `}
+                              className={` ${styles.alcen} ${styles.rowMessage} `}
                             >
                               <Tooltip
                                 title={
@@ -222,7 +254,7 @@ class Index extends PureComponent {
                                 <span
                                   className={styles.nowarpCorolText}
                                   style={{
-                                    width: '90%',
+                                    width: '90%'
                                   }}
                                 >
                                   {kind &&
@@ -235,29 +267,30 @@ class Index extends PureComponent {
                           </div>
 
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.buildCommitter
-                            } ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${styles.buildCommitter} ${styles.alcen}`}
                           >
                             <div
                               style={{
-                                width: '210px',
+                                width: '210px'
                               }}
                             >
                               <a
                                 style={{
                                   width: '100%',
-                                  cursor: 'auto',
+                                  cursor: 'auto'
                                 }}
                               >
-                                <font
-                                  className={styles.nowarpCorolText}
-                                  style={{
-                                    width: '90%',
-                                  }}
-                                >
-                                  {build_user && ` @&nbsp;${build_user}`}
-                                </font>
+                                {plan_version && (
+                                  <font
+                                    className={styles.nowarpCorolText}
+                                    title={`${plan_version}`}
+                                    style={{
+                                      width: '90%'
+                                    }}
+                                  >
+                                    {`${plan_version}`}
+                                  </font>
+                                )}
                               </a>
                             </div>
                             <div
@@ -267,7 +300,7 @@ class Index extends PureComponent {
                                 className={`${styles.alcen}`}
                                 style={{
                                   width: '50%',
-                                  cursor: 'auto',
+                                  cursor: 'auto'
                                 }}
                               >
                                 <Tooltip
@@ -295,7 +328,7 @@ class Index extends PureComponent {
                                   <span
                                     className={styles.nowarpCorolText}
                                     style={{
-                                      width: '90%',
+                                      width: '90%'
                                     }}
                                   >
                                     {kind &&
@@ -309,7 +342,7 @@ class Index extends PureComponent {
                                 className={` ${styles.alcen} `}
                                 style={{
                                   width: '50%',
-                                  cursor: 'auto',
+                                  cursor: 'auto'
                                 }}
                               >
                                 <Tooltip
@@ -321,9 +354,7 @@ class Index extends PureComponent {
                                   }
                                 >
                                   <span
-                                    className={` ${styles.alcen} ${
-                                      styles.buildwidth
-                                    } `}
+                                    className={` ${styles.alcen} ${styles.buildwidth} `}
                                     style={{ color: 'rgba(0, 0, 0, 0.65)' }}
                                   >
                                     {kind &&
@@ -344,7 +375,7 @@ class Index extends PureComponent {
                                   <font
                                     className={styles.nowarpCorolText}
                                     style={{
-                                      width: '90%',
+                                      width: '90%'
                                     }}
                                   >
                                     {kind &&
@@ -381,7 +412,7 @@ class Index extends PureComponent {
                                   color:
                                     status === 'failure'
                                       ? '#39AA56#db4545'
-                                      : '#39AA56',
+                                      : '#39AA56'
                                 }}
                               >
                                 {this.showStatus(status)}
@@ -392,9 +423,7 @@ class Index extends PureComponent {
                         </div>
                         <div className={`${styles.linestree}`}>
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.rowDuration
-                            }`}
+                            className={`${styles.rowRtem} ${styles.rowDuration}`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="运行时间">
@@ -405,7 +434,7 @@ class Index extends PureComponent {
                                 <font
                                   style={{
                                     display: 'inline-block',
-                                    color: 'rgba(0,0,0,0.45)',
+                                    color: 'rgba(0,0,0,0.45)'
                                   }}
                                 >
                                   {globalUtil.fetchTime(
@@ -420,9 +449,7 @@ class Index extends PureComponent {
                             </div>
                           </div>
                           <div
-                            className={`${styles.rowRtem} ${
-                              styles.rowCalendar
-                            } ${styles.alcen}`}
+                            className={`${styles.rowRtem} ${styles.rowCalendar} ${styles.alcen}`}
                           >
                             <div className={styles.alcen}>
                               <Tooltip title="创建时间">
@@ -433,7 +460,7 @@ class Index extends PureComponent {
                                 <font
                                   style={{
                                     display: 'inline-block',
-                                    color: 'rgba(0,0,0,0.45)',
+                                    color: 'rgba(0,0,0,0.45)'
                                   }}
                                 >
                                   {create_time &&
@@ -446,6 +473,17 @@ class Index extends PureComponent {
                           </div>
                         </div>
                         <div className={`${styles.linefour}`}>
+                          <span>
+                            <a
+                              style={{ fontSize: '12px' }}
+                              onClick={() => {
+                                this.editorPlanVersion(item);
+                              }}
+                            >
+                              编辑
+                            </a>
+                            <Divider type="vertical" />
+                          </span>
                           <span>
                             <a
                               style={{ fontSize: '12px' }}
@@ -523,6 +561,14 @@ class Index extends PureComponent {
             </div>
           </Card>
         </Col>
+        {visible && (
+          <PlanVersion
+            info={info}
+            loading={planVersionLoading}
+            onOk={this.handleOkPlanVersion}
+            onCancel={this.handleCancelPlanVersion}
+          />
+        )}
       </Row>
     );
   }

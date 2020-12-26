@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import {
   addConfiguration,
   addEnterpriseAdminTeams,
@@ -21,7 +22,6 @@ import {
   fetchEnterpriseList,
   fetchEnterpriseTeams,
   fetchEnterpriseUsers,
-  fetchInternalMessages,
   fetchLoginLogs,
   fetchOperationLogs,
   fetchOverview,
@@ -41,6 +41,7 @@ import {
   getDomainTime,
   getEnterpriseRoles,
   getGuideState,
+  getInternalMessages,
   getJoinTeam,
   getMarketApp,
   getMarketPlugins,
@@ -68,6 +69,7 @@ import {
   postUpdateOrder,
   putInternalMessages,
   putMsgAction,
+  putReadAllMessages,
   putSetRemind,
   queryCodeWarehouseInfo,
   queryCodeWarehouseType,
@@ -131,6 +133,10 @@ export default {
     enterpriseInfo: null,
     isRegist: false,
     messageList: [],
+    systemList: [],
+    systemTotal: 0,
+    alertList: [],
+    alertTotal: 0,
     memoryTip: '',
     is_enterprise_version: false,
     nouse: false,
@@ -626,16 +632,29 @@ export default {
         callback(response);
       }
     },
-    *fetchInternalMessages({ payload, callback }, { put, call }) {
-      const response = yield call(fetchInternalMessages, payload);
+    *fetchSystemMessages({ payload, callback }, { put, call }) {
+      const response = yield call(getInternalMessages, payload);
       if (response) {
-        yield put({
-          type: 'saveMessages',
-          payload: response.list || []
-        });
-        if (callback) {
-          callback(response);
+        if (payload && payload.is_read === 'False') {
+          yield put({
+            type: 'saveSystemList',
+            payload: response
+          });
         }
+
+        callback && callback(response);
+      }
+    },
+    *fetchAlertMessages({ payload, callback }, { put, call }) {
+      const response = yield call(getInternalMessages, payload);
+      if (response) {
+        if (payload && payload.is_read === 'False') {
+          yield put({
+            type: 'saveAlertList',
+            payload: response
+          });
+        }
+        callback && callback(response);
       }
     },
     *fetchSetRemind({ payload, callback }, { call }) {
@@ -654,6 +673,12 @@ export default {
       const response = yield call(putInternalMessages, payload);
       if (response && callback) {
         callback(response);
+      }
+    },
+    *putReadAllMessages({ payload, callback }, { call }) {
+      const response = yield call(putReadAllMessages, payload);
+      if (response) {
+        callback && callback(response);
       }
     },
     *fetchLoginLogs({ payload, callback }, { call }) {
@@ -993,10 +1018,18 @@ export default {
         nouse: payload
       };
     },
-    saveMessages(state, { payload }) {
+    saveSystemList(state, { payload }) {
       return {
         ...state,
-        messageList: payload
+        systemList: payload.list || [],
+        systemTotal: payload.total || 0
+      };
+    },
+    saveAlertList(state, { payload }) {
+      return {
+        ...state,
+        alertList: payload.list || [],
+        alertTotal: payload.total || 0
       };
     },
     saveEnterpriseInfo(state, { payload }) {
