@@ -22,8 +22,7 @@ export default class Alarm extends PureComponent {
       },
       user
     } = this.props;
-    const adminer =
-      userUtil.isSystemAdmin(user) || userUtil.isCompanyAdmin(user);
+    const adminer = userUtil.isCompanyAdmin(user);
 
     this.state = {
       adminer,

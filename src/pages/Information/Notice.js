@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import { Tabs, Table, Button, Badge } from 'antd';
-import { routerRedux } from 'dva/router';
-import moment from 'moment';
 import logsUtil from '@/utils/logs';
 import userUtil from '@/utils/user';
+import { Badge, Button, Table, Tabs } from 'antd';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import moment from 'moment';
+import React, { PureComponent } from 'react';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -21,8 +21,7 @@ export default class Notice extends PureComponent {
       },
       user
     } = this.props;
-    const adminer =
-      userUtil.isSystemAdmin(user) || userUtil.isCompanyAdmin(user);
+    const adminer = userUtil.isCompanyAdmin(user);
 
     this.state = {
       adminer,
