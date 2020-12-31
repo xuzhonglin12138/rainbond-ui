@@ -1,5 +1,4 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { Link } from 'dva/router';
 
 const OperationType = {
   enterprise_manage: '企业管理',
@@ -46,15 +45,38 @@ export default {
         {startVal}
         <a
           href="javascript:;"
-          onClick={event => {
+          onClick={(event) => {
             event.stopPropagation();
             // eslint-disable-next-line no-unused-expressions
-            const teamName =
-              obj &&
-              (obj.view_type === 'team' ||
-                obj.view_type === 'team_application') &&
-              obj.team_name;
-            handleJump && handleJump(url, teamName);
+            let teamNameInfo;
+            let appObj;
+            let componentObj;
+            let pluginInfo;
+
+            if (obj) {
+              if (
+                (obj.view_type === 'team' ||
+                  obj.view_type === 'team_application') &&
+                obj.team_name
+              ) {
+                teamNameInfo = obj;
+              } else if (obj && obj.view_type === 'app' && obj.app_id) {
+                appObj = obj;
+              } else if (obj.view_type === 'component' && obj.service_alias) {
+                componentObj = obj;
+              } else if (obj.view_type === 'plugin' && obj.plugin_id) {
+                pluginInfo = obj;
+              }
+            }
+
+            const Info = {
+              teamNameInfo,
+              appObj,
+              componentObj,
+              pluginInfo
+            };
+            // eslint-disable-next-line no-unused-expressions
+            handleJump && handleJump(url, Info);
           }}
         >
           {obj.name}

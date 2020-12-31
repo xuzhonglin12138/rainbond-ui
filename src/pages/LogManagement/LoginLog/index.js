@@ -47,7 +47,7 @@ export default class LoginLog extends PureComponent {
       logList: [],
       logsPage: 1,
       logsPageSize: 10,
-      logsTotal: 0,
+      logsTotal: 1,
       adminList: [],
       startTime: '',
       endTime: ''
@@ -59,7 +59,7 @@ export default class LoginLog extends PureComponent {
     this.loadLoginLog();
   }
 
-  handleSearch = name => {
+  handleSearch = (name) => {
     this.setState(
       {
         name,
@@ -70,7 +70,7 @@ export default class LoginLog extends PureComponent {
       }
     );
   };
-  handleChange = value => {
+  handleChange = (value) => {
     this.setState(
       {
         username: value,
@@ -100,12 +100,12 @@ export default class LoginLog extends PureComponent {
         start_time: startTime,
         end_time: endTime
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             loading: false,
             logList: res.list,
-            logsTotal: res.total
+            logsTotal: res.total || 1
           });
         }
       }
@@ -128,7 +128,7 @@ export default class LoginLog extends PureComponent {
         page_size,
         name
       },
-      callback: res => {
+      callback: (res) => {
         if (res) {
           this.setState({ adminList: res.list });
         }
@@ -136,7 +136,7 @@ export default class LoginLog extends PureComponent {
     });
   };
 
-  disabledDate = current => {
+  disabledDate = (current) => {
     return (
       current &&
       (moment(new Date()).subtract(1, 'years') > current ||
@@ -151,7 +151,7 @@ export default class LoginLog extends PureComponent {
     return result;
   };
 
-  onPageChange = logsPage => {
+  onPageChange = (logsPage) => {
     this.setState({ logsPage, loading: true }, () => {
       this.loadLoginLog();
     });
@@ -200,7 +200,7 @@ export default class LoginLog extends PureComponent {
       }
     });
   };
-  handleChangeTimes = values => {
+  handleChangeTimes = (values) => {
     let startTime = '';
     let endTime = '';
 
@@ -208,9 +208,7 @@ export default class LoginLog extends PureComponent {
       startTime = moment(values[0])
         .locale('zh-cn')
         .format('YYYY-MM-DD HH:mm:ss');
-      endTime = moment(values[1])
-        .locale('zh-cn')
-        .format('YYYY-MM-DD HH:mm:ss');
+      endTime = moment(values[1]).locale('zh-cn').format('YYYY-MM-DD HH:mm:ss');
     }
 
     this.setState(
@@ -283,7 +281,7 @@ export default class LoginLog extends PureComponent {
                   </Option>
                   {adminList &&
                     adminList.length > 0 &&
-                    adminList.map(item => {
+                    adminList.map((item) => {
                       const { nick_name, real_name, user_id } = item;
                       return (
                         <Option key={user_id} value={nick_name}>
@@ -303,7 +301,7 @@ export default class LoginLog extends PureComponent {
                   separator="至"
                   style={{ width: '400px', marginRight: '20px' }}
                   disabledDate={this.disabledDate}
-                  onChange={value => {
+                  onChange={(value) => {
                     this.handleChangeTimes(value);
                   }}
                   showTime={{
@@ -361,7 +359,7 @@ export default class LoginLog extends PureComponent {
               align: 'center',
               width: 130,
               dataIndex: 'client_ip',
-              render: val => {
+              render: (val) => {
                 return <div>{val || '-'}</div>;
               }
             },
@@ -371,12 +369,10 @@ export default class LoginLog extends PureComponent {
               rowKey: 'login_time',
               align: 'center',
               width: 180,
-              render: val => {
+              render: (val) => {
                 return (
                   <span>
-                    {moment(val)
-                      .locale('zh-cn')
-                      .format('YYYY-MM-DD HH:mm:ss')}
+                    {moment(val).locale('zh-cn').format('YYYY-MM-DD HH:mm:ss')}
                   </span>
                 );
               }
@@ -384,7 +380,7 @@ export default class LoginLog extends PureComponent {
             {
               title: '登录设备',
               dataIndex: 'user_agent',
-              render: val => {
+              render: (val) => {
                 return <div>{val || '-'}</div>;
               }
             },
@@ -394,7 +390,7 @@ export default class LoginLog extends PureComponent {
               rowKey: 'duration',
               align: 'center',
               width: 140,
-              render: val => {
+              render: (val) => {
                 if (!val) {
                   return '-';
                 }

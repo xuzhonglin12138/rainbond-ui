@@ -106,17 +106,13 @@ export async function userDetail(
 /*
 	移交团队管理权限
 */
-export async function moveTeam(
-  body = {
-    team_name,
-    user_id
-  }
-) {
+export async function moveTeam(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/pemtransfer`,
     {
       method: 'post',
       data: {
+        user_name: body.user_name,
         user_id: body.user_id
       }
     }

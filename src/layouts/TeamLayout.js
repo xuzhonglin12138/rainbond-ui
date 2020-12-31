@@ -7,6 +7,7 @@ import { Icon, Layout, notification, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
+import router from 'umi/router';
 import { enquireScreen } from 'enquire-js';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
@@ -14,6 +15,7 @@ import { ContainerQuery } from 'react-container-query';
 import DocumentTitle from 'react-document-title';
 import logo from '../../public/logo.png';
 import { getAppMenuData } from '../common/appMenu';
+import JoinTeam from '../components/JoinTeam';
 import { getMenuData } from '../common/teamMenu';
 import AuthCompany from '../components/AuthCompany';
 import GlobalHeader from '../components/GlobalHeader';
@@ -30,7 +32,6 @@ import userUtil from '../utils/user';
 import AppHeader from './components/AppHeader';
 import TeamHeader from './components/TeamHeader';
 import Context from './MenuContext';
-const qs = require('query-string');
 
 const { Content } = Layout;
 
@@ -56,7 +57,7 @@ const query = {
 };
 
 let isMobile;
-enquireScreen(b => {
+enquireScreen((b) => {
   isMobile = b;
 });
 
@@ -78,7 +79,8 @@ class TeamLayout extends PureComponent {
       currentEnterprise: false,
       currentComponent: null,
       eid: '',
-      teamView: true
+      teamView: true,
+      joinTeamLoading: false
     };
   }
 
@@ -92,7 +94,7 @@ class TeamLayout extends PureComponent {
 
     dispatch({
       type: 'global/fetchEnterpriseList',
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -120,7 +122,7 @@ class TeamLayout extends PureComponent {
     if (teamName && regionName) {
       dispatch({
         type: 'user/fetchCurrent',
-        callback: res => {
+        callback: (res) => {
           if (res && res._code === 200) {
             this.getTeamOverview(res.bean.user_id);
           }
@@ -141,7 +143,7 @@ class TeamLayout extends PureComponent {
       payload: {
         team_name: teamName
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState(
             {
@@ -153,7 +155,7 @@ class TeamLayout extends PureComponent {
           );
         }
       },
-      handleError: err => {
+      handleError: (err) => {
         if (err && err.data && err.data.code) {
           const errtext =
             err.data.code === 10411
@@ -181,7 +183,7 @@ class TeamLayout extends PureComponent {
     dispatch({
       type: 'teamControl/fetchTeamUserPermissions',
       payload: { user_id: ID, team_name: teamName },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           const results = roleUtil.queryTeamUserPermissionsInfo(
             res.bean,
@@ -191,7 +193,7 @@ class TeamLayout extends PureComponent {
           this.setState({ teamView: results });
           if (!results) {
             dispatch(
-              routerRedux.replace(
+              routerRedux.push(
                 `/team/${teamName}/region/${regionName}/exception/403`
               )
             );
@@ -222,7 +224,7 @@ class TeamLayout extends PureComponent {
       payload: { team_name: teamName, region_name: regionName }
     });
     const region = userUtil.hasTeamAndRegion(currentUser, teamName, regionName);
-    enterpriseList.map(item => {
+    enterpriseList.map((item) => {
       if (eid === item.enterprise_id) {
         dispatch({ type: 'enterprise/fetchCurrentEnterprise', payload: item });
         this.setState({
@@ -235,7 +237,7 @@ class TeamLayout extends PureComponent {
     });
     this.fetchEnterpriseInfo(eid);
     this.fetchTeamApps();
-    enquireScreen(mobile => {
+    enquireScreen((mobile) => {
       this.setState({ isMobile: mobile });
     });
     // 连接云应用市场
@@ -259,10 +261,10 @@ class TeamLayout extends PureComponent {
           team_name: teamName,
           app_alias: componentID
         },
-        callback: appDetail => {
+        callback: (appDetail) => {
           this.setState({ currentComponent: appDetail.service });
         },
-        handleError: data => {
+        handleError: (data) => {
           if (data.status) {
             if (data.status === 404) {
               this.props.dispatch(
@@ -288,7 +290,7 @@ class TeamLayout extends PureComponent {
     });
   };
 
-  fetchEnterpriseInfo = eid => {
+  fetchEnterpriseInfo = (eid) => {
     if (!eid) {
       return null;
     }
@@ -302,7 +304,7 @@ class TeamLayout extends PureComponent {
     });
   };
 
-  fetchEnterpriseService = eid => {
+  fetchEnterpriseService = (eid) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'order/fetchEnterpriseService',
@@ -311,13 +313,39 @@ class TeamLayout extends PureComponent {
       }
     });
   };
-
+  handleJoinTeam = (values) => {
+    this.setState({ joinTeamLoading: true });
+    const { dispatch } = this.props;
+    const { currentEnterprise } = this.state;
+    dispatch({
+      type: 'global/joinTeam',
+      payload: values,
+      callback: () => {
+        notification.success({ message: '申请成功，请等待审核' });
+        router.push(`/enterprise/${currentEnterprise.enterprise_id}/teams`);
+      }
+    });
+  };
+  cancelJoinTeam = () => {
+    return router.go(-1);
+  };
   getChildContext = () => {
     const { location } = this.props;
     return { location, breadcrumbNameMap: this.breadcrumbNameMap };
   };
 
-  handleMenuCollapse = collapsed => {
+  getPageTitle = () => {
+    const { rainbondInfo } = this.props;
+    const title =
+      (rainbondInfo &&
+        rainbondInfo.title &&
+        rainbondInfo.title.enable &&
+        rainbondInfo.title.value) ||
+      'Rainbond | Serverless PaaS , A new generation of easy-to-use cloud management platforms based on kubernetes.';
+    return title;
+  };
+
+  handleMenuCollapse = (collapsed) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/changeLayoutCollapsed',
@@ -362,7 +390,8 @@ class TeamLayout extends PureComponent {
       currentTeam,
       currentRegion,
       currentComponent,
-      teamView
+      teamView,
+      joinTeamLoading
     } = this.state;
 
     const { teamName, regionName } = this.props.match.params;
@@ -376,9 +405,26 @@ class TeamLayout extends PureComponent {
       !ready ||
       !currentEnterprise ||
       !currentTeam ||
-      !currentTeamPermissionsInfo
+      !currentTeamPermissionsInfo ||
+      !currentUser
     ) {
       return <PageLoading />;
+    }
+
+    const teamPermissions = userUtil.getTeamByTeamPermissions(
+      currentUser.teams,
+      teamName
+    );
+    if (teamPermissions && teamPermissions.length === 0) {
+      return (
+        <JoinTeam
+          title="请先加入团队"
+          enterpriseID={currentEnterprise.enterprise_id}
+          loading={joinTeamLoading}
+          onOk={this.handleJoinTeam}
+          onCancel={this.cancelJoinTeam}
+        />
+      );
     }
     if (
       teamName !== currentTeam.team_name ||
@@ -471,7 +517,7 @@ class TeamLayout extends PureComponent {
       if (hasRegion) {
         isRegionMaintain =
           currentRegion.region_status === '3' &&
-          !userUtil.isCompanyAdmin(currentUser);
+          !userUtil.isSystemAdmin(currentUser);
       } else {
         return <Redirect to="/" />;
       }
@@ -601,7 +647,7 @@ class TeamLayout extends PureComponent {
       <Fragment>
         <DocumentTitle title={SiteTitle}>
           <ContainerQuery key={teamName + regionName} query={query}>
-            {params => (
+            {(params) => (
               <Context.Provider value={this.getContext()}>
                 <div className={classNames(params)}>{layout()}</div>
               </Context.Provider>

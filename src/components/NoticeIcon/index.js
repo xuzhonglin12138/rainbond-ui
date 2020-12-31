@@ -48,29 +48,112 @@ export default class NoticeIcon extends PureComponent {
     const { onItemClick } = this.props;
     onItemClick(item, tabProps);
   };
-  onTabChange = tabType => {
+  onTabChange = (tabType) => {
     this.setState({ tabType });
     // this.props.onTabChange(tabType);
   };
-  handleJump = (url, teamName) => {
+
+  putInternalMessages = (isJump, info, tabType, url, Info) => {
+    const { dispatch, onJump } = this.props;
+    dispatch({
+      type: 'global/putInternalMessages',
+      payload: {
+        message_ids: [info.message_id]
+      },
+      callback: (res) => {
+        if (res && res._code === 200) {
+          if (info.category === 'system') {
+            this.updataSystemMessages();
+          } else {
+            this.updataAlertMessages();
+          }
+          if (isJump && tabType) {
+            onJump(tabType);
+          } else if (url) {
+            this.handleJump(url, Info);
+          }
+        }
+      }
+    });
+  };
+
+  updataSystemMessages = () => {
     const { dispatch } = this.props;
-    if (this.state.adminer && teamName) {
-      this.handleJoinTeams(teamName, url);
+    dispatch({
+      type: 'global/fetchSystemMessages',
+      payload: {
+        page: 1,
+        page_size: 5,
+        is_read: 'False',
+        create_time: '',
+        category: 'system'
+      }
+    });
+  };
+  updataAlertMessages = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchAlertMessages',
+      payload: {
+        page: 1,
+        page_size: 5,
+        is_read: 'False',
+        create_time: '',
+        category: 'alert'
+      }
+    });
+  };
+
+  handleJump = (url, Info) => {
+    const { dispatch } = this.props;
+    const { teamNameInfo, appObj, componentObj, pluginInfo } = Info;
+    if (this.state.adminer && teamNameInfo) {
+      this.fetchDetail(
+        'teamControl/joinTeam',
+        {
+          team_name: teamNameInfo.team_name
+        },
+        url
+      );
+    } else if (appObj) {
+      this.fetchDetail(
+        'groupControl/fetchGroupDetail',
+        {
+          team_name: appObj.team_name,
+          region_name: appObj.region,
+          group_id: appObj.app_id
+        },
+        url
+      );
+    } else if (componentObj) {
+      this.fetchDetail(
+        'appControl/fetchDetail',
+        {
+          team_name: componentObj.team_name,
+          app_alias: componentObj.service_alias
+        },
+        url
+      );
+    } else if (pluginInfo) {
+      this.fetchDetail(
+        'plugin/getPluginVersions',
+        {
+          team_name: pluginInfo.team_name,
+          plugin_id: pluginInfo.plugin_id
+        },
+        url
+      );
     } else {
       dispatch(routerRedux.push(url));
     }
   };
-  handleJoinTeams = (teamName, url) => {
+  fetchDetail = (type, payload, url) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'teamControl/joinTeam',
-      payload: {
-        team_name: teamName
-      },
-      callback: res => {
-        if (res && res._code === 200) {
-          dispatch(routerRedux.push(url));
-        }
+      type,
+      payload,
+      callback: () => {
+        dispatch(routerRedux.push(url));
       }
     });
   };
@@ -81,7 +164,7 @@ export default class NoticeIcon extends PureComponent {
     if (!children) {
       return null;
     }
-    const panes = React.Children.map(children, child => {
+    const panes = React.Children.map(children, (child) => {
       const title =
         child.props.list && child.props.list.length > 0
           ? `${child.props.title} (${child.props.count})`
@@ -91,9 +174,10 @@ export default class NoticeIcon extends PureComponent {
           <List
             {...this.props}
             {...child.props}
-            handleJump={this.handleJump}
+            handleJump={this.putInternalMessages}
             data={child.props.list}
-            onClick={item => this.onItemClick(item, child.props)}
+            onJump={this.putInternalMessages}
+            onClick={(item) => this.onItemClick(item, child.props)}
             onClear={() => onClear(child.props.name)}
             title={child.props.title}
             locale={locale}
