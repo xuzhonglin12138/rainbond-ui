@@ -44,7 +44,7 @@ class CreateUserForm extends PureComponent {
   };
   checkAccountPass = (rule, value, callback) => {
     if (!value) {
-      callback();
+      callback('请填写密码');
     } else if (value && value.length < 8) {
       callback('密码长度至少为8位');
     } else {

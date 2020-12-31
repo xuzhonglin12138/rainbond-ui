@@ -93,7 +93,14 @@ export default class Index extends PureComponent {
   }
 
   componentDidMount() {
-    this.loadOverview();
+    const { currUser } = this.props;
+    const teamPermissions = userUtil.getTeamByTeamPermissions(
+      currUser.teams,
+      globalUtil.getCurrTeamName()
+    );
+    if (teamPermissions && teamPermissions.length !== 0) {
+      this.loadOverview();
+    }
   }
   componentWillUnmount() {
     this.handleClearTimeout(this.loadAppsTimer);
@@ -108,13 +115,13 @@ export default class Index extends PureComponent {
     });
   };
 
-  onDomainPageChange = domainPage => {
+  onDomainPageChange = (domainPage) => {
     this.setState({ domainPage }, () => {
       this.getDomainName();
     });
   };
 
-  onServicePageChange = servicePage => {
+  onServicePageChange = (servicePage) => {
     this.setState({ servicePage }, () => {
       this.getService();
     });
@@ -131,7 +138,7 @@ export default class Index extends PureComponent {
         page: servicePage,
         page_size: servicePageSize
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
           this.setState({
             serviceList: res.list
@@ -172,7 +179,7 @@ export default class Index extends PureComponent {
         step: this.getStep(),
         end: new Date().getTime() / 1000
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
           const visitDatas =
             res.bean &&
@@ -208,7 +215,7 @@ export default class Index extends PureComponent {
           );
         }
       },
-      handleError: err => {
+      handleError: (err) => {
         this.handleError(err);
         this.handleTimers(
           'getDomainTimer',
@@ -233,7 +240,7 @@ export default class Index extends PureComponent {
         page_size: domainPageSize,
         id: 1
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
           this.setState(
             {
@@ -253,7 +260,7 @@ export default class Index extends PureComponent {
           );
         }
       },
-      handleError: err => {
+      handleError: (err) => {
         this.handleError(err);
         this.handleTimers(
           'getDomainNameTimer',
@@ -277,7 +284,7 @@ export default class Index extends PureComponent {
         page,
         page_size
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
           this.setState({
             teamAppList: res.list,
@@ -294,7 +301,7 @@ export default class Index extends PureComponent {
       payload: {
         enterprise_id: this.props.currUser.enterprise_id
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code == 200) {
           const { list } = res;
           let current = 7;
@@ -346,19 +353,23 @@ export default class Index extends PureComponent {
     });
   };
 
-  handleError = err => {
-    if (err && err.data && err.data.msg_show) {
-      notification.warning({
-        message: `请求错误`,
-        description: err.data.msg_show
-      });
-    }
+  handleError = (err) => {
+    this.handleTeamPermissions(() => {
+      if (err && err.data && err.data.msg_show) {
+        notification.warning({
+          message: `请求错误`,
+          description: err.data.msg_show
+        });
+      }
+    });
   };
 
   handleTimers = (timerName, callback, times) => {
-    this[timerName] = setTimeout(() => {
-      callback();
-    }, times);
+    this.handleTeamPermissions(() => {
+      this[timerName] = setTimeout(() => {
+        callback();
+      }, times);
+    });
   };
 
   isPublicRegion() {
@@ -372,7 +383,7 @@ export default class Index extends PureComponent {
     }
     return false;
   }
-  handleClearTimeout = timer => {
+  handleClearTimeout = (timer) => {
     if (timer) {
       clearTimeout(timer);
     }
@@ -386,7 +397,7 @@ export default class Index extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         region_name: globalUtil.getCurrRegionName()
       },
-      callback: res => {
+      callback: (res) => {
         this.setState({ loadingOverview: false, loadedOverview: true });
         if (res && res.bean && res.bean.region_health) {
           dispatch({
@@ -407,7 +418,7 @@ export default class Index extends PureComponent {
           }
         }
       },
-      handleError: err => {
+      handleError: (err) => {
         this.setState({ loadingOverview: false, loadedOverview: true });
         if (err && err.code === 10400) {
           dispatch({
@@ -458,7 +469,7 @@ export default class Index extends PureComponent {
     dispatch({
       type: 'index/fetchApps',
       payload,
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.handleTimers(
             'loadAppsTimer',
@@ -469,7 +480,7 @@ export default class Index extends PureComponent {
           );
         }
       },
-      handleError: err => {
+      handleError: (err) => {
         this.handleError(err);
         this.handleTimers(
           'loadAppsTimer',
@@ -480,6 +491,16 @@ export default class Index extends PureComponent {
         );
       }
     });
+  };
+  handleTeamPermissions = (callback) => {
+    const { currUser } = this.props;
+    const teamPermissions = userUtil.getTeamByTeamPermissions(
+      currUser.teams,
+      globalUtil.getCurrTeamName()
+    );
+    if (teamPermissions && teamPermissions.length !== 0) {
+      callback();
+    }
   };
 
   renderActivities() {
@@ -499,7 +520,7 @@ export default class Index extends PureComponent {
       );
     }
 
-    return list.map(item => {
+    return list.map((item) => {
       const {
         UserName,
         OptType,
@@ -549,7 +570,7 @@ export default class Index extends PureComponent {
     });
   }
 
-  handleOkApplication = vals => {
+  handleOkApplication = (vals) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'application/addGroup',
@@ -558,7 +579,7 @@ export default class Index extends PureComponent {
         group_name: vals.group_name,
         note: vals.note
       },
-      callback: res => {
+      callback: (res) => {
         if (res) {
           notification.success({ message: '添加成功' });
           this.handleCancelApplication();
@@ -1132,7 +1153,7 @@ export default class Index extends PureComponent {
                       />
                       <MiniArea line height={45} data={this.state.visitData} />
                       <Table
-                        rowKey={record => record.index}
+                        rowKey={(record) => record.index}
                         size="small"
                         style={{ marginTop: '15px', height: '300px' }}
                         columns={columns}
@@ -1172,7 +1193,7 @@ export default class Index extends PureComponent {
                             marginTop: '-20px',
                             overflow: 'auto'
                           }}
-                          rowKey={record => record.index}
+                          rowKey={(record) => record.index}
                           size="small"
                           columns={columnTwo}
                           dataSource={serviceList}

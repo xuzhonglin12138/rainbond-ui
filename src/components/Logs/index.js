@@ -80,30 +80,60 @@ export default class Index extends PureComponent {
     this.handleViews();
     this.handleUser();
   }
-  handleJump = (url, teamName) => {
+  handleJump = (url, Info) => {
     const { dispatch, views } = this.props;
-    if (views === 'enterprise' && url && teamName) {
-      this.handleJoinTeams(teamName, url);
+    const { teamNameInfo, appObj, componentObj, pluginInfo } = Info;
+    if (views === 'enterprise' && url && teamNameInfo) {
+      this.fetchDetail(
+        'teamControl/joinTeam',
+        {
+          team_name: teamNameInfo.team_name
+        },
+        url
+      );
+    } else if (appObj) {
+      this.fetchDetail(
+        'groupControl/fetchGroupDetail',
+        {
+          team_name: appObj.team_name,
+          region_name: appObj.region,
+          group_id: appObj.app_id
+        },
+        url
+      );
+    } else if (componentObj) {
+      this.fetchDetail(
+        'appControl/fetchDetail',
+        {
+          team_name: componentObj.team_name,
+          app_alias: componentObj.service_alias
+        },
+        url
+      );
+    } else if (pluginInfo) {
+      this.fetchDetail(
+        'plugin/getPluginVersions',
+        {
+          team_name: pluginInfo.team_name,
+          plugin_id: pluginInfo.plugin_id
+        },
+        url
+      );
     } else {
       dispatch(routerRedux.push(url));
     }
   };
 
-  handleJoinTeams = (teamName, url) => {
+  fetchDetail = (type, payload, url) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'teamControl/joinTeam',
-      payload: {
-        team_name: teamName
-      },
-      callback: res => {
-        if (res && res._code === 200) {
-          dispatch(routerRedux.push(url));
-        }
+      type,
+      payload,
+      callback: () => {
+        dispatch(routerRedux.push(url));
       }
     });
   };
-
   handleViews = () => {
     const { views } = this.props;
     if (views === 'enterprise') {
@@ -125,7 +155,7 @@ export default class Index extends PureComponent {
       this.loadApps();
     }
   };
-  handleSearch = name => {
+  handleSearch = (name) => {
     this.setState(
       {
         name,
@@ -136,7 +166,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleSearchApp = teamQuery => {
+  handleSearchApp = (teamQuery) => {
     this.setState(
       {
         teamQuery,
@@ -147,7 +177,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleChangeApp = appId => {
+  handleChangeApp = (appId) => {
     this.setState(
       {
         appId
@@ -158,7 +188,7 @@ export default class Index extends PureComponent {
     );
   };
 
-  handleSearchComponent = service_alias => {
+  handleSearchComponent = (service_alias) => {
     this.setState(
       {
         service_alias
@@ -168,7 +198,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleChange = value => {
+  handleChange = (value) => {
     if (value === '') {
       this.setState(
         {
@@ -192,7 +222,7 @@ export default class Index extends PureComponent {
     );
   };
 
-  handleChangeType = value => {
+  handleChangeType = (value) => {
     this.setState(
       {
         operationType: value,
@@ -203,7 +233,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleChangeComponent = value => {
+  handleChangeComponent = (value) => {
     if (value === '') {
       this.setState(
         {
@@ -251,12 +281,12 @@ export default class Index extends PureComponent {
         end_time: endTime,
         team_name: globalUtil.getCurrTeamName()
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             loading: false,
             logList: res.list,
-            logsTotal: res.total
+            logsTotal: res.total || 1
           });
         }
       }
@@ -286,12 +316,12 @@ export default class Index extends PureComponent {
         group_id: appID,
         service_alias
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             loading: false,
             logList: res.list,
-            logsTotal: res.total
+            logsTotal: res.total || 1
           });
         }
       }
@@ -321,12 +351,12 @@ export default class Index extends PureComponent {
         end_time: endTime,
         operation_type: operationType
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             loading: false,
             logList: res.list,
-            logsTotal: res.total
+            logsTotal: res.total || 1
           });
         }
       }
@@ -344,7 +374,7 @@ export default class Index extends PureComponent {
         page_size,
         name
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             adminList: res.list || [],
@@ -369,7 +399,7 @@ export default class Index extends PureComponent {
         page: teamPage,
         page_size: teamPageSize
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             teamQuery: '',
@@ -394,7 +424,7 @@ export default class Index extends PureComponent {
         page_size,
         name
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             adminLoading: false,
@@ -418,8 +448,8 @@ export default class Index extends PureComponent {
         page: 1,
         page_size: 99
       },
-      callback: res => {
-        if (res && res._code === 200) {
+      callback: (res) => {
+        if (res && res._code == 200) {
           this.setState({
             appLoading: false,
             service_alias: '',
@@ -430,7 +460,7 @@ export default class Index extends PureComponent {
     });
   };
 
-  disabledDate = current => {
+  disabledDate = (current) => {
     return (
       current &&
       (moment(new Date()).subtract(1, 'years') > current ||
@@ -446,7 +476,7 @@ export default class Index extends PureComponent {
     return result;
   };
 
-  onPageChange = logsPage => {
+  onPageChange = (logsPage) => {
     this.setState({ logsPage, loading: true }, () => {
       this.handleViews();
     });
@@ -463,7 +493,7 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleChangeTimes = values => {
+  handleChangeTimes = (values) => {
     let startTime = '';
     let endTime = '';
 
@@ -471,9 +501,7 @@ export default class Index extends PureComponent {
       startTime = moment(values[0])
         .locale('zh-cn')
         .format('YYYY-MM-DD HH:mm:ss');
-      endTime = moment(values[1])
-        .locale('zh-cn')
-        .format('YYYY-MM-DD HH:mm:ss');
+      endTime = moment(values[1]).locale('zh-cn').format('YYYY-MM-DD HH:mm:ss');
     }
 
     this.setState(
@@ -588,7 +616,7 @@ export default class Index extends PureComponent {
         align: 'center',
         width: 150,
         dataIndex: 'operation_type',
-        render: val => {
+        render: (val) => {
           return <span>{logs[val] || '-'}</span>;
         }
       });
@@ -654,12 +682,10 @@ export default class Index extends PureComponent {
         rowKey: 'create_time',
         align: 'center',
         width: 200,
-        render: val => {
+        render: (val) => {
           return (
             <span>
-              {moment(val)
-                .locale('zh-cn')
-                .format('YYYY-MM-DD HH:mm:ss')}
+              {moment(val).locale('zh-cn').format('YYYY-MM-DD HH:mm:ss')}
             </span>
           );
         }
@@ -712,7 +738,7 @@ export default class Index extends PureComponent {
                   </Option>
                   {adminList &&
                     adminList.length > 0 &&
-                    adminList.map(item => {
+                    adminList.map((item) => {
                       const { nick_name, real_name, user_id } = item;
                       return (
                         <Option
@@ -745,7 +771,7 @@ export default class Index extends PureComponent {
                     <Option key={0} value="">
                       所有类型
                     </Option>
-                    {Object.keys(logs).map(item => (
+                    {Object.keys(logs).map((item) => (
                       <Option value={item}>{logs[item]}</Option>
                     ))}
                   </Select>
@@ -774,7 +800,7 @@ export default class Index extends PureComponent {
                     </Option>
                     {teamApps &&
                       teamApps.length > 0 &&
-                      teamApps.map(item => {
+                      teamApps.map((item) => {
                         const { group_id, group_name } = item;
                         return (
                           <Option key={group_id} value={group_id}>
@@ -805,7 +831,7 @@ export default class Index extends PureComponent {
                     </Option>
                     {apps &&
                       apps.length > 0 &&
-                      apps.map(item => {
+                      apps.map((item) => {
                         const { service_alias, service_cname } = item;
                         return (
                           <Option key={service_alias} value={service_alias}>
@@ -827,7 +853,7 @@ export default class Index extends PureComponent {
                   style={{ width: '400px', marginRight }}
                   separator="至"
                   disabledDate={this.disabledDate}
-                  onChange={value => {
+                  onChange={(value) => {
                     this.handleChangeTimes(value);
                   }}
                   showTime={{

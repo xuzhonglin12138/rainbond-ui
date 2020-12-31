@@ -277,7 +277,7 @@ export default function request(url, options) {
             push({ type: 'global/showNeedLogin' });
             return;
           }
-
+          notification.destroy();
           notification.warning({ message: '警告', description: msg });
         }
       } else {

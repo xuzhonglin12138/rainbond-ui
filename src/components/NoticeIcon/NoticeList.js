@@ -49,11 +49,16 @@ export default function NoticeList({
                   ) : null
                 }
                 title={
-                  <div className={styles.title} onClick={() => onJump(tabType)}>
+                  <div
+                    className={styles.title}
+                    onClick={() => onJump(true, item, tabType)}
+                  >
                     <div className={styles.extra}>
                       {item.is_read === false ? <Badge status="error" /> : null}
                     </div>
-                    {logsUtil.fetchLogsContent(item.content, handleJump)}
+                    {logsUtil.fetchLogsContent(item.content, (url, Info) => {
+                      handleJump(false, item, tabType, url, Info);
+                    })}
                   </div>
                 }
                 description={

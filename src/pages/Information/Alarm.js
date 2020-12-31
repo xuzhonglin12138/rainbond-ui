@@ -41,7 +41,7 @@ export default class Alarm extends PureComponent {
     this.loadAlertMessages();
   }
 
-  onChange = key => {
+  onChange = (key) => {
     this.setState(
       {
         loading: true,
@@ -53,7 +53,7 @@ export default class Alarm extends PureComponent {
       }
     );
   };
-  onPageChange = page => {
+  onPageChange = (page) => {
     this.setState({ page }, () => {
       this.loadAlertMessages();
     });
@@ -71,7 +71,7 @@ export default class Alarm extends PureComponent {
         is_read: isRead,
         category: 'alert'
       },
-      callback: res => {
+      callback: (res) => {
         if (res && res._code === 200) {
           this.setState({
             loading: false,
@@ -87,7 +87,7 @@ export default class Alarm extends PureComponent {
       this.putReadAllMessages();
     });
   };
-  putInternalMessages = (messageIds, url, teamName) => {
+  putInternalMessages = (messageIds, url, Info) => {
     const { dispatch } = this.props;
     const { isRead } = this.state;
     dispatch({
@@ -95,7 +95,7 @@ export default class Alarm extends PureComponent {
       payload: {
         message_ids: messageIds
       },
-      callback: res => {
+      callback: (res) => {
         this.setState({
           modifyLoading: false
         });
@@ -105,7 +105,7 @@ export default class Alarm extends PureComponent {
           }
           this.loadAlertMessages();
           if (url) {
-            this.handleJump(url, teamName);
+            this.handleJump(url, Info);
           }
         }
       }
@@ -120,7 +120,7 @@ export default class Alarm extends PureComponent {
         enterprise_id: user && user.enterprise_id,
         category: 'alert'
       },
-      callback: res => {
+      callback: () => {
         this.setState({
           modifyLoading: false
         });
@@ -129,26 +129,57 @@ export default class Alarm extends PureComponent {
     });
   };
 
-  handleJump = (url, teamName) => {
+  handleJump = (url, Info) => {
     const { dispatch } = this.props;
-    if (this.state.adminer && teamName) {
-      this.handleJoinTeams(teamName, url);
+    const { teamNameInfo, appObj, componentObj, pluginInfo } = Info;
+    if (this.state.adminer && teamNameInfo) {
+      this.fetchDetail(
+        'teamControl/joinTeam',
+        {
+          team_name: teamNameInfo.team_name
+        },
+        url
+      );
+    } else if (appObj) {
+      this.fetchDetail(
+        'groupControl/fetchGroupDetail',
+        {
+          team_name: appObj.team_name,
+          region_name: appObj.region,
+          group_id: appObj.app_id
+        },
+        url
+      );
+    } else if (componentObj) {
+      this.fetchDetail(
+        'appControl/fetchDetail',
+        {
+          team_name: componentObj.team_name,
+          app_alias: componentObj.service_alias
+        },
+        url
+      );
+    } else if (pluginInfo) {
+      this.fetchDetail(
+        'plugin/getPluginVersions',
+        {
+          team_name: pluginInfo.team_name,
+          plugin_id: pluginInfo.plugin_id
+        },
+        url
+      );
     } else {
       dispatch(routerRedux.push(url));
     }
   };
 
-  handleJoinTeams = (teamName, url) => {
+  fetchDetail = (type, payload, url) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'teamControl/joinTeam',
-      payload: {
-        team_name: teamName
-      },
-      callback: res => {
-        if (res && res._code === 200) {
-          dispatch(routerRedux.push(url));
-        }
+      type,
+      payload,
+      callback: () => {
+        dispatch(routerRedux.push(url));
       }
     });
   };
@@ -181,7 +212,7 @@ export default class Alarm extends PureComponent {
     const { total, loading, page, pageSize, dataList } = this.state;
     return (
       <Table
-        onRow={record => {
+        onRow={(record) => {
           return {
             onClick: () => {
               if (!record.is_read) {
@@ -221,15 +252,11 @@ export default class Alarm extends PureComponent {
                     }}
                   >
                     <Badge status={data.is_read ? 'default' : 'error'} />
-                    {logsUtil.fetchLogsContent(val, (url, teamName) => {
+                    {logsUtil.fetchLogsContent(val, (url, Info) => {
                       if (!data.is_read) {
-                        this.putInternalMessages(
-                          [data.message_id],
-                          url,
-                          teamName
-                        );
+                        this.putInternalMessages([data.message_id], url, Info);
                       } else {
-                        this.handleJump(url);
+                        this.handleJump(url, Info);
                       }
                     })}
                   </div>
