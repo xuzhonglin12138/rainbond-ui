@@ -3,21 +3,25 @@
 
 .pageHeaderContent {
   display: flex;
-  & > div {
+
+  &>div {
     width: 50%;
     margin: 0 0 24px 0;
     padding: 24px;
   }
+
   .contentl {
     background: #fff;
     margin-right: 20px;
     color: @text-color-secondary;
     line-height: 22px;
+
     .conBoxt {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
     .contentTitle {
       line-height: 28px;
       font-weight: 500;
@@ -28,6 +32,7 @@
       width: 45%;
       display: flex;
       align-items: center;
+
       span {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -35,23 +40,29 @@
         white-space: nowrap;
       }
     }
+
     .connect_Bot {
       display: flex;
-      & > div:nth-of-type(1) {
+
+      &>div:nth-of-type(1) {
         margin-right: 24px;
       }
+
       .connect_Box {
         border-radius: 10px;
         border: 1px solid #eee;
         width: 50%;
         display: flex;
         padding: 10px;
+
         .connect_Boxs {
           width: 50%;
           text-align: center;
+
           div:nth-of-type(1) {
             font-size: 14px;
           }
+
           div:nth-of-type(2) {
             color: @heading-color;
             margin-top: 10px;
@@ -61,52 +72,67 @@
       }
     }
   }
+
   .contentr {
     background: #fff;
-    & > div:nth-of-type(2) {
+
+    &>div:nth-of-type(2) {
       margin: 31px 0;
     }
+
     .conrHeader {
       display: flex;
+
       div {
         width: 45%;
+
         span {
           color: @heading-color;
         }
+
         span:nth-of-type(1) {
           margin-right: 14px;
           color: rgba(0, 0, 0, 0.45);
         }
       }
-      div:nth-of-type(1){
+
+      div:nth-of-type(1) {
         width: 55%;
       }
     }
+
     .conrBot {
       display: flex;
       padding: 10px;
       border: 1px solid #eee;
       border-radius: 10px;
-      & > div:nth-of-type(1) {
+
+      &>div:nth-of-type(1) {
         font-size: 14px;
       }
+
       .conrBox {
-        & > div:nth-of-type(2) {
+        &>div:nth-of-type(2) {
           margin-top: 10px;
         }
+
         text-align: center;
         width: 25%;
       }
     }
   }
+
   .content_Box {
     margin: 24px 0;
+
     .states {
       margin-right: 24px;
     }
+
     a {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.45);
+
       &:hover {
         color: #1890ff !important;
       }
@@ -159,6 +185,7 @@
   margin: 5px 0;
   text-align: center;
   cursor: pointer;
+
   p {
     margin: 10px 0;
   }
@@ -189,20 +216,20 @@
     position: relative;
     display: inline-block;
 
-    > p:first-child {
+    >p:first-child {
       color: @text-color-secondary;
       font-size: @font-size-base;
       line-height: 22px;
       margin-bottom: 4px;
     }
 
-    > p {
+    >p {
       color: @heading-color;
       font-size: 30px;
       line-height: 38px;
       margin: 0;
 
-      > span {
+      >span {
         color: @text-color-secondary;
         font-size: 20px;
       }
@@ -230,8 +257,7 @@
   .ant-btn-group {
     margin-right: 10px;
 
-    .right-btn {
-    }
+    .right-btn {}
   }
 }
 

@@ -859,6 +859,80 @@ export async function fetchEnterpriseUsers(param) {
   );
 }
 
+export async function fetchOperationLogs(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        operation_type: param.operation_type,
+        page: param.page,
+        page_size: param.page_size,
+        username: param.name,
+        start_time: param.start_time,
+        end_time: param.end_time,
+        query: param.query
+      }
+    }
+  );
+}
+
+export async function getInternalMessages(param) {
+  return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
+    method: 'get',
+    params: param
+  });
+}
+export async function fetchSetRemind(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users/${param.user_id}/internal-messages/rules`,
+    {
+      method: 'get',
+      params: {
+        msg_type: param.msg_type
+      }
+    }
+  );
+}
+
+export async function putSetRemind(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users/${param.user_id}/internal-messages/rules/${param.rule_id}`,
+    {
+      method: 'put',
+      data: {
+        enable: param.enable
+      }
+    }
+  );
+}
+
+export async function putInternalMessages(param) {
+  return request(`${apiconfig.baseUrl}/console/users/internal-messages`, {
+    method: 'put',
+    data: param
+  });
+}
+export async function putReadAllMessages(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/users/internal-messages`,
+    {
+      method: 'put',
+      data: param
+    }
+  );
+}
+
+export async function fetchLoginLogs(param) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/login-events`,
+    {
+      method: 'get',
+      params: param
+    }
+  );
+}
+
 /* 添加企业管理员 */
 export async function addEnterpriseAdminTeams(param) {
   return request(

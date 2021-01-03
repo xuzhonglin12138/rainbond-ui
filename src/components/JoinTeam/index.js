@@ -1,7 +1,7 @@
-import React, { PureComponent } from "react";
-import { Modal, Form, Select, Button } from "antd";
-import { connect } from "dva";
-import styles from "../CreateTeam/index.less";
+import { Button, Form, Modal, Select } from 'antd';
+import { connect } from 'dva';
+import React, { PureComponent } from 'react';
+import styles from '../CreateTeam/index.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -9,7 +9,7 @@ const { Option } = Select;
 @Form.create()
 @connect(({ user, loading }) => ({
   currUser: user.currentUser,
-  Loading: loading.effects["global/joinTeam"]
+  Loading: loading.effects['global/joinTeam']
 }))
 export default class JoinTeam extends PureComponent {
   constructor(arg) {
@@ -24,7 +24,7 @@ export default class JoinTeam extends PureComponent {
   loadTeams = () => {
     const { enterpriseID } = this.props;
     this.props.dispatch({
-      type: "global/getUserCanJoinTeams",
+      type: 'global/getUserCanJoinTeams',
       payload: {
         enterpriseID
       },
@@ -45,7 +45,7 @@ export default class JoinTeam extends PureComponent {
     });
   };
   render() {
-    const { onCancel, form, Loading } = this.props;
+    const { onCancel, form, title = '', loading = false } = this.props;
     const { getFieldDecorator } = form;
     const { teams } = this.state;
     const teamList = teams && teams.length > 0 && teams;
@@ -62,31 +62,31 @@ export default class JoinTeam extends PureComponent {
 
     return (
       <Modal
-        title="加入团队"
+        title={title || '加入团队'}
         visible
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}
         onCancel={onCancel}
         footer={[
           <Button onClick={onCancel}> 取消 </Button>,
-          <Button type="primary" onClick={this.handleSubmit} loading={Loading}>
+          <Button type="primary" loading={loading} onClick={this.handleSubmit}>
             确定
           </Button>
         ]}
       >
         <Form onSubmit={this.handleSubmit} layout="horizontal" hideRequiredMark>
           <FormItem {...formItemLayout} label="团队名称" hasFeedback>
-            {getFieldDecorator("team_name", {
-              initialValue: (teamList && teamList[0].team_name) || "",
+            {getFieldDecorator('team_name', {
+              initialValue: (teamList && teamList[0].team_name) || '',
               rules: [
                 {
                   required: true,
-                  message: "请选择团队"
+                  message: '请选择团队'
                 }
               ]
             })(
               <Select
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 onChange={this.handleTeamChange}
                 placeholder="请选择一个团队"
               >

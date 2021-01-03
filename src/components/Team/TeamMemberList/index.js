@@ -3,14 +3,14 @@ import { connect } from 'dva';
 import { Card, notification } from 'antd';
 import ScrollerX from '../../ScrollerX';
 import globalUtil from '../../../utils/global';
+import userUtil from '../../../utils/user';
 import TeamMemberTable from '../../TeamMemberTable';
 import AddMember from '../../AddMember';
 import ConfirmModal from '../../ConfirmModal';
 
-@connect(({ teamControl, loading }) => ({
+@connect(({ teamControl }) => ({
   regions: teamControl.regions,
-  currentTeam: teamControl.currentTeam,
-  toMoveTeamLoading: loading.effects['teamControl/moveTeam']
+  currentTeam: teamControl.currentTeam
 }))
 export default class MemberList extends PureComponent {
   constructor(props) {
@@ -19,6 +19,7 @@ export default class MemberList extends PureComponent {
       showAddMember: false,
       toDeleteMember: null,
       toMoveTeam: null,
+      moveTeamLoading: false,
       page: 1,
       pageSize: 8,
       total: 0,
@@ -38,29 +39,49 @@ export default class MemberList extends PureComponent {
     this.setState({ toEditAction: member });
   };
   hideMoveTeam = () => {
-    this.setState({ toMoveTeam: null });
+    this.setState({ toMoveTeam: null, moveTeamLoading: false });
   };
   handleMoveTeam = () => {
+    this.setState({ moveTeamLoading: true });
     this.props.dispatch({
       type: 'teamControl/moveTeam',
       payload: {
         team_name: globalUtil.getCurrTeamName(),
+        user_name: this.state.toMoveTeam.user_name,
         user_id: this.state.toMoveTeam.user_id
       },
       callback: (res) => {
-        if (res && res._code === 200) {
-          notification.success({ message: res.msg_show });
+        let message = '';
+        if (res && res._code == 200 && res.msg_show) {
+          message = res.msg_show;
+          this.updateCurrentUser();
         }
-        this.updateCurrentUser();
         this.loadMembers();
-        this.hideMoveTeam();
+        setTimeout(() => {
+          this.hideMoveTeam();
+          if (message) {
+            notification.success({
+              message
+            });
+          }
+        }, 3000);
       }
     });
   };
 
   updateCurrentUser = () => {
-    this.props.dispatch({
-      type: 'user/fetchCurrent'
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/fetchCurrent',
+      callback: (res) => {
+        if (res && res._code === 200) {
+          const team = userUtil.getTeamByTeamName(
+            res.bean,
+            globalUtil.getCurrTeamName()
+          );
+          dispatch({ type: 'teamControl/fetchCurrentTeam', payload: team });
+        }
+      }
     });
   };
   hideEditAction = () => {
@@ -148,19 +169,19 @@ export default class MemberList extends PureComponent {
     const {
       currentTeam,
       memberPermissions,
-      toMoveTeamLoading,
       memberPermissions: { isCreate }
     } = this.props;
     const {
-      page,
-      pageSize,
-      total,
       showAddMember,
       members,
       roles,
       toEditAction,
       toDeleteMember,
-      toMoveTeam
+      toMoveTeam,
+      moveTeamLoading,
+      page,
+      pageSize,
+      total
     } = this.state;
     const pagination = {
       current: page,
@@ -229,7 +250,7 @@ export default class MemberList extends PureComponent {
         {toMoveTeam && (
           <ConfirmModal
             onOk={this.handleMoveTeam}
-            loading={toMoveTeamLoading}
+            loading={moveTeamLoading}
             title="移交团队"
             subDesc="移交后您将失去所有权"
             desc={`确定要把团队移交给 ${toMoveTeam.nick_name} 吗？`}

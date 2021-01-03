@@ -1,5 +1,5 @@
-import request from '../utils/request';
 import apiconfig from '../../config/api.config';
+import request from '../utils/request';
 
 /* Gets the access token data */
 export async function fetchAccessToken() {
@@ -190,7 +190,7 @@ export async function login(
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     transformRequest: [
-      function (data) {
+      function(data) {
         let ret = '';
         for (const it in data) {
           ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`;
@@ -209,23 +209,16 @@ export async function logout() {
 }
 
 /* 注册 */
-export async function register(
-  body = {
-    user_name,
-    email,
-    password,
-    password_repeat,
-    captcha_code
-  }
-) {
+export async function register(body = {}, handleError) {
   return request(`${apiconfig.baseUrl}/console/users/register`, {
     method: 'post',
     data: body,
+    handleError,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     transformRequest: [
-      function (data) {
+      function(data) {
         let ret = '';
         for (const it in data) {
           ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`;

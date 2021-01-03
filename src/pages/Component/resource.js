@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/sort-comp */
+/* eslint-disable camelcase */
 /* eslint-disable eqeqeq */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
@@ -16,7 +19,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import React, { Fragment, PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import CodeBuildConfig from '../../components/CodeBuildConfig';
 import MarketAppDetailShow from '../../components/MarketAppDetailShow';
 import NoPermTip from '../../components/NoPermTip';
@@ -65,7 +68,6 @@ export default class Index extends PureComponent {
       fullList: [],
       tabList: [],
       OauthLoading: true,
-      isAddComponents: false,
       page: 1
     };
   }
@@ -76,7 +78,7 @@ export default class Index extends PureComponent {
       rainbondUtil.OauthbEnable(rainbondInfo) &&
       rainbondUtil.OauthEnterpriseEnable(enterprise)
     ) {
-      enterprise.oauth_services.value.map((item) => {
+      enterprise.oauth_services.value.map(item => {
         const { oauth_type, service_id, is_git, name } = item;
         if (is_git) {
           tabList.push({
@@ -111,14 +113,14 @@ export default class Index extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: this.props.appDetail.service.service_alias
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           this.setState({ runtimeInfo: data.bean ? data.bean : {} });
         }
       }
     });
   };
-  handleEditRuntime = (build_env_dict) => {
+  handleEditRuntime = build_env_dict => {
     this.props.dispatch({
       type: 'appControl/editRuntimeBuildInfo',
       payload: {
@@ -126,7 +128,7 @@ export default class Index extends PureComponent {
         app_alias: this.props.appDetail.service.service_alias,
         build_env_dict
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code == 200) {
           notification.success({ message: '修改成功.' });
           this.getRuntimeInfo();
@@ -142,7 +144,7 @@ export default class Index extends PureComponent {
         app_alias: this.props.appDetail.service.service_alias,
         ...val
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           this.props.updateDetail();
         }
@@ -174,7 +176,7 @@ export default class Index extends PureComponent {
         team_name,
         service_alias: this.props.appDetail.service.service_alias
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           const { bean } = data;
           this.setState({ buildSource: bean }, () => {
@@ -201,7 +203,7 @@ export default class Index extends PureComponent {
         full_name: buildSource.full_name,
         oauth_service_id: buildSource.oauth_service_id
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             thirdInfo: res.bean
@@ -227,7 +229,7 @@ export default class Index extends PureComponent {
         service_alias: this.props.appDetail.service.service_alias,
         check_uuid: this.state.check_uuid
       },
-      callback: (res) => {
+      callback: res => {
         if (res) {
           if (res._code == 200) {
             if (
@@ -235,7 +237,7 @@ export default class Index extends PureComponent {
               res.bean.check_status != 'success' &&
               res.bean.check_status != 'failure'
             ) {
-              setTimeout(function () {
+              setTimeout(function() {
                 _th.handleDetectGetLanguage();
               }, 3000);
             } else {
@@ -260,7 +262,7 @@ export default class Index extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         service_alias: this.props.appDetail.service.service_alias
       },
-      callback: (res) => {
+      callback: res => {
         if (res) {
           this.setState(
             {
@@ -269,6 +271,7 @@ export default class Index extends PureComponent {
             },
             () => {
               if (this.state.create_status == 'failure') {
+                notification.warning({ message: '更新语言失败' });
               } else {
                 this.handleDetectGetLanguage();
               }
@@ -287,8 +290,8 @@ export default class Index extends PureComponent {
   };
 
   // 获取类型
-  handleCodeWarehouseType = (props) => {
-    const { dispatch, type } = props;
+  handleCodeWarehouseType = props => {
+    const { dispatch } = props;
     const { tabType, buildSource } = this.state;
     const oauth_service_id = this.props.form.getFieldValue('oauth_service_id');
     const project_full_name = this.props.form.getFieldValue('full_name');
@@ -300,7 +303,7 @@ export default class Index extends PureComponent {
         full_name: project_full_name || buildSource.full_name,
         oauth_service_id: oauth_service_id || buildSource.oauth_service_id
       },
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           this.setState({
             tags: res.bean ? res.bean[tabType] : [],
@@ -312,7 +315,7 @@ export default class Index extends PureComponent {
     });
   };
 
-  onTabChange = (tabType) => {
+  onTabChange = tabType => {
     this.setState({ tabType, tagsLoading: true }, () => {
       this.handleCodeWarehouseType(this.props);
     });
@@ -338,9 +341,9 @@ export default class Index extends PureComponent {
     }
   };
 
-  handleProvinceChange = (id) => {
+  handleProvinceChange = id => {
     // 获取代码仓库信息
-    const { dispatch, form } = this.props;
+    const { dispatch } = this.props;
     const { setFieldsValue } = this.props.form;
     const { tabList, buildSource, page } = this.state;
     const oauth_service_id = this.props.form.getFieldValue('oauth_service_id');
@@ -356,7 +359,7 @@ export default class Index extends PureComponent {
           (buildSource && buildSource.oauth_service_id) ||
           (tabList.length > 0 ? tabList[0].id : '')
       },
-      callback: (res) => {
+      callback: res => {
         if (
           res &&
           res._code === 200 &&
@@ -394,13 +397,12 @@ export default class Index extends PureComponent {
     });
   };
 
-  handleProjectChange = (project_full_name) => {
+  handleProjectChange = project_full_name => {
     this.setState({ OauthLoading: true });
-    const { form } = this.props;
     const { setFieldsValue } = this.props.form;
     const { fullList } = this.state;
 
-    fullList.map((item) => {
+    fullList.map(item => {
       if (item.project_full_name === project_full_name) {
         setFieldsValue(
           {
@@ -413,6 +415,7 @@ export default class Index extends PureComponent {
           }
         );
       }
+      return item;
     });
   };
 
@@ -463,6 +466,7 @@ export default class Index extends PureComponent {
       firstPage,
       lastPage
     } = this.state;
+
     const language = appUtil.getLanguage(appDetail);
     const formItemLayout = {
       labelCol: {
@@ -518,14 +522,10 @@ export default class Index extends PureComponent {
             }}
             extra={[
               appUtil.isOauthByBuildSource(buildSource) ? (
-                <a onClick={this.changeEditOauth} href="javascript:;">
-                  编辑
-                </a>
+                <a onClick={this.changeEditOauth}>编辑</a>
               ) : (
                 !appUtil.isMarketAppByBuildSource(buildSource) && (
-                  <a onClick={this.changeBuildSource} href="javascript:;">
-                    更改
-                  </a>
+                  <a onClick={this.changeBuildSource}>更改</a>
                 )
               )
             ]}
@@ -600,7 +600,6 @@ export default class Index extends PureComponent {
                 >
                   {buildSource.group_key ? (
                     <a
-                      href="javascript:;"
                       onClick={() => {
                         this.setState({
                           showApp: {
@@ -640,7 +639,7 @@ export default class Index extends PureComponent {
                 {...formItemLayout}
                 label="项目名称"
               >
-                <a href={buildSource.git_url} target="_blank">
+                <a href={buildSource.git_url} target="_blank" rel="noreferrer">
                   {buildSource.full_name}
                 </a>
               </FormItem>
@@ -655,7 +654,11 @@ export default class Index extends PureComponent {
                   {...formItemLayout}
                   label="仓库地址"
                 >
-                  <a href={buildSource.git_url} target="_blank">
+                  <a
+                    href={buildSource.git_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {buildSource.git_url}
                   </a>
                 </FormItem>
@@ -668,7 +671,6 @@ export default class Index extends PureComponent {
                 >
                   {buildSource.code_version}
                 </FormItem>
-
                 <FormItem
                   style={{
                     marginBottom: 0
@@ -682,7 +684,7 @@ export default class Index extends PureComponent {
                       {languageType}
                     </a>
                   ) : (
-                    <a href="javascript:void(0);">{languageType}</a>
+                    <a>{languageType}</a>
                   )}
                   <Button
                     size="small"
@@ -780,14 +782,13 @@ export default class Index extends PureComponent {
                     />
                   </p>
                   {this.state.error_infos &&
-                    this.state.error_infos.map((item) => {
+                    this.state.error_infos.map(item => {
                       return (
                         <div>
                           <span
                             dangerouslySetInnerHTML={{
-                              __html: `<span>${item.error_info || ''} ${
-                                item.solve_advice || ''
-                              }</span>`
+                              __html: `<span>${item.error_info ||
+                                ''} ${item.solve_advice || ''}</span>`
                             }}
                           />
                         </div>
@@ -811,7 +812,7 @@ export default class Index extends PureComponent {
                   </p>
 
                   {this.state.service_info &&
-                    this.state.service_info.map((item) => {
+                    this.state.service_info.map(item => {
                       return (
                         <p style={{ textAlign: 'center', fontSize: '14px' }}>
                           {item.key}:{item.value}{' '}
@@ -896,7 +897,7 @@ export default class Index extends PureComponent {
                       placeholder="请选择OAuth服务"
                     >
                       {tabList.length > 0 &&
-                        tabList.map((item) => (
+                        tabList.map(item => (
                           <Option key={item.id} value={item.id}>
                             {item.name}
                           </Option>
@@ -914,7 +915,7 @@ export default class Index extends PureComponent {
                   })(
                     <Select
                       onChange={this.handleProjectChange}
-                      dropdownRender={(menu) => (
+                      dropdownRender={menu => (
                         <div>
                           {menu}
                           {!firstPage && (
@@ -925,7 +926,7 @@ export default class Index extends PureComponent {
                                   padding: '4px 8px',
                                   cursor: 'pointer'
                                 }}
-                                onMouseDown={(e) => e.preventDefault()}
+                                onMouseDown={e => e.preventDefault()}
                                 onClick={this.onPagePre}
                               >
                                 上一页
@@ -941,7 +942,7 @@ export default class Index extends PureComponent {
                                   padding: '4px 8px',
                                   cursor: 'pointer'
                                 }}
-                                onMouseDown={(e) => e.preventDefault()}
+                                onMouseDown={e => e.preventDefault()}
                                 onClick={this.onPageNext}
                               >
                                 下一页
@@ -953,7 +954,7 @@ export default class Index extends PureComponent {
                       placeholder="请选择项目"
                     >
                       {fullList.length > 0 &&
-                        fullList.map((item) => (
+                        fullList.map(item => (
                           <Option
                             key={item.project_url}
                             value={item.project_full_name}
@@ -997,7 +998,7 @@ export default class Index extends PureComponent {
                         }
                       >
                         {tags.length > 0 ? (
-                          tags.map((item) => {
+                          tags.map(item => {
                             return (
                               <Option key={item} value={item}>
                                 {item}

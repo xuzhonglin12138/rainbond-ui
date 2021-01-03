@@ -1,382 +1,18 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable array-callback-return */
 /* eslint-disable camelcase */
 /* eslint-disable react/sort-comp */
-import React, { Fragment, PureComponent } from 'react';
-import { Button, notification } from 'antd';
+import { notification } from 'antd';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
-import LogProcress from '../../components/LogProcress';
-import { getActionLogDetail } from '../../services/app';
-import appAcionLogUtil from '../../utils/app-action-log-util';
-import dateUtil from '../../utils/date-util';
+import React, { Fragment, PureComponent } from 'react';
 import globalUtil from '../../utils/global';
-import LogSocket from '../../utils/logSocket';
-import regionUtil from '../../utils/region';
-import teamUtil from '../../utils/team';
-import userUtil from '../../utils/user';
 import Basic from './component/Basic/index';
 import OperationRecord from './component/Basic/operationRecord';
 import BuildHistory from './component/BuildHistory/index';
 import Instance from './component/Instance/index';
-import styles from './Index.less';
-
-const ButtonGroup = Button.Group;
-
-@connect(({ user, appControl }) => ({
-  currUser: user.currentUser,
-  appDetail: appControl.appDetail
-}))
-class LogItem extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      status: '',
-      resultStatus: '',
-      opened: false,
-      logType: 'info',
-      logs: []
-    };
-  }
-  static contextTypes = {
-    isActionIng: PropTypes.func,
-    appRolback: PropTypes.func
-  };
-  showLogType = () => {
-    if (this.state.status === 'ing') {
-      return 'none';
-    }
-
-    if (this.state.opened === false) {
-      return 'none';
-    }
-    return '';
-  };
-
-  componentDidMount() {
-    const { data } = this.props;
-    if (data) {
-      if (this.ref) {
-        this.ref.querySelector(
-          '.actioncn'
-        ).innerHTML = appAcionLogUtil.getActionCN(data);
-        if (appAcionLogUtil.isSuccess(data)) {
-          this.onSuccess();
-        }
-        if (appAcionLogUtil.isFail(data)) {
-          this.onFail(data);
-        }
-        if (appAcionLogUtil.isTimeout(data)) {
-          this.onTimeout(data);
-        }
-        if (appAcionLogUtil.isActioning(data)) {
-          this.setState({ status: 'ing' });
-          this.ref.querySelector('.actionresultcn').innerHTML = '进行中';
-          this.context.isActionIng(true);
-        }
-        this.ref.querySelector(
-          '.action-user'
-        ).innerHTML = `@${appAcionLogUtil.getActionUser(data)}`;
-      }
-    }
-  }
-
-  loadLog() {
-    getActionLogDetail({
-      app_alias: this.props.appAlias,
-      level: this.state.logType,
-      team_name: globalUtil.getCurrTeamName(),
-      event_id: this.props.data.event_id
-    }).then(data => {
-      if (data) {
-        this.setState({
-          logs: data.list || []
-        });
-      }
-    });
-  }
-  getSocketUrl = () => {
-    const currTeam = userUtil.getTeamByTeamName(
-      this.props.currUser,
-      globalUtil.getCurrTeamName()
-    );
-    const currRegionName = globalUtil.getCurrRegionName();
-
-    if (currTeam) {
-      const region = teamUtil.getRegionByName(currTeam, currRegionName);
-
-      if (region) {
-        return regionUtil.getEventWebSocketUrl(region);
-      }
-    }
-    return '';
-  };
-  createSocket() {
-    const { data } = this.props;
-    const socketUrls = this.getSocketUrl();
-    if (socketUrls) {
-      const isThrough = dateUtil.isWebSocketOpen(socketUrls);
-      if (isThrough && isThrough === 'through') {
-        this.socket = new LogSocket({
-          url: this.getSocketUrl(),
-          eventId: data.event_id,
-          onMessage: data => {
-            const { logs } = this.state;
-            logs.unshift(data);
-            this.setState({
-              logs: [].concat(logs)
-            });
-          }
-        });
-      }
-    }
-  }
-  onClose = () => {
-    this.isDoing = false;
-  };
-  onSuccess = data => {
-    this.setState({ resultStatus: 'success' });
-    this.ref.querySelector('.actionresultcn').innerHTML = '完成';
-  };
-  onTimeout = data => {
-    this.setState({ resultStatus: 'timeout' });
-    this.ref.querySelector('.actionresultcn').innerHTML = '超时';
-
-    this.ref.querySelector(
-      '.action-error-msg'
-    ).innerHTML = `(${appAcionLogUtil.getFailMessage(data)})`;
-  };
-  onFail = data => {
-    this.setState({ resultStatus: 'fail' });
-    this.ref.querySelector('.actionresultcn').innerHTML = '失败';
-
-    this.ref.querySelector(
-      '.action-error-msg'
-    ).innerHTML = `(${appAcionLogUtil.getFailMessage(data)})`;
-  };
-  onComplete = data => {
-    this.setState({ status: '' });
-    this.context.isActionIng(false);
-    this.close();
-  };
-  getLogContHeight() {
-    const { status, opened } = this.state;
-    if (status === 'ing' && !opened) {
-      return 15;
-    }
-
-    if (opened) {
-      return 'auto';
-    }
-
-    return 0;
-  }
-  open = () => {
-    this.setState(
-      {
-        opened: true,
-        logType: 'info'
-      },
-      () => {
-        this.loadLog();
-      }
-    );
-  };
-  close = () => {
-    this.setState({ opened: false });
-  };
-  changeLogType = type => {
-    if (type === this.state.logType) {
-      return;
-    }
-    this.setState(
-      {
-        logType: type,
-        logs: []
-      },
-      () => {
-        this.loadLog();
-      }
-    );
-  };
-  saveRef = ref => {
-    this.ref = ref;
-  };
-  getResultClass() {
-    const { data } = this.props;
-    if (this.state.resultStatus === 'fail') {
-      return styles.fail;
-    }
-
-    if (this.state.resultStatus === 'success') {
-      return styles.success;
-    }
-    return '';
-  }
-  handleRollback = () => {
-    this.context.appRolback(
-      appAcionLogUtil.getRollbackVersion(this.props.data)
-    );
-  };
-  render() {
-    const { status, opened, logType, logs } = this.state;
-    const { data } = this.props;
-    const box = document.getElementById('box');
-    if (!data) {
-      return null;
-    }
-
-    return (
-      <div
-        ref={this.saveRef}
-        className={`${styles.logItem} ${this.getResultClass()}`}
-      >
-        <div className={styles.logItemDate}>
-          <span className={styles.time}>
-            {appAcionLogUtil.getActionTime(data)}
-          </span>
-          <span className={styles.date}>
-            {dateUtil.dateToCN(
-              appAcionLogUtil.getActionDateTime(data),
-              'yyyy-MM-dd'
-            )}
-          </span>
-        </div>
-        <div className={styles.logItemMain}>
-          <div className={styles.hd}>
-            <label className={styles.tit}>
-              <span className="actioncn" />
-              <span className="actionresultcn" />
-              <span className="action-error-msg" />
-              <span className="action-user" />
-            </label>
-            <div className={styles.btns}>
-              {!opened ? (
-                <span onClick={this.open} className={styles.btn}>
-                  查看详情
-                </span>
-              ) : (
-                <span onClick={this.close} className={styles.btn}>
-                  收起
-                </span>
-              )}
-            </div>
-          </div>
-          {appAcionLogUtil.isShowCommitInfo(data) ? (
-            <div className={styles.codeVersion}>
-              <div className={styles.versionInfo}>
-                代码信息： {appAcionLogUtil.getCommitLog(data)}
-              </div>
-              <div className={styles.versionAuthor}>
-                #{appAcionLogUtil.getCodeVersion(data)}
-                by {appAcionLogUtil.getCommitUser(data)}
-              </div>
-            </div>
-          ) : (
-            ''
-          )}
-
-          <ButtonGroup
-            style={{
-              display: this.showLogType()
-            }}
-            size="small"
-            className={styles.logTypeBtn}
-          >
-            <Button
-              onClick={() => {
-                this.changeLogType('info');
-              }}
-              className={logType === 'info' ? 'active' : ''}
-              type="dashed"
-            >
-              Info日志
-            </Button>
-            <Button
-              onClick={() => {
-                this.changeLogType('debug');
-              }}
-              className={logType === 'debug' ? 'active' : ''}
-              type="dashed"
-            >
-              Debug日志
-            </Button>
-            <Button
-              onClick={() => {
-                this.changeLogType('error');
-              }}
-              className={logType === 'error' ? 'active' : ''}
-              type="dashed"
-            >
-              Error日志
-            </Button>
-          </ButtonGroup>
-          <div
-            style={{
-              height: this.getLogContHeight(),
-              maxHeight: 350,
-              overflowY: 'auto'
-            }}
-            className={`${styles.logContent} logs-cont`}
-          >
-            {/* 动态日志 */}
-            {status === 'ing' ? (
-              <LogProcress
-                resover
-                onClose={this.onClose}
-                onComplete={this.onComplete}
-                onSuccess={this.onSuccess}
-                onTimeout={this.onTimeout}
-                onFail={this.onFail}
-                socketUrl={this.getSocketUrl()}
-                eventId={data.event_id}
-                opened={opened}
-                list={this.state.logs}
-              />
-            ) : (
-              <div>
-                {logs &&
-                  logs.length > 0 &&
-                  logs.map((item, index) => (
-                    <p key={index}>
-                      <span
-                        style={{
-                          marginRight: 10
-                        }}
-                      >
-                        {dateUtil.format(item.time, 'hh:mm:ss')}
-                      </span>
-                      <span>{item.message}</span>
-                    </p>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-// eslint-disable-next-line react/no-multi-comp
-class LogList extends PureComponent {
-  render() {
-    const { list } = this.props;
-    return (
-      <div className={styles.logs}>
-        {list.map(item => (
-          <LogItem
-            appDetail={this.props.appDetail}
-            key={item.event_id}
-            appAlias={this.props.appAlias}
-            data={item}
-          />
-        ))}
-      </div>
-    );
-  }
-}
 
 // eslint-disable-next-line react/no-multi-comp
 @connect(
@@ -414,7 +50,6 @@ export default class Index extends PureComponent {
       pages: 1,
       pageSize: 10,
       total: 0,
-      status: '',
       isopenLog: false,
       buildSource: null,
       componentTimers: this.props.timers
@@ -576,7 +211,7 @@ export default class Index extends PureComponent {
     this.context.appRolback(data);
   };
 
-  onAction = action => {
+  onAction = () => {
     this.fetchOperationLog(false);
     this.getVersionList();
   };
@@ -687,7 +322,7 @@ export default class Index extends PureComponent {
         app_alias: appAlias
       },
       callback: res => {
-        if (res && res._code == 200) {
+        if (res && res._code === 200) {
           this.setState(
             {
               new_pods: res.list.new_pods,
@@ -770,6 +405,8 @@ export default class Index extends PureComponent {
             dataList={dataList}
             onPageChange={this.onPageChange}
             onShowSizeChange={this.onShowSizeChange}
+            appAlias={this.props.appAlias}
+            reload={this.getVersionList}
             handleDel={this.handleDel}
             onRollback={this.handleRollback}
             socket={socket && socket}

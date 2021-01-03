@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-undef */
 import apiconfig from '../../config/api.config';
 import request from '../utils/request';
 
@@ -168,6 +170,23 @@ export async function getGroupDetail(body = {}, handleError) {
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}`,
     {
       handleError
+    }
+  );
+}
+export async function getAppLogs(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/apps/${body.group_id}/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        username: body.name,
+        page: body.page,
+        page_size: body.page_size,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        service_alias: body.service_alias,
+        query: body.query
+      }
     }
   );
 }

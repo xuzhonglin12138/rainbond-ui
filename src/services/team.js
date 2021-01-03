@@ -106,17 +106,13 @@ export async function userDetail(
 /*
 	移交团队管理权限
 */
-export async function moveTeam(
-  body = {
-    team_name,
-    user_id
-  }
-) {
+export async function moveTeam(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/pemtransfer`,
     {
       method: 'post',
       data: {
+        user_name: body.user_name,
         user_id: body.user_id
       }
     }
@@ -168,19 +164,10 @@ export async function createTeam(
 /*
 	获取团队下的所有成员
 */
-export async function getMembers(
-  body = {
-    team_name,
-    page,
-    pageSize
-  }
-) {
+export async function getMembers(body = {}) {
   return request(`${apiconfig.baseUrl}/console/teams/${body.team_name}/users`, {
     method: 'get',
-    params: {
-      page: body.page,
-      page_size: body.pageSize
-    }
+    params: body
   });
 }
 
@@ -439,6 +426,23 @@ export async function getNewestEvent(
     }
   );
 }
+export async function getTeamOperationLogs(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/operation-logs`,
+    {
+      method: 'get',
+      params: {
+        username: body.name,
+        page: body.page,
+        page_size: body.page_size,
+        start_time: body.start_time,
+        end_time: body.end_time,
+        query: body.query,
+        app_id: body.app_id
+      }
+    }
+  );
+}
 
 /*
   获取团队未开通的集群列表
@@ -503,7 +507,7 @@ export function getGithubInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/github`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -522,7 +526,7 @@ export function getGitlabInfo(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/code_repo/gitlab`,
     {
       method: 'get',
-      data: {
+      params: {
         tenantName: body.team_name
       }
     }
@@ -560,11 +564,12 @@ export async function exitTeam(
 /*
   用户查询加入状态
  */
-export async function getJoinTeamUsers(body = { team_name }) {
+export async function getJoinTeamUsers(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {
-      method: 'get'
+      method: 'get',
+      params: body
     }
   );
 }
@@ -572,7 +577,9 @@ export async function getJoinTeamUsers(body = { team_name }) {
 /*
   审批用户加入
  */
-export async function setJoinTeamUsers(body = {}) {
+export async function setJoinTeamUsers(
+  body = { team_name, user_id, action, role_ids }
+) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/applicants`,
     {

@@ -1,12 +1,13 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
-import React, { Component } from 'react';
+import { message } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import rainbondUtil from '../../utils/rainbond';
-import globalUtil from '../../utils/global';
-import cookie from '../../utils/cookie';
+import React, { Component } from 'react';
 import Result from '../../components/Result';
-import { message } from 'antd';
+import cookie from '../../utils/cookie';
+import globalUtil from '../../utils/global';
+import rainbondUtil from '../../utils/rainbond';
 
 @connect()
 export default class ThirdLogin extends Component {
@@ -26,10 +27,10 @@ export default class ThirdLogin extends Component {
     if (
       code &&
       service_id &&
-      code != 'None' &&
-      service_id != 'None' &&
-      code != '' &&
-      service_id != ''
+      code !== 'None' &&
+      service_id !== 'None' &&
+      code !== '' &&
+      service_id !== ''
     ) {
       const token = cookie.get('token');
       // if user login
@@ -61,7 +62,7 @@ export default class ThirdLogin extends Component {
                   desc: ''
                 },
                 () => {
-                  dispatch(routerRedux.push(`/`));
+                  this.handleSuccess();
                 }
               );
             }
@@ -88,12 +89,12 @@ export default class ThirdLogin extends Component {
           domain: window.location.host
         },
         callback: res => {
-          if (res && res.status && res.status === 400) {
+          if (res && (res._code === 400 || res._code === 401)) {
             this.setState(
               {
                 resultState: 'error',
                 title: '第三方认证未通过',
-                desc: '未成功获取access_token,请重新认证。'
+                desc: res.msg_show
               },
               () => {
                 dispatch(
@@ -105,7 +106,7 @@ export default class ThirdLogin extends Component {
             const data = res.bean;
             if (data && data.token) {
               cookie.set('token', data.token);
-              dispatch(routerRedux.push(`/`));
+              this.handleSuccess();
               return null;
             }
             if (data && data.result) {
@@ -137,6 +138,20 @@ export default class ThirdLogin extends Component {
     } else {
       globalUtil.removeCookie();
       dispatch(routerRedux.replace('/user/login?disable_auto_login=true'));
+    }
+  }
+
+  handleSuccess() {
+    const { dispatch } = this.props;
+    let redirect = window.localStorage.getItem('redirect');
+    if (!redirect || redirect == '') {
+      redirect = '/';
+    }
+    window.localStorage.setItem('redirect', '');
+    if (redirect.startsWith('/')) {
+      dispatch(routerRedux.push(redirect));
+    } else {
+      window.location.href = redirect;
     }
   }
 

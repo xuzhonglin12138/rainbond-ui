@@ -196,7 +196,7 @@ const appUtil = {
   },
   isOauthByBuildSource(buildSource) {
     return !!(
-      buildSource.code_from && buildSource.code_from.indexOf('oauth') > -1
+      buildSource && buildSource.code_from && buildSource.code_from.indexOf('oauth') > -1
     );
   },
 

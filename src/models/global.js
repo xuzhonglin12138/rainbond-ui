@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-expressions */
 import {
   addConfiguration,
   addEnterpriseAdminTeams,
-  upDataEnterpriseAdminTeams,
   authEnterprise,
   bindGithub,
   buyPurchase,
@@ -17,17 +17,18 @@ import {
   editConfiguration,
   fetchAppComponents,
   fetchEnterpriseAdmin,
-  getEnterpriseRoles,
   fetchEnterpriseApps,
   fetchEnterpriseInfo,
-  setBasicInformation,
   fetchEnterpriseList,
   fetchEnterpriseTeams,
   fetchEnterpriseUsers,
+  fetchLoginLogs,
+  fetchOperationLogs,
   fetchOverview,
   fetchOverviewApp,
   fetchOverviewMonitor,
   fetchOverviewTeam,
+  fetchSetRemind,
   fetchUserTeams,
   getAllRegion,
   getAllRegionFee,
@@ -38,7 +39,9 @@ import {
   getConfigurationList,
   getDomainName,
   getDomainTime,
+  getEnterpriseRoles,
   getGuideState,
+  getInternalMessages,
   getJoinTeam,
   getMarketApp,
   getMarketPlugins,
@@ -64,7 +67,10 @@ import {
   joinTeam,
   postUpdatedTasks,
   postUpdateOrder,
+  putInternalMessages,
   putMsgAction,
+  putReadAllMessages,
+  putSetRemind,
   queryCodeWarehouseInfo,
   queryCodeWarehouseType,
   queryDetectionTestCode,
@@ -74,6 +80,7 @@ import {
   queryThirdInfo,
   resPrice,
   saveLog,
+  setBasicInformation,
   setCertificateType,
   setRegist,
   syncCloudPlugin,
@@ -92,6 +99,7 @@ import {
   toQueryLinks,
   toQueryTopology,
   toSearchTenant,
+  upDataEnterpriseAdminTeams,
   upEnterpriseUsers
 } from '../services/api';
 import { getTeamRegionGroups } from '../services/team';
@@ -124,10 +132,15 @@ export default {
     enterprise: null,
     enterpriseInfo: null,
     isRegist: false,
+    messageList: [],
+    systemList: [],
+    systemTotal: 0,
+    alertList: [],
+    alertTotal: 0,
     memoryTip: '',
     is_enterprise_version: false,
     nouse: false,
-    needLogin: false,
+    needLogin: false
   },
 
   effects: {
@@ -141,7 +154,7 @@ export default {
     *setNouse({ payload }, { put }) {
       yield put({
         type: 'saveIsisNouse',
-        payload: payload.isNouse,
+        payload: payload.isNouse
       });
     },
     *getUserCanJoinTeams({ payload, callback }, { call }) {
@@ -431,7 +444,7 @@ export default {
       const data = yield call(isPubCloud);
       yield put({
         type: 'saveIsPubCloud',
-        payload: !!(data.bean.is_public && data.bean.is_public.enable),
+        payload: !!(data.bean.is_public && data.bean.is_public.enable)
       });
     },
     *fetchNotices(_, { call, put }) {
@@ -449,7 +462,7 @@ export default {
       if (response) {
         yield put({
           type: 'saveGroups',
-          payload: response.list || [],
+          payload: response.list || []
         });
         if (callback) {
           setTimeout(() => {
@@ -533,7 +546,7 @@ export default {
       if (response) {
         yield put({
           type: 'saveIsRegist',
-          payload: payload.isRegist,
+          payload: payload.isRegist
         });
         if (callback) {
           callback(response);
@@ -545,7 +558,7 @@ export default {
       if (response) {
         yield put({
           type: 'saveIsRegist',
-          payload: response.bean && response.bean.is_regist,
+          payload: response.bean && response.bean.is_regist
         });
         if (callback) {
           callback(response);
@@ -569,7 +582,7 @@ export default {
       if (response) {
         yield put({
           type: 'saveEnterpriseInfo',
-          payload: response.bean,
+          payload: response.bean
         });
         if (callback) {
           callback(response);
@@ -609,6 +622,67 @@ export default {
     },
     *fetchEnterpriseUsers({ payload, callback }, { call }) {
       const response = yield call(fetchEnterpriseUsers, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *fetchOperationLogs({ payload, callback }, { call }) {
+      const response = yield call(fetchOperationLogs, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *fetchSystemMessages({ payload, callback }, { put, call }) {
+      const response = yield call(getInternalMessages, payload);
+      if (response) {
+        if (payload && payload.is_read === 'False') {
+          yield put({
+            type: 'saveSystemList',
+            payload: response
+          });
+        }
+
+        callback && callback(response);
+      }
+    },
+    *fetchAlertMessages({ payload, callback }, { put, call }) {
+      const response = yield call(getInternalMessages, payload);
+      if (response) {
+        if (payload && payload.is_read === 'False') {
+          yield put({
+            type: 'saveAlertList',
+            payload: response
+          });
+        }
+        callback && callback(response);
+      }
+    },
+    *fetchSetRemind({ payload, callback }, { call }) {
+      const response = yield call(fetchSetRemind, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *putSetRemind({ payload, callback }, { call }) {
+      const response = yield call(putSetRemind, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *putInternalMessages({ payload, callback }, { call }) {
+      const response = yield call(putInternalMessages, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *putReadAllMessages({ payload, callback }, { call }) {
+      const response = yield call(putReadAllMessages, payload);
+      if (response) {
+        callback && callback(response);
+      }
+    },
+    *fetchLoginLogs({ payload, callback }, { call }) {
+      const response = yield call(fetchLoginLogs, payload);
       if (response && callback) {
         callback(response);
       }
@@ -656,7 +730,7 @@ export default {
     *IsUpDataHeader({ payload }, { put }) {
       yield put({
         type: 'isUpDataHeader',
-        payload: payload.isUpData,
+        payload: payload.isUpData
       });
     },
     *fetchOverviewApp({ payload, callback }, { call }) {
@@ -795,153 +869,167 @@ export default {
       if (callback) {
         callback(response);
       }
-    },
+    }
   },
   reducers: {
     isUpDataHeader(state, action) {
       return {
         ...state,
-        upDataHeader: action.payload,
+        upDataHeader: action.payload
       };
     },
     showPayTip(state) {
       return {
         ...state,
-        payTip: true,
+        payTip: true
       };
     },
     showMemoryTip(state, action) {
       return {
         ...state,
-        memoryTip: action.payload.message,
+        memoryTip: action.payload.message
       };
     },
     hideMemoryTip(state) {
       return {
         ...state,
-        memoryTip: '',
+        memoryTip: ''
       };
     },
     showNoMoneyTip(state) {
       return {
         ...state,
-        noMoneyTip: true,
+        noMoneyTip: true
       };
     },
     hideNoMoneyTip(state) {
       return {
         ...state,
-        noMoneyTip: false,
+        noMoneyTip: false
       };
     },
     hidePayTip(state) {
       return {
         ...state,
-        payTip: false,
+        payTip: false
       };
     },
     saveRainBondInfo(state, { payload }) {
       return {
         ...state,
         rainbondInfo: payload,
-        isRegist: payload.is_regist.enable,
+        isRegist: payload.is_regist.enable
       };
     },
     saveIsPubCloud(state, { payload }) {
       return {
         ...state,
-        isPubCloud: payload,
+        isPubCloud: payload
       };
     },
     changeLayoutCollapsed(state, { payload }) {
       return {
         ...state,
-        collapsed: payload,
+        collapsed: payload
       };
     },
     saveNotices(state, { payload }) {
       return {
         ...state,
-        notices: payload,
+        notices: payload
       };
     },
     saveClearedNotices(state, { payload }) {
       return {
         ...state,
-        notices: state.notices.filter(item => item.type !== payload),
+        notices: state.notices.filter(item => item.type !== payload)
       };
     },
     saveGroups(state, { payload }) {
       return {
         ...state,
-        groups: payload,
+        groups: payload
       };
     },
 
     saveCurrTeamAndRegion(state, { payload }) {
       return {
         ...state,
-        ...payload,
+        ...payload
       };
     },
     showLoading(state) {
       return {
         ...state,
-        apploadingnum: state.apploadingnum + 1,
+        apploadingnum: state.apploadingnum + 1
       };
     },
     hiddenLoading(state) {
       return {
         ...state,
-        apploadingnum: state.apploadingnum - 1,
+        apploadingnum: state.apploadingnum - 1
       };
     },
     showOrders(state, { payload }) {
       return {
         ...state,
-        orders: payload.code,
+        orders: payload.code
       };
     },
     hideOrders(state) {
       return {
         ...state,
-        orders: false,
+        orders: false
       };
     },
     showAuthCompany(state, { payload }) {
       return {
         ...state,
-        showAuthCompany: payload.market_name,
+        showAuthCompany: payload.market_name
       };
     },
     hideAuthCompany(state) {
       return {
         ...state,
-        showAuthCompany: false,
+        showAuthCompany: false
       };
     },
     showNeedLogin(state) {
       return {
         ...state,
-        needLogin: true,
+        needLogin: true
       };
     },
     hideNeedLogin(state) {
       return {
         ...state,
-        needLogin: false,
+        needLogin: false
       };
     },
     saveIsRegist(state, { payload }) {
       return {
         ...state,
-        isRegist: payload,
+        isRegist: payload
       };
     },
     saveIsisNouse(state, { payload }) {
       return {
         ...state,
-        nouse: payload,
+        nouse: payload
+      };
+    },
+    saveSystemList(state, { payload }) {
+      return {
+        ...state,
+        systemList: payload.list || [],
+        systemTotal: payload.total || 0
+      };
+    },
+    saveAlertList(state, { payload }) {
+      return {
+        ...state,
+        alertList: payload.list || [],
+        alertTotal: payload.total || 0
       };
     },
     saveEnterpriseInfo(state, { payload }) {
@@ -951,9 +1039,9 @@ export default {
       );
       return {
         ...state,
-        enterprise: payload,
+        enterprise: payload
       };
-    },
+    }
   },
 
   subscriptions: {
@@ -964,6 +1052,6 @@ export default {
           window.ga('send', 'pageview', pathname + search);
         }
       });
-    },
-  },
+    }
+  }
 };

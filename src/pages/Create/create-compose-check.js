@@ -163,7 +163,7 @@ export default class CreateCheck extends PureComponent {
       res => {
         if (res.status === 404) {
           this.props.dispatch(
-            routerRedux.replace(
+            routerRedux.push(
               `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/exception/404`
             )
           );

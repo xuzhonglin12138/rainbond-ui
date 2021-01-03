@@ -1,0 +1,111 @@
+@import '~antd/lib/style/themes/default.less';
+
+.main {
+  width: 100%;
+  height: 100%;
+  background-color: @body-background;
+  display: flex;
+  padding-bottom: 16px;
+  overflow: auto;
+  .leftmenu {
+    width: 224px;
+    background: #f7f8fa;
+    border-right: @border-width-base @border-style-base @border-color-split;
+    :global {
+      .ant-menu {
+        background: #f7f8fa;
+      }
+      .ant-menu-inline {
+        border: none;
+      }
+      .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        font-weight: bold;
+      }
+    }
+  }
+  .layoutMenuTitle {
+    padding: 24px 30px 20px;
+    .titles {
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 28px;
+      font-weight: 500;
+    }
+  }
+  .right {
+    flex: 1;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 24px;
+    padding-bottom: 8px;
+    .boxs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .title {
+      font-size: 20px;
+      color: @heading-color;
+      line-height: 28px;
+      font-weight: 500;
+    }
+
+    .customTitle {
+      color: rgb(96, 108, 128);
+      padding: 10px 12px;
+      border-bottom: 1px solid rgb(242, 244, 246);
+    }
+    .customSubTitle {
+      padding: 0px 12px;
+      margin: 42px 0px 15px;
+      color: rgb(96, 108, 128);
+      font-size: 12px;
+      margin-top: 15px;
+    }
+    .customContent {
+      list-style: none;
+      display: flex;
+      margin-bottom: 0 !important;
+      li {
+        flex: 1 1 0%;
+      }
+      // li:last-child {
+      //   margin-left: auto;
+      //   flex: 0 0 auto;
+      //   width: 70px;
+      // }
+    }
+  }
+  :global {
+    .ant-list-split .ant-list-item:last-child {
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .ant-list-item {
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+  }
+}
+.noAllowed {
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+.mb10 {
+  margin-bottom: 20px;
+}
+.pb20 {
+  padding-bottom: 20px;
+}
+@media screen and (max-width: @screen-md) {
+  .main {
+    flex-direction: column;
+    .leftmenu {
+      width: 100%;
+      border: none;
+    }
+    .right {
+      padding: 40px;
+    }
+  }
+}

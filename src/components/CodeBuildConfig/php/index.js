@@ -1,6 +1,7 @@
-import React, { PureComponent } from 'react';
 import { Form, Radio, Switch } from 'antd';
 import { connect } from 'dva';
+import React, { PureComponent } from 'react';
+
 const RadioGroup = Radio.Group;
 
 @connect(null, null, null, { withRef: true })
@@ -34,12 +35,8 @@ class Index extends PureComponent {
           help="开启后下一次构建将移除所有缓存文件，包括编译工具和依赖库"
         >
           {getFieldDecorator('BUILD_NO_CACHE', {
-            initialValue: envs && envs.BUILD_NO_CACHE ? true : false
-          })(
-            <Switch
-              defaultChecked={envs && envs.BUILD_NO_CACHE ? true : false}
-            />
-          )}
+            initialValue: !!(envs && envs.BUILD_NO_CACHE)
+          })(<Switch defaultChecked={!!(envs && envs.BUILD_NO_CACHE)} />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="Web服务器支持">
           {getFieldDecorator('BUILD_RUNTIMES_SERVER', {
