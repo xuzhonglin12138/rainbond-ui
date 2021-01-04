@@ -83,6 +83,7 @@ export default class Index extends PureComponent {
   handleJump = (url, Info) => {
     const { dispatch, views } = this.props;
     const { teamNameInfo, appObj, componentObj, pluginInfo } = Info;
+
     if (views === 'enterprise' && url && teamNameInfo) {
       this.fetchDetail(
         'teamControl/joinTeam',
@@ -93,7 +94,7 @@ export default class Index extends PureComponent {
       );
     } else if (appObj) {
       this.fetchDetail(
-        'groupControl/fetchGroupDetail',
+        'application/fetchGroupDetail',
         {
           team_name: appObj.team_name,
           region_name: appObj.region,
