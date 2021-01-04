@@ -142,7 +142,7 @@ export default class Alarm extends PureComponent {
       );
     } else if (appObj) {
       this.fetchDetail(
-        'groupControl/fetchGroupDetail',
+        'application/fetchGroupDetail',
         {
           team_name: appObj.team_name,
           region_name: appObj.region,
