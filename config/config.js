@@ -1,8 +1,8 @@
+import moment from 'moment';
 import defaultSettings from '../src/defaultSettings';
 import routerConfig from './router.config';
 
-const now = new Date();
-const dayFormat = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+const dayFormat = moment(new Date()).locale('zh-cn').format('YYYY-MM-DD');
 let publcPath = '/';
 if (process.env.ENABLE_CDN === 'true') {
   publcPath = `https://static.goodrain.com/rainbond-cloud/publish/${dayFormat}/`;
