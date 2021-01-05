@@ -44,7 +44,8 @@ import styles from '../List/BasicList.less';
   user: user.currentUser,
   rainbondInfo: global.rainbondInfo,
   overviewInfo: index.overviewInfo,
-  createTeamLoading: loading.effects['teamControl/createTeam']
+  createTeamLoading: loading.effects['teamControl/createTeam'],
+  joinTeamLoading: loading.effects['global/joinTeam']
 }))
 export default class Enterprise extends PureComponent {
   constructor(props) {
@@ -483,6 +484,7 @@ export default class Enterprise extends PureComponent {
         {this.state.joinTeam && (
           <JoinTeam
             enterpriseID={eid}
+            loading={this.props.joinTeamLoading}
             onOk={this.handleJoinTeam}
             onCancel={this.cancelJoinTeam}
           />
