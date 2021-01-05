@@ -33,24 +33,32 @@ export default class NoticeIcon extends PureComponent {
     super(props);
     const { user } = this.props;
     const adminer = userUtil.isCompanyAdmin(user);
-
-    this.state = { adminer };
+    this.state = { adminer, tabType: this.handleTabType(props) };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.loading !== this.props.loading) {
+      this.setState({
+        tabType: this.handleTabType(nextProps)
+      });
+    }
+  }
+  handleTabType = (props) => {
+    let tabType = 'alertInfo';
     if (props.children && props.children.length > 1) {
       const list = props.children;
-      let tabType = list[0].props.name;
+      tabType = list[0].props.name;
       if (list[0].props.count < 1 && list[1].props.count > 0) {
         tabType = list[1].props.name;
       }
-      this.state.tabType = tabType;
     }
-  }
+    return tabType;
+  };
   onItemClick = (item, tabProps) => {
     const { onItemClick } = this.props;
     onItemClick(item, tabProps);
   };
   onTabChange = (tabType) => {
     this.setState({ tabType });
-    // this.props.onTabChange(tabType);
   };
 
   putInternalMessages = (isJump, info, tabType, url, Info) => {
@@ -187,7 +195,9 @@ export default class NoticeIcon extends PureComponent {
       );
     });
     const type =
-      tabType.indexOf('alertInfo') > -1 ? 'alertInfo/.0' : 'systemInfo/.1';
+      tabType && tabType.indexOf('alertInfo') > -1
+        ? 'alertInfo/.0'
+        : 'systemInfo/.1';
 
     return (
       <Spin spinning={loading} delay={0}>
