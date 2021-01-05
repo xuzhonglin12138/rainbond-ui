@@ -83,6 +83,7 @@ export default class Index extends PureComponent {
   handleJump = (url, Info) => {
     const { dispatch, views } = this.props;
     const { teamNameInfo, appObj, componentObj, pluginInfo } = Info;
+
     if (views === 'enterprise' && url && teamNameInfo) {
       this.fetchDetail(
         'teamControl/joinTeam',
@@ -93,7 +94,7 @@ export default class Index extends PureComponent {
       );
     } else if (appObj) {
       this.fetchDetail(
-        'groupControl/fetchGroupDetail',
+        'application/fetchGroupDetail',
         {
           team_name: appObj.team_name,
           region_name: appObj.region,
@@ -516,7 +517,11 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleSubmit = () => {
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.handleData();
+  };
+  handleData = () => {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
@@ -714,8 +719,9 @@ export default class Index extends PureComponent {
                 initialValue: ''
               })(
                 <Search
+                  autoComplete="off"
                   placeholder="请输入操作内容"
-                  onSearch={this.handleSubmit}
+                  onSearch={this.handleData}
                   style={{ width: 249, marginRight }}
                 />
               )}

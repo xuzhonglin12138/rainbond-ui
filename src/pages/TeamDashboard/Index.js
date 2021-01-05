@@ -357,7 +357,7 @@ export default class Index extends PureComponent {
     this.handleTeamPermissions(() => {
       if (err && err.data && err.data.msg_show) {
         notification.warning({
-          message: `请求错误`,
+          message: `警告`,
           description: err.data.msg_show
         });
       }
