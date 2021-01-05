@@ -517,7 +517,11 @@ export default class Index extends PureComponent {
       }
     );
   };
-  handleSubmit = () => {
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.handleData();
+  };
+  handleData = () => {
     const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
@@ -715,8 +719,9 @@ export default class Index extends PureComponent {
                 initialValue: ''
               })(
                 <Search
+                  autoComplete="off"
                   placeholder="请输入操作内容"
-                  onSearch={this.handleSubmit}
+                  onSearch={this.handleData}
                   style={{ width: 249, marginRight }}
                 />
               )}

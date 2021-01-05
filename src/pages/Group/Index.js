@@ -943,7 +943,7 @@ class Main extends PureComponent {
         {toDelete && (
           <ConfirmModal
             title="删除应用"
-            desc="确定要此删除此应用吗？"
+            desc="确定要删除此应用吗？"
             subDesc="此操作不可恢复"
             loading={deleteLoading}
             onOk={this.handleDelete}

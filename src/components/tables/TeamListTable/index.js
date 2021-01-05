@@ -51,7 +51,7 @@ class TeamListTable extends PureComponent {
           return (
             <div>
               <Popconfirm
-                title="确定要删除此团队么?"
+                title="确定要删除此团队吗?"
                 onConfirm={() => {
                   onDelete(data.team_name);
                 }}
