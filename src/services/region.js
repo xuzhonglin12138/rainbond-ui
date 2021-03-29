@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import apiconfig from '../../config/api.config';
 import request from '../utils/request';
 
@@ -27,7 +28,9 @@ export async function createEnterpriseCluster(params, handleError = null) {
         region_name: params.region_name,
         region_type: params.region_type,
         desc: params.desc,
-        token: params.token
+        token: params.token,
+        provider: params.provider,
+        provider_cluster_id: params.providerClusterID
       },
       handleError
     }

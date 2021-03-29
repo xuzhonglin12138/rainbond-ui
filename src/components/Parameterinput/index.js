@@ -1,6 +1,8 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-no-bind */
+import { Col, Icon, Input, Row } from 'antd';
 import React, { Component } from 'react';
-import { Row, Col, Input, Icon } from 'antd';
+
 const { TextArea } = Input;
 
 class Parameterinput extends Component {
@@ -42,7 +44,7 @@ class Parameterinput extends Component {
     const { values } = this.state;
     this.setState({ values: values.concat({ item_key: '', item_value: '' }) });
   };
-  remove = (index) => {
+  remove = index => {
     const { values } = this.state;
     values.splice(index, 1);
     this.setValues(values);
@@ -66,13 +68,17 @@ class Parameterinput extends Component {
         {values &&
           values.length > 0 &&
           values.map((item, index) => {
+            const isPassword =
+              item.item_key.indexOf('PASS') > -1 ||
+              item.item_key.indexOf('pass') > -1;
             return (
               <Row
                 style={{ display: 'flex', alignItems: 'center' }}
-                key={index}
+                key={`conifgitem${index}`}
               >
                 <Col span={10}>
                   <Input
+                    autoComplete="off"
                     name="item_key"
                     value={item.item_key}
                     maxLength={255}
@@ -84,14 +90,25 @@ class Parameterinput extends Component {
                   :
                 </Col>
                 <Col span={10}>
-                  <TextArea
-                    name="item_value"
-                    rows={1}
-                    value={item.item_value}
-                    maxLength={65533}
-                    placeholder={valuePlaceholder}
-                    onChange={this.onValueChange.bind(this, index)}
-                  />
+                  {isPassword ? (
+                    <Input.Password
+                      autoComplete="new-password"
+                      name="item_value"
+                      value={item.item_value}
+                      maxLength={65533}
+                      placeholder={valuePlaceholder}
+                      onChange={this.onValueChange.bind(this, index)}
+                    />
+                  ) : (
+                    <TextArea
+                      name="item_value"
+                      rows={1}
+                      value={item.item_value}
+                      maxLength={65533}
+                      placeholder={valuePlaceholder}
+                      onChange={this.onValueChange.bind(this, index)}
+                    />
+                  )}
                 </Col>
                 <Col span={3} style={{ textAlign: 'center' }}>
                   {index === 0 ? (

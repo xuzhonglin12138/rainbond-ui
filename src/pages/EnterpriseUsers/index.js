@@ -228,7 +228,7 @@ export default class EnterpriseUsers extends PureComponent {
     this.loadUser();
   };
   handelChange = value => {
-    this.setState({ name: value.trim() });
+    this.setState({ name: value && value.trim() });
   };
   render() {
     const {
@@ -261,6 +261,12 @@ export default class EnterpriseUsers extends PureComponent {
         title: '姓名',
         dataIndex: 'real_name',
         rowKey: 'real_name',
+        align: 'center'
+      },
+      {
+        title: '电话',
+        dataIndex: 'phone',
+        rowKey: 'phone',
         align: 'center'
       },
       {

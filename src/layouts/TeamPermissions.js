@@ -1,9 +1,9 @@
-import React from 'react';
-import { connect } from 'dva';
-import router from 'umi/router';
 import { notification } from 'antd';
-import PageLoading from '../components/PageLoading';
+import { connect } from 'dva';
+import React from 'react';
+import router from 'umi/router';
 import JoinTeam from '../components/JoinTeam';
+import PageLoading from '../components/PageLoading';
 import Exception from '../pages/Exception/403';
 import roleUtil from '../utils/role';
 import userUtil from '../utils/user';
@@ -30,7 +30,7 @@ class TeamPermissions extends React.PureComponent {
       dispatch({
         type: 'user/fetchCurrent',
         callback: res => {
-          if (res && res._code === 200) {
+          if (res && res.status_code === 200) {
             this.setState(
               {
                 eid: res.bean && res.bean.enterprise_id

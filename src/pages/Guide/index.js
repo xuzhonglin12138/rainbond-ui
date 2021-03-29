@@ -1,3 +1,8 @@
+/* eslint-disable import/no-named-default */
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable react/no-unused-state */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/sort-comp */
 /* eslint-disable camelcase */
 import {
   Button,
@@ -13,7 +18,10 @@ import {
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
-import EditGroupName from '../../components/AddOrEditGroup';
+import {
+  default as AddGroup,
+  default as EditGroupName
+} from '../../components/AddOrEditGroup';
 import configureGlobal from '../../utils/configureGlobal';
 import globalUtil from '../../utils/global';
 import guideUtil from '../../utils/guide';
@@ -76,7 +84,7 @@ export default class Index extends PureComponent {
         enterprise_id: this.props.user.enterprise_id
       },
       callback: res => {
-        if (res && res._code == 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             GuideList: res.list,
             SpinState: false,
@@ -233,7 +241,7 @@ export default class Index extends PureComponent {
         page_size: 80
       },
       callback: data => {
-        if (data && data._code == 200) {
+        if (data && data.status_code === 200) {
           this.setState({
             ServiceList: data.list || []
           });
@@ -683,7 +691,7 @@ export default class Index extends PureComponent {
         />
 
         <p>
-          将前置任务创建的应用分享到应用市场，从而让你的业务系统支持一键交付能力。完成当前任务用户会关注以下功能：
+          将前置任务创建的应用发布到应用市场，从而让你的业务系统支持一键交付能力。完成当前任务用户会关注以下功能：
         </p>
         <p>
           1. 应用发布到企业应用市场{' '}
@@ -711,7 +719,7 @@ export default class Index extends PureComponent {
         </p>
         {this.lineShow()}
         <p>
-          完成任务说明：将上述任务建立的源码业务+数据库的完整应用分享到应用市场，并尝试一键安装出一个新的应用。
+          完成任务说明：将上述任务建立的源码业务+数据库的完整应用发布到应用市场，并尝试一键安装出一个新的应用。
         </p>
         <p style={{ textAlign: 'center' }}>
           {grade.status ? this.completedShow() : ''}

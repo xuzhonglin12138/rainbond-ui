@@ -38,7 +38,7 @@ export default class EnterpriseTeams extends PureComponent {
   constructor(props) {
     super(props);
     const { user } = this.props;
-    const adminer =  userUtil.isCompanyAdmin(user);
+    const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
       teamList: [],
       userTeamList: [],
@@ -58,7 +58,8 @@ export default class EnterpriseTeams extends PureComponent {
       name: '',
       total: 1,
       joinTeam: false,
-      delTeamLoading: false
+      delTeamLoading: false,
+      initShow: false
     };
   }
   componentDidMount() {
@@ -68,14 +69,8 @@ export default class EnterpriseTeams extends PureComponent {
     }
   }
 
-  onPageChangeUserTeam = (page, pageSize) => {
-    this.setState({ page, pageSize }, () => {
-      this.getUserTeams();
-    });
-  };
-
   onPageChangeTeam = (page, pageSize) => {
-    this.setState({ page, pageSize }, () => {
+    this.setState({ page, page_size: pageSize }, () => {
       this.getEnterpriseTeams();
     });
   };
@@ -97,9 +92,10 @@ export default class EnterpriseTeams extends PureComponent {
         name
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             total: (res.bean && res.bean.total_count) || 1,
+            initShow: res.bean.total_count === 0,
             teamList: (res.bean && res.bean.list) || [],
             enterpriseTeamsLoading: false
           });
@@ -126,7 +122,7 @@ export default class EnterpriseTeams extends PureComponent {
         name
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             userTeamList: res.list,
             userTeamsLoading: false
@@ -200,7 +196,7 @@ export default class EnterpriseTeams extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             overviewTeamsLoading: false,
             overviewTeamInfo: res.bean
@@ -214,7 +210,7 @@ export default class EnterpriseTeams extends PureComponent {
     this.setState({ showAddTeam: true });
   };
   cancelCreateTeam = () => {
-    this.setState({ showAddTeam: false });
+    this.setState({ showAddTeam: false, initShow: false });
   };
   showExitTeam = exitTeamName => {
     this.setState({ showExitTeam: true, exitTeamName });
@@ -228,7 +224,7 @@ export default class EnterpriseTeams extends PureComponent {
         team_name: exitTeamName
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.getOverviewTeam();
           this.getUserTeams();
           this.hideExitTeam();
@@ -292,7 +288,7 @@ export default class EnterpriseTeams extends PureComponent {
       },
       callback: res => {
         this.setState({ closeTeamComponentLoading: false });
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           notification.success({ message: '操作成功，组件正在关闭中' });
         }
         this.hideCloseAllComponent();
@@ -323,7 +319,7 @@ export default class EnterpriseTeams extends PureComponent {
       },
       callback: res => {
         this.setState({ delTeamLoading: false });
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.getEnterpriseTeams();
           this.hideDelTeam();
           notification.success({ message: '团队删除成功' });
@@ -402,7 +398,7 @@ export default class EnterpriseTeams extends PureComponent {
         team_name: teamName
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.onJumpTeam(teamName, region);
         }
       }
@@ -429,7 +425,8 @@ export default class EnterpriseTeams extends PureComponent {
       userTeamsLoading,
       delTeamLoading,
       showCloseAllComponent,
-      closeTeamComponentLoading
+      closeTeamComponentLoading,
+      initShow
     } = this.state;
 
     const request_join_team =
@@ -743,13 +740,13 @@ export default class EnterpriseTeams extends PureComponent {
                   <Col span={6}>{team_alias}</Col>
                   <Col span={3}>{owner_name}</Col>
                   <Col span={3}>
-                    {roles.map(item => {
+                    {roles.map(role => {
                       return (
                         <span
                           style={{ marginRight: '8px' }}
-                          key={`role${item}`}
+                          key={`role${role}`}
                         >
-                          {roleUtil.actionMap(item)}
+                          {roleUtil.actionMap(role)}
                         </span>
                       );
                     })}
@@ -770,7 +767,7 @@ export default class EnterpriseTeams extends PureComponent {
     );
     let title = '我的团队';
     const content =
-      '团队是企业下多租户资源划分的一个层级，平台中各类资源都属于团队';
+      '团队是企业下多租户资源划分的一个层级，应用、插件、权限划分等都基于团队进行隔离。一个团队可以开通多个集群。';
     if (adminer) {
       title = '团队管理';
     }
@@ -798,6 +795,14 @@ export default class EnterpriseTeams extends PureComponent {
           <CreateTeam
             enterprise_id={eid}
             loading={this.props.createTeamLoading}
+            onOk={this.handleCreateTeam}
+            onCancel={this.cancelCreateTeam}
+          />
+        )}
+        {initShow && (
+          <CreateTeam
+            title="创建您的第一个团队"
+            enterprise_id={eid}
             onOk={this.handleCreateTeam}
             onCancel={this.cancelCreateTeam}
           />

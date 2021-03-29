@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-unused-state */
 /* eslint-disable react/sort-comp */
 /* eslint-disable camelcase */
@@ -70,7 +71,7 @@ class MoveGroup extends PureComponent {
   onCancel = () => {
     this.props.onCancel();
   };
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     const { form, currGroup } = this.props;
     form.validateFields((err, fieldsValue) => {
@@ -110,7 +111,7 @@ class MoveGroup extends PureComponent {
               <Select>
                 {groups &&
                   groups.length > 0 &&
-                  groups.map((group) => {
+                  groups.map(group => {
                     return (
                       <Option
                         key={group.group_id}
@@ -136,7 +137,7 @@ class EditName extends PureComponent {
   onCancel = () => {
     this.props.onCancel();
   };
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
@@ -164,7 +165,11 @@ class EditName extends PureComponent {
               rules: [
                 {
                   required: true,
-                  message: '不能为空!'
+                  message: '组件名称不能为空。'
+                },
+                {
+                  max: 24,
+                  message: '建议组件名称少于24个字符。'
                 }
               ]
             })(
@@ -236,10 +241,10 @@ class Main extends PureComponent {
 
   getChildContext() {
     return {
-      isActionIng: (res) => {
+      isActionIng: res => {
         this.setState({ actionIng: res });
       },
-      appRolback: (data) => {
+      appRolback: data => {
         this.handleRollback(data);
       }
     };
@@ -286,7 +291,7 @@ class Main extends PureComponent {
     }
   }
 
-  getStatus = (isCycle) => {
+  getStatus = isCycle => {
     const { componentTimer } = this.state;
     this.props.dispatch({
       type: 'appControl/fetchComponentState',
@@ -294,8 +299,8 @@ class Main extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: this.getAppAlias()
       },
-      callback: (res) => {
-        if (res && res._code === 200) {
+      callback: res => {
+        if (res && res.status_code === 200) {
           this.setState({ status: res.bean }, () => {
             if (isCycle && componentTimer) {
               this.handleTimers(
@@ -309,7 +314,7 @@ class Main extends PureComponent {
           });
         }
       },
-      handleError: (err) => {
+      handleError: err => {
         this.handleError(err);
         if (isCycle && componentTimer && err.status !== 404) {
           this.handleTimers(
@@ -330,7 +335,7 @@ class Main extends PureComponent {
     }
     return null;
   };
-  handleTeamPermissions = (callback) => {
+  handleTeamPermissions = callback => {
     const { currUser } = this.props;
     const teamPermissions = userUtil.getTeamByTeamPermissions(
       currUser.teams,
@@ -343,7 +348,7 @@ class Main extends PureComponent {
     }
   };
 
-  handleError = (err) => {
+  handleError = err => {
     const { componentTimer } = this.state;
     const { appDetail, dispatch } = this.props;
     this.handleTeamPermissions(() => {
@@ -382,7 +387,7 @@ class Main extends PureComponent {
     }, times);
   };
 
-  handleTabChange = (key) => {
+  handleTabChange = key => {
     const { dispatch, match } = this.props;
     const { appAlias } = match.params;
     dispatch(
@@ -398,7 +403,7 @@ class Main extends PureComponent {
     }
   };
 
-  loadBuildState = (appDetail) => {
+  loadBuildState = appDetail => {
     if (
       appDetail &&
       appDetail.service &&
@@ -411,8 +416,8 @@ class Main extends PureComponent {
           team_name: globalUtil.getCurrTeamName(),
           app_alias: serviceAlias
         },
-        callback: (res) => {
-          if (res && res._code == 200) {
+        callback: res => {
+          if (res && res.status_code === 200) {
             this.setState({
               BuildState:
                 res.list && res.list.length > 0 ? res.list.length : null
@@ -429,7 +434,7 @@ class Main extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: this.getAppAlias()
       },
-      callback: (appDetail) => {
+      callback: appDetail => {
         this.loadBuildState(appDetail);
         if (appDetail.service.service_source) {
           this.setState({
@@ -468,7 +473,7 @@ class Main extends PureComponent {
         // get websocket url and create client
         this.getWebSocketUrl(appDetail.service.service_id);
       },
-      handleError: (data) => {
+      handleError: data => {
         const { componentTimer } = this.state;
         if (!componentTimer) {
           return null;
@@ -484,10 +489,10 @@ class Main extends PureComponent {
       }
     });
   };
-  handleshowDeployTips = (showonoff) => {
+  handleshowDeployTips = showonoff => {
     this.setState({ showDeployTips: showonoff });
   };
-  handleDeploy = (groupVersion) => {
+  handleDeploy = groupVersion => {
     this.setState({
       showDeployTips: false,
       showreStartTips: false
@@ -505,7 +510,7 @@ class Main extends PureComponent {
         group_version: groupVersion || '',
         is_upgrate: build_upgrade
       },
-      callback: (res) => {
+      callback: res => {
         if (res) {
           this.handleCancelBuild();
           this.loadBuildState(appDetail);
@@ -523,7 +528,7 @@ class Main extends PureComponent {
       }
     });
   };
-  handleRollback = (datas) => {
+  handleRollback = datas => {
     if (this.state.actionIng) {
       notification.warning({ message: `正在执行操作，请稍后` });
       return;
@@ -539,7 +544,7 @@ class Main extends PureComponent {
       upgrade_or_rollback: datas.upgrade_or_rollback
         ? datas.upgrade_or_rollback
         : -1
-    }).then((data) => {
+    }).then(data => {
       if (data) {
         notification.success({
           message: datas.upgrade_or_rollback
@@ -555,14 +560,14 @@ class Main extends PureComponent {
       }
     });
   };
-  handleshowRestartTips = (showonoff) => {
+  handleshowRestartTips = showonoff => {
     this.setState({ showreStartTips: showonoff });
   };
 
-  saveRef = (ref) => {
+  saveRef = ref => {
     this.ref = ref;
   };
-  handleDropClick = (item) => {
+  handleDropClick = item => {
     if (item === 'deleteApp') {
       this.closeComponentTimer();
       this.onDeleteApp();
@@ -642,7 +647,7 @@ class Main extends PureComponent {
   hideEditName = () => {
     this.setState({ showEditName: false });
   };
-  handleEditName = (data) => {
+  handleEditName = data => {
     const team_name = globalUtil.getCurrTeamName();
     const { appDetail, dispatch } = this.props;
     const serviceAlias = appDetail.service.service_alias;
@@ -673,7 +678,7 @@ class Main extends PureComponent {
   hideMoveGroup = () => {
     this.setState({ showMoveGroup: false });
   };
-  handleMoveGroup = (data) => {
+  handleMoveGroup = data => {
     const team_name = globalUtil.getCurrTeamName();
     const { appDetail, dispatch } = this.props;
     const serviceAlias = appDetail.service.service_alias;
@@ -697,7 +702,7 @@ class Main extends PureComponent {
       }
     });
   };
-  handleOperation = (state) => {
+  handleOperation = state => {
     const { dispatch } = this.props;
     const { actionIng } = this.state;
     if (state === 'putUpdateRolling') {
@@ -724,7 +729,7 @@ class Main extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: this.getAppAlias()
       },
-      callback: (res) => {
+      callback: res => {
         if (res) {
           notification.success({
             message: operationMap[state]
@@ -739,7 +744,7 @@ class Main extends PureComponent {
     });
   };
 
-  handleChecked = (value) => {
+  handleChecked = value => {
     this.props.dispatch({
       type: 'appControl/changeApplicationState',
       payload: {
@@ -747,7 +752,7 @@ class Main extends PureComponent {
         team_name: globalUtil.getCurrTeamName(),
         app_alias: this.getAppAlias()
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           notification.info({ message: '修改成功' });
         }
@@ -774,8 +779,8 @@ class Main extends PureComponent {
           team_name: globalUtil.getCurrTeamName(),
           app_alias: serviceAlias
         },
-        callback: (res) => {
-          if (res && res._code == 200) {
+        callback: res => {
+          if (res && res.status_code === 200) {
             this.setState({
               BuildList: res.list,
               visibleBuild: true,
@@ -810,7 +815,7 @@ class Main extends PureComponent {
       showMarketAppDetail: true
     });
   };
-  handleOpenHelpfulHints = (promptModal) => {
+  handleOpenHelpfulHints = promptModal => {
     this.setState({
       promptModal
     });
@@ -1314,7 +1319,7 @@ class Main extends PureComponent {
           </Modal>
         )}
         <Modal
-          title={[<span>从云市应用构建</span>]}
+          title={[<span>从应用商店升级构建</span>]}
           className={styless.TelescopicModal}
           visible={this.state.visibleBuild}
           onOk={this.handleOkBuild}
@@ -1367,7 +1372,7 @@ class Main extends PureComponent {
               <Form onSubmit={this.handleOkBuild}>
                 <Alert
                   message={[
-                    <span>从云市应用</span>,
+                    <span>从应用商店应用 </span>,
                     <a
                       onClick={() => {
                         this.hideMarketOpenAppDetail();
@@ -1419,10 +1424,10 @@ class Main extends PureComponent {
             ref={this.saveRef}
             {...this.props.match.params}
             {...this.props}
-            onshowDeployTips={(msg) => {
+            onshowDeployTips={msg => {
               this.handleshowDeployTips(msg);
             }}
-            onshowRestartTips={(msg) => {
+            onshowRestartTips={msg => {
               this.handleshowRestartTips(msg);
             }}
             socket={this.socket}
@@ -1497,7 +1502,7 @@ export default class Index extends PureComponent {
       globalUtil.withoutPermission(dispatch);
     }
   }
-  handlePermissions = (type) => {
+  handlePermissions = type => {
     const { currentTeamPermissionsInfo } = this.props;
     return roleUtil.querySpecifiedPermissionsInfo(
       currentTeamPermissionsInfo,

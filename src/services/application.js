@@ -297,6 +297,9 @@ export async function addGroup(body = {}) {
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups`,
     {
       method: 'post',
+      params: {
+        region_name: body.region_name
+      },
       data: {
         team_name: body.team_name,
         region_name: body.region_name,
@@ -340,7 +343,7 @@ export async function AddCopyTeamApps(body = {}, handleError) {
 }
 
 /*
-	查询未完成分享记录
+	查询未完成发布记录
 */
 export async function recordShare(
   body = {
@@ -361,7 +364,7 @@ export async function recordShare(
 }
 
 /*
-	创建分享记录
+	创建发布记录
 */
 export async function createShare(
   body = {
@@ -381,7 +384,7 @@ export async function createShare(
     }
   );
 }
-// 获取分享记录
+// 获取发布记录
 export async function getShareRecords(
   body = {
     team_name,
@@ -400,7 +403,7 @@ export async function getShareRecords(
   );
 }
 
-// 获取指定分享记录
+// 获取指定发布记录
 export async function getShareRecord(
   body = {
     team_name,
@@ -416,7 +419,7 @@ export async function getShareRecord(
   );
 }
 
-// 获取指定分享记录
+// 获取指定发布记录
 export async function deleteShareRecord(
   body = {
     team_name,
@@ -433,7 +436,7 @@ export async function deleteShareRecord(
 }
 
 /*
-	放弃分享
+	放弃发布
 */
 export async function giveupShare(
   body = {
@@ -448,7 +451,7 @@ export async function giveupShare(
 }
 
 /*
-	查询需要分享应用信息和插件信息
+	查询需要发布应用信息和插件信息
 */
 export async function getShare(
   body = {
@@ -465,7 +468,7 @@ export async function getShare(
 }
 
 /*
-	提交分享信息
+	提交发布信息
 */
 export async function submitShare(
   body = {
@@ -511,7 +514,7 @@ export async function buildCompose(
 }
 
 /*
-   获取分享应用的事件信息
+   获取发布应用的事件信息
 */
 export async function getShareEventInfo(
   body = {
@@ -526,7 +529,7 @@ export async function getShareEventInfo(
 }
 
 /*
-    执行分享事件
+    执行发布事件
 */
 export async function startShareEvent(
   body = {
@@ -542,7 +545,7 @@ export async function startShareEvent(
 }
 
 /*
-    执行分享插件事件，在应用分享时
+    执行发布插件事件，在应用发布时
 */
 export async function startPluginShareEventInShareApp(
   body = {
@@ -558,7 +561,7 @@ export async function startPluginShareEventInShareApp(
 }
 
 /*
-    查询分享插件事件，在应用分享时
+    查询发布插件事件，在应用发布时
 */
 export async function getPluginShareEventInShareApp(
   body = {
@@ -574,7 +577,7 @@ export async function getPluginShareEventInShareApp(
 }
 
 /*
-    查询分享状态
+    查询发布状态
 */
 export async function getShareStatus(
   body = {
@@ -590,7 +593,7 @@ export async function getShareStatus(
 }
 
 /*
-    完成分享
+    完成发布
 */
 export async function completeShare(
   body = {

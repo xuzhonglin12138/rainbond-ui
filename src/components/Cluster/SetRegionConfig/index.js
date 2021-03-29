@@ -1,4 +1,15 @@
-import { Button, Card, Col, Descriptions, Form, Input, notification, Row } from 'antd';
+/* eslint-disable no-underscore-dangle */
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Form,
+  Input,
+  notification,
+  Row
+} from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
@@ -10,56 +21,77 @@ export default class SetRegionConfig extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      checked: false,
       loading: true,
-      showInitDetail: false,
       configs: {},
-      task: {},
+      task: null
     };
   }
   componentDidMount() {
     this.loadTask();
   }
   createClusters = () => {
-    const { dispatch, eid, form } = this.props;
-    const { configsYaml, task } = this.state
+    const { dispatch, eid, form, selectClusterID, selectProvider } = this.props;
+    const { configsYaml, task } = this.state;
+    let desc;
+    switch (selectProvider) {
+      case 'ack':
+        desc = '从阿里云托管集群安装对接';
+        break;
+      case 'tke':
+        desc = '从腾讯云托管集群安装对接';
+        break;
+      case 'custom':
+        desc = '从自定义 Kubernetes 集群对接';
+        break;
+      case 'rke':
+        desc = '提供主机安装 Kubernetes 集群并对接';
+        break;
+      default:
+        desc = '自建集群';
+    }
     form.validateFields((err, fieldsValue) => {
       if (err) {
         return;
       }
-      this.setState({commitloading: true})
+      this.setState({ commitloading: true });
       dispatch({
         type: 'region/createEnterpriseCluster',
         payload: {
           ...fieldsValue,
           enterprise_id: eid,
-          desc: '来源于阿里云托管集群自动对接',
+          desc,
           token: configsYaml,
-          region_type: ["custom"],
+          region_type: ['custom'],
+          provider: selectProvider,
+          providerClusterID: selectClusterID
         },
         callback: res => {
           if (res && res._condition === 200) {
             notification.success({ message: '添加成功' });
-            dispatch({
-              type: 'cloud/updateInitTaskStatus',
-              payload: {
-                enterprise_id: eid,
-                taskID: task.taskID,
-                status: "complete",
-              },
-              callback: data => {
-                dispatch(routerRedux.push(`/enterprise/${eid}/clusters`));
-              },
-              handleError: res => {
-                cloud.handleCloudAPIError(res);
-                this.setState({commitloading: false})
-              },
-            });
+            if (task) {
+              dispatch({
+                type: 'cloud/updateInitTaskStatus',
+                payload: {
+                  enterprise_id: eid,
+                  taskID: task.taskID,
+                  status: 'complete'
+                },
+                callback: () => {
+                  dispatch(routerRedux.push(`/enterprise/${eid}/clusters`));
+                },
+                handleError: herr => {
+                  cloud.handleCloudAPIError(herr);
+                  this.setState({ commitloading: false });
+                }
+              });
+            } else {
+              dispatch(routerRedux.push(`/enterprise/${eid}/clusters`));
+            }
           }
         },
         handleError: () => {
-          this.setState({commitloading: false})
-        },
+          this.setState({ commitloading: false });
+        }
       });
     });
   };
@@ -70,17 +102,21 @@ export default class SetRegionConfig extends PureComponent {
       payload: {
         enterprise_id: eid,
         clusterID: selectClusterID,
-        providerName: selectProvider,
+        providerName: selectProvider
       },
       callback: data => {
         if (data) {
-          this.setState({ configs: data.configs, configsYaml: data.configs_yaml, loading: false });
+          this.setState({
+            configs: data.configs,
+            configsYaml: data.configs_yaml,
+            loading: false
+          });
         }
       },
       handleError: res => {
         cloud.handleCloudAPIError(res);
         this.setState({ loading: false });
-      },
+      }
     });
   };
   loadTask = () => {
@@ -90,35 +126,63 @@ export default class SetRegionConfig extends PureComponent {
       payload: {
         enterprise_id: eid,
         clusterID: selectClusterID,
-        providerName: selectProvider,
+        providerName: selectProvider
       },
       callback: data => {
         if (data) {
           this.setState({ task: data });
-          if (data.status == 'inited') {
-            this.loadRegionConfig();
-          }
+          this.loadRegionConfig();
         }
       },
       handleError: res => {
+        if (res.data && res.data.code === 404) {
+          this.loadRegionConfig();
+          return;
+        }
         cloud.handleCloudAPIError(res);
         this.setState({ loading: false });
-      },
+      }
     });
   };
 
   render() {
+    const { selectProvider } = this.props;
     const { configs, loading, commitloading } = this.state;
     const { getFieldDecorator } = this.props.form;
+    let clusterTitle;
+    switch (selectProvider) {
+      case 'ack':
+        clusterTitle = '阿里云托管集群';
+        break;
+      case 'tke':
+        clusterTitle = '腾讯云托管集群';
+        break;
+      case 'custom':
+        clusterTitle = '自定义对接集群';
+        break;
+      case 'rke':
+        clusterTitle = '自建集群';
+        break;
+      default:
+        clusterTitle = '自建集群';
+    }
     return (
       <Form>
         <Card loading={loading} bordered={false} style={{ padding: '0 16px' }}>
           <Row>
-            <Descriptions>
-              <Descriptions.Item label="API通信地址">
-                {configs.apiAddress}
-              </Descriptions.Item>
-            </Descriptions>
+            {!configs.apiAddress && (
+              <Alert
+                message="未正常获取到集群的初始化状态，不能进行对接"
+                type="error"
+              />
+            )}
+            {configs.apiAddress && (
+              <Descriptions>
+                <Descriptions.Item label="API通信地址">
+                  {configs.apiAddress}
+                </Descriptions.Item>
+              </Descriptions>
+            )}
           </Row>
           <Row style={{ marginTop: '32px' }}>
             <h4>集群设置</h4>
@@ -129,20 +193,26 @@ export default class SetRegionConfig extends PureComponent {
                 {getFieldDecorator('region_name', {
                   initialValue: '',
                   rules: [
-                    { required: true, message: '请填写辨识度高的集群ID，不可修改' },
+                    {
+                      required: true,
+                      message: '请填写辨识度高的集群ID，不可修改'
+                    },
                     {
                       pattern: /^[a-z0-9A-Z-_]+$/,
-                      message: '只支持字母、数字和-_组合',
-                    },
-                  ],
-                })(<Input placeholder="请填写集群ID，添加后不可修改" />)}
+                      message: '只支持字母、数字和-_组合'
+                    }
+                  ]
+                })(<Input placeholder="请填写辨识度高的集群ID，不可修改" />)}
               </Form.Item>
             </Col>
             <Col span={6}>
               <Form.Item label="集群名称">
                 {getFieldDecorator('region_alias', {
-                  initialValue: '阿里云托管集群',
-                  rules: [{ required: true, message: '请填写集群名称!' }],
+                  initialValue: clusterTitle,
+                  rules: [
+                    { required: true, message: '请填写集群名称!' },
+                    { max: 24, message: '集群名称不能超过24字符' }
+                  ]
                 })(<Input placeholder="请填写集群名称" />)}
               </Form.Item>
             </Col>
@@ -152,6 +222,7 @@ export default class SetRegionConfig extends PureComponent {
               <Button
                 loading={commitloading}
                 onClick={this.createClusters}
+                disabled={!configs.apiAddress}
                 type="primary"
               >
                 对接
