@@ -132,7 +132,7 @@ export default class Index extends PureComponent {
         page_size: this.state.page_size
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState(
             {
               isopenLog,
@@ -322,7 +322,7 @@ export default class Index extends PureComponent {
         app_alias: appAlias
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState(
             {
               new_pods: res.list.new_pods,

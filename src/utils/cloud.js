@@ -1,6 +1,7 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/react-in-jsx-scope */
-import { notification } from 'antd';
+import { notification, Tooltip } from 'antd';
 
 const aliyunRegionNames = [
   {
@@ -22,6 +23,11 @@ const aliyunRegionNames = [
     RegionId: 'cn-huhehaote',
     RegionEndpoint: 'ecs.cn-huhehaote.aliyuncs.com',
     LocalName: '华北5（呼和浩特）'
+  },
+  {
+    RegionId: 'cn-wulanchabu',
+    RegionEndpoint: 'ecs-cn-wulanchabu.aliyuncs.com',
+    LocalName: '华北6（乌兰察布）'
   },
   {
     RegionId: 'cn-hangzhou',
@@ -142,9 +148,35 @@ const createKubernetesSteps = {
     Title: '创建集群',
     Description: '创建托管集群，创建成功后大概10分钟集群即可使用',
     Status: ''
+  },
+  InitClusterConfig: {
+    Title: '初始化集群配置',
+    Description: '初始化创建集群所需要的配置数据',
+    Status: ''
+  },
+  InstallKubernetes: {
+    Title: '安装集群',
+    Description: '连接所有节点安装 Kubernetes 集群，耗时取决于网络状况。',
+    Status: ''
   }
 };
-
+const updateKubernetesSteps = {
+  Init: {
+    Title: '控制器初始化',
+    Description: '检测提供的参数是否正确',
+    Status: ''
+  },
+  InitClusterConfig: {
+    Title: '初始化集群配置',
+    Description: '初始化扩容集群所需要的配置数据',
+    Status: ''
+  },
+  UpdateKubernetes: {
+    Title: '扩容集群',
+    Description: '连接所有节点完成节点的扩容，耗时取决于网络状况。',
+    Status: ''
+  }
+};
 const initRainbondSteps = {
   Init: {
     Title: '控制器初始化',
@@ -193,8 +225,8 @@ const initRainbondSteps = {
     Status: ''
   },
   InitRainbondRegion: {
-    Title: '初始化Rainbond集群完成',
-    Description: '已经完成Rainbond集群初始化',
+    Title: '初始化Rainbond集群',
+    Description: '等待 Rainbond 集群初始化完成',
     Status: ''
   },
   InitRainbondRegionOperator: {
@@ -203,18 +235,18 @@ const initRainbondSteps = {
     Status: ''
   },
   InitRainbondRegionImageHub: {
-    Title: '启动集群本地镜像仓库(预计2分钟)',
+    Title: '启动集群本地镜像仓库(预计5分钟)',
     Description:
-      '本地镜像仓库就绪意味着存储、网关等服务已就绪，本阶段预计2分钟',
+      '本地镜像仓库就绪意味着存储、网关等服务已就绪，本阶段预计5分钟，取决于网络状况',
     Status: ''
   },
   InitRainbondRegionPackage: {
-    Title: '系统所需所有镜像本地化处理(预计10分钟)',
-    Description: '将Rainbond需要的所有镜像获取完成并推送到本地镜像仓库',
+    Title: '系统所需的非组件镜像本地化处理(预计5分钟)',
+    Description: '将Rainbond需要的非组件镜像获取完成并推送到本地镜像仓库',
     Status: ''
   },
   InitRainbondRegionRegionConfig: {
-    Title: '获取集群访问配置文件(预计1分钟)',
+    Title: '获取集群访问配置文件(预计5分钟)',
     Description:
       '等待集群服务启动完成，当API服务可以正常访问则集群访问配置文件已获取完成',
     Status: ''
@@ -359,28 +391,28 @@ const amzonIcon = (
     />
   </svg>
 );
-const huaweiIcon = (
-  <svg
-    t="1586163751977"
-    viewBox="0 0 3328 1024"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    p-id="6167"
-    width="100"
-    height="100"
-  >
-    <path
-      d="M1497.6 704h236.8v-57.6h57.6v57.6h243.2v64H1792v160h-57.6V768h-236.8v-64z m339.2-57.6c-38.4 0-64-19.2-64-64v-38.4c-25.6 12.8-51.2 19.2-76.8 32l-32-51.2c44.8-19.2 76.8-32 108.8-44.8V332.8h57.6v121.6c57.6-32 108.8-64 140.8-102.4l38.4 44.8c-51.2 44.8-115.2 89.6-185.6 121.6v51.2c0 12.8 6.4 19.2 19.2 19.2h83.2c12.8 0 25.6-6.4 32-12.8 6.4-6.4 12.8-32 19.2-70.4l57.6 19.2c-6.4 57.6-19.2 89.6-32 102.4-12.8 12.8-32 19.2-64 19.2h-102.4z m-262.4-140.8c-25.6 19.2-44.8 38.4-70.4 51.2l-19.2-64c76.8-44.8 134.4-102.4 166.4-172.8l51.2 25.6c-19.2 38.4-38.4 70.4-70.4 102.4v217.6h-57.6V505.6z m620.8-166.4c32 38.4 64 70.4 83.2 102.4l-44.8 32c-19.2-32-51.2-64-83.2-102.4l44.8-32z m217.6 275.2c38.4 51.2 76.8 89.6 96 128l-51.2 38.4c-25.6-44.8-57.6-89.6-96-134.4l51.2-32z m-89.6-288h57.6v153.6h249.6c0 192-6.4 313.6-25.6 364.8-19.2 51.2-44.8 76.8-89.6 76.8-32 0-57.6 0-83.2-6.4l-12.8-57.6c38.4 6.4 64 6.4 89.6 6.4s44.8-38.4 51.2-102.4c6.4-76.8 6.4-147.2 6.4-217.6H2368c-12.8 83.2-25.6 147.2-51.2 204.8-38.4 76.8-96 134.4-179.2 179.2l-32-57.6c83.2-44.8 140.8-102.4 166.4-166.4 19.2-44.8 32-96 38.4-160h-185.6v-64h192V326.4h6.4z m460.8 32h441.6v57.6h-441.6v-57.6z m-57.6 179.2h556.8v64h-294.4c-51.2 115.2-102.4 192-140.8 243.2 102.4-6.4 198.4-19.2 300.8-32-19.2-38.4-44.8-76.8-64-115.2l44.8-32c57.6 83.2 96 160 128 230.4l-51.2 38.4c-12.8-32-25.6-51.2-32-64-121.6 19.2-256 32-403.2 44.8l-12.8-64c6.4 0 12.8-6.4 12.8-6.4 38.4-32 89.6-108.8 147.2-236.8h-198.4l6.4-70.4z"
-      fill="#56606F"
-      p-id="6168"
-    />
-    <path
-      d="M601.6 6.4C531.2 6.4 467.2 38.4 422.4 89.6c-70.4 96-19.2 230.4 19.2 307.2s211.2 352 217.6 358.4c6.4 6.4 12.8 6.4 12.8 0s19.2-409.6 6.4-505.6c-19.2-89.6-44.8-166.4-76.8-243.2zM224 192c-12.8 0-102.4 96-115.2 179.2s32 147.2 134.4 217.6c108.8 76.8 358.4 211.2 364.8 204.8 6.4-12.8-96-192-185.6-326.4S236.8 192 224 192zM256 1011.2c76.8 32 198.4-44.8 230.4-64l89.6-64-435.2 12.8c25.6 44.8 64 83.2 115.2 115.2z m12.8-352C192 620.8 32 531.2 25.6 531.2c-6.4 0-32 115.2 19.2 198.4s147.2 108.8 192 115.2c51.2 6.4 345.6 6.4 345.6 0-6.4-6.4-236.8-147.2-313.6-185.6z m716.8-569.6C940.8 38.4 876.8 6.4 806.4 6.4c-32 76.8-57.6 153.6-70.4 236.8-12.8 96 6.4 505.6 6.4 505.6 0 6.4 6.4 6.4 12.8 0s185.6-288 217.6-358.4 83.2-204.8 12.8-300.8z m403.2 441.6c-6.4 0-166.4 89.6-243.2 128-76.8 38.4-307.2 179.2-313.6 185.6 0 6.4 294.4 6.4 345.6 0 44.8-6.4 140.8-32 192-115.2 44.8-83.2 19.2-198.4 19.2-198.4z m-467.2 416c32 19.2 153.6 96 230.4 64 51.2-25.6 89.6-70.4 115.2-121.6l-435.2-12.8 89.6 70.4z m377.6-576C1292.8 288 1196.8 192 1184 192s-121.6 140.8-204.8 275.2-185.6 313.6-179.2 326.4c6.4 12.8 256-128 364.8-204.8 102.4-70.4 140.8-128 134.4-217.6z"
-      fill="#EA020A"
-      p-id="6169"
-    />
-  </svg>
-);
+// const huaweiIcon = (
+//   <svg
+//     t="1586163751977"
+//     viewBox="0 0 3328 1024"
+//     version="1.1"
+//     xmlns="http://www.w3.org/2000/svg"
+//     p-id="6167"
+//     width="100"
+//     height="100"
+//   >
+//     <path
+//       d="M1497.6 704h236.8v-57.6h57.6v57.6h243.2v64H1792v160h-57.6V768h-236.8v-64z m339.2-57.6c-38.4 0-64-19.2-64-64v-38.4c-25.6 12.8-51.2 19.2-76.8 32l-32-51.2c44.8-19.2 76.8-32 108.8-44.8V332.8h57.6v121.6c57.6-32 108.8-64 140.8-102.4l38.4 44.8c-51.2 44.8-115.2 89.6-185.6 121.6v51.2c0 12.8 6.4 19.2 19.2 19.2h83.2c12.8 0 25.6-6.4 32-12.8 6.4-6.4 12.8-32 19.2-70.4l57.6 19.2c-6.4 57.6-19.2 89.6-32 102.4-12.8 12.8-32 19.2-64 19.2h-102.4z m-262.4-140.8c-25.6 19.2-44.8 38.4-70.4 51.2l-19.2-64c76.8-44.8 134.4-102.4 166.4-172.8l51.2 25.6c-19.2 38.4-38.4 70.4-70.4 102.4v217.6h-57.6V505.6z m620.8-166.4c32 38.4 64 70.4 83.2 102.4l-44.8 32c-19.2-32-51.2-64-83.2-102.4l44.8-32z m217.6 275.2c38.4 51.2 76.8 89.6 96 128l-51.2 38.4c-25.6-44.8-57.6-89.6-96-134.4l51.2-32z m-89.6-288h57.6v153.6h249.6c0 192-6.4 313.6-25.6 364.8-19.2 51.2-44.8 76.8-89.6 76.8-32 0-57.6 0-83.2-6.4l-12.8-57.6c38.4 6.4 64 6.4 89.6 6.4s44.8-38.4 51.2-102.4c6.4-76.8 6.4-147.2 6.4-217.6H2368c-12.8 83.2-25.6 147.2-51.2 204.8-38.4 76.8-96 134.4-179.2 179.2l-32-57.6c83.2-44.8 140.8-102.4 166.4-166.4 19.2-44.8 32-96 38.4-160h-185.6v-64h192V326.4h6.4z m460.8 32h441.6v57.6h-441.6v-57.6z m-57.6 179.2h556.8v64h-294.4c-51.2 115.2-102.4 192-140.8 243.2 102.4-6.4 198.4-19.2 300.8-32-19.2-38.4-44.8-76.8-64-115.2l44.8-32c57.6 83.2 96 160 128 230.4l-51.2 38.4c-12.8-32-25.6-51.2-32-64-121.6 19.2-256 32-403.2 44.8l-12.8-64c6.4 0 12.8-6.4 12.8-6.4 38.4-32 89.6-108.8 147.2-236.8h-198.4l6.4-70.4z"
+//       fill="#56606F"
+//       p-id="6168"
+//     />
+//     <path
+//       d="M601.6 6.4C531.2 6.4 467.2 38.4 422.4 89.6c-70.4 96-19.2 230.4 19.2 307.2s211.2 352 217.6 358.4c6.4 6.4 12.8 6.4 12.8 0s19.2-409.6 6.4-505.6c-19.2-89.6-44.8-166.4-76.8-243.2zM224 192c-12.8 0-102.4 96-115.2 179.2s32 147.2 134.4 217.6c108.8 76.8 358.4 211.2 364.8 204.8 6.4-12.8-96-192-185.6-326.4S236.8 192 224 192zM256 1011.2c76.8 32 198.4-44.8 230.4-64l89.6-64-435.2 12.8c25.6 44.8 64 83.2 115.2 115.2z m12.8-352C192 620.8 32 531.2 25.6 531.2c-6.4 0-32 115.2 19.2 198.4s147.2 108.8 192 115.2c51.2 6.4 345.6 6.4 345.6 0-6.4-6.4-236.8-147.2-313.6-185.6z m716.8-569.6C940.8 38.4 876.8 6.4 806.4 6.4c-32 76.8-57.6 153.6-70.4 236.8-12.8 96 6.4 505.6 6.4 505.6 0 6.4 6.4 6.4 12.8 0s185.6-288 217.6-358.4 83.2-204.8 12.8-300.8z m403.2 441.6c-6.4 0-166.4 89.6-243.2 128-76.8 38.4-307.2 179.2-313.6 185.6 0 6.4 294.4 6.4 345.6 0 44.8-6.4 140.8-32 192-115.2 44.8-83.2 19.2-198.4 19.2-198.4z m-467.2 416c32 19.2 153.6 96 230.4 64 51.2-25.6 89.6-70.4 115.2-121.6l-435.2-12.8 89.6 70.4z m377.6-576C1292.8 288 1196.8 192 1184 192s-121.6 140.8-204.8 275.2-185.6 313.6-179.2 326.4c6.4 12.8 256-128 364.8-204.8 102.4-70.4 140.8-128 134.4-217.6z"
+//       fill="#EA020A"
+//       p-id="6169"
+//     />
+//   </svg>
+// );
 const providers = [
   {
     id: 'ack',
@@ -389,28 +421,28 @@ const providers = [
     describe:
       '支持阿里云托管类型集群对接，集群可用性由阿里云负责，Rainbond Cloud负责辅助集群创建、Rainbond集群初始化以及后续的资源调度管理',
     disable: false
-  },
-  {
-    id: 'eks',
-    name: 'Amazon EKS',
-    icon: amzonIcon,
-    describe: 'Amazon EKS 即将支持',
-    disable: true
-  },
-  {
-    id: 'cce',
-    name: '华为云 CCE',
-    icon: huaweiIcon,
-    describe: '华为云 CCE 即将支持',
-    disable: true
   }
+  // {
+  //   id: 'eks',
+  //   name: 'Amazon EKS',
+  //   icon: amzonIcon,
+  //   describe: 'Amazon EKS 即将支持',
+  //   disable: true
+  // },
+  // {
+  //   id: 'cce',
+  //   name: '华为云 CCE',
+  //   icon: huaweiIcon,
+  //   describe: '华为云 CCE 即将支持',
+  //   disable: true
+  // }
 ];
 
 const cloud = {
   getAliyunRegionName(id) {
     let regionName = id;
     aliyunRegionNames.map(item => {
-      if (item.RegionId == id) {
+      if (item.RegionId === id) {
         regionName = item.LocalName;
       }
     });
@@ -424,9 +456,13 @@ const cloud = {
   getAliyunClusterName(n) {
     switch (n) {
       case 'ManagedKubernetes':
-        return '托管集群';
+        return '阿里云托管集群';
       case 'ServerlessKubernetes':
-        return 'Serverless集群';
+        return '阿里云Serverless集群';
+      case 'rke':
+        return '主机自安装集群';
+      case 'custom':
+        return '自建对接集群';
       default:
         return n;
     }
@@ -479,7 +515,41 @@ const cloud = {
         notification.warning({ message: '阿里云容器服务默认缺角未创建' });
         break;
       case 7007:
-        notification.warning({ message: '阿里云API请求故障，请联系我们' });
+        notification.warning({ message: '阿里云API请求故障，请稍后重试' });
+        break;
+      case 7010:
+        notification.warning({
+          message: '节点角色缺失，请确保管理、计算、ETCD节点分别至少一个'
+        });
+        break;
+      case 7011:
+        notification.warning({ message: 'ETCD节点数量必须为奇数' });
+        break;
+      case 7012:
+        notification.warning({ message: '集群节点配置校验不通过' });
+        break;
+      case 7013:
+        notification.warning({ message: '节点端口配置不正确' });
+        break;
+      case 7014:
+        notification.warning({ message: 'KubeConfig配置不能为空' });
+        break;
+      case 7015:
+        notification.warning({ message: '集群不能被删除' });
+        break;
+      case 7016:
+        notification.warning({ message: '集群不支持重新安装' });
+        break;
+      case 7017:
+        notification.warning({ message: '该集群不支持节点扩容动作' });
+        break;
+      case 7018:
+        notification.warning({
+          message: 'RainbondCluster 配置不合法，请检查后重试'
+        });
+        break;
+      case 7019:
+        notification.warning({ message: '无法获取集群的初始化状态' });
         break;
       case 400:
         notification.warning({ message: '请求参数错误' });
@@ -503,7 +573,7 @@ const cloud = {
     const steps = [];
     events.map(item => {
       let step = createKubernetesSteps[item.type];
-      if (step == undefined) {
+      if (step === undefined) {
         step = {
           Title: item.type,
           Description: item.type,
@@ -515,11 +585,13 @@ const cloud = {
       step.Color = colorMap[item.status];
       steps.push(step);
       if (
-        item.status == 'failure' ||
-        (item.type == 'CreateCluster' && item.status == 'success')
+        item.status === 'failure' ||
+        ((item.type === 'CreateCluster' || item.type === 'InstallKubernetes') &&
+          item.status === 'success')
       ) {
         complete = true;
       }
+      return item;
     });
     return { complete, steps };
   },
@@ -534,7 +606,7 @@ const cloud = {
     const steps = [];
     events.map(item => {
       let step = initRainbondSteps[item.type];
-      if (step == undefined) {
+      if (step === undefined) {
         step = {
           Title: item.type,
           Description: item.type,
@@ -546,42 +618,74 @@ const cloud = {
       step.Color = colorMap[item.status];
       steps.push(step);
       if (
-        item.status == 'failure' ||
-        (item.type == 'InitRainbondRegion' && item.status == 'success')
+        item.status === 'failure' ||
+        (item.type === 'InitRainbondRegion' && item.status === 'success')
       ) {
         complete = true;
       }
     });
     return { complete, steps };
   },
-  getAliyunClusterStatus(status, cluster) {
-    const logURL = `https://cs.console.aliyun.com/#/k8s/cluster/${cluster.cluster_id}/log`;
+  showUpdateClusterSteps(events) {
+    const colorMap = {
+      start: '',
+      '': 'gray',
+      failure: 'red',
+      success: 'green'
+    };
+    let complete = false;
+    const steps = [];
+    events.map(item => {
+      let step = updateKubernetesSteps[item.type];
+      if (step === undefined) {
+        step = {
+          Title: item.type,
+          Description: item.type,
+          Status: ''
+        };
+      }
+      step.Status = item.status;
+      step.Message = item.message;
+      step.Color = colorMap[item.status];
+      steps.push(step);
+      if (
+        item.status === 'failure' ||
+        (item.type === 'UpdateKubernetes' && item.status === 'success')
+      ) {
+        complete = true;
+      }
+      return item;
+    });
+    return { complete, steps };
+  },
+  getAliyunClusterStatus(status, cluster, linkedClusters) {
     switch (status) {
       case 'running':
-        if (cluster.rainbond_init) {
+        if (linkedClusters.get(cluster.cluster_id)) {
           return <span style={{ color: 'green' }}>运行中(已对接)</span>;
         }
+        if (cluster.rainbond_init === true) {
+          return <span style={{ color: 'green' }}>运行中(已初始化)</span>;
+        }
+        if (cluster.parameters && cluster.parameters.Message) {
+          return (
+            <Tooltip title={cluster.parameters.Message}>
+              <span style={{ color: 'green' }}>
+                <span style={{ color: 'red', fontSize: '16px' }}>*</span>运行中
+              </span>
+            </Tooltip>
+          );
+        }
         return <span style={{ color: 'green' }}>运行中</span>;
+
       case 'initial':
-        return (
-          <span style={{ color: '#1890ff' }}>
-            初始化中
-            <a target="_blank" href={logURL}>
-              查看日志
-            </a>
-          </span>
-        );
+        return <span style={{ color: '#1890ff' }}>初始化中</span>;
       case 'deleting':
         return <span style={{ color: 'red' }}>删除中</span>;
+      case 'offline':
+        return <span style={{ color: 'red' }}>已离线</span>;
       case 'failed':
-        return (
-          <span style={{ color: 'red' }}>
-            创建失败
-            <a target="_blank" href={logURL}>
-              查看日志
-            </a>
-          </span>
-        );
+        return <span style={{ color: 'red' }}>安装失败</span>;
       default:
         return status;
     }
@@ -592,9 +696,10 @@ const cloud = {
   getProviderShowName(id) {
     let name = id;
     providers.map(item => {
-      if (item.id == id) {
+      if (item.id === id) {
         name = item.name;
       }
+      return item;
     });
     return name;
   },

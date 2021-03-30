@@ -4,6 +4,7 @@ import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import userUtil from '../../utils/user';
+// import BackupManage from './backup';
 import Infrastructure from './infrastructure';
 import Management from './management';
 
@@ -37,7 +38,7 @@ export default class EnterpriseSetting extends PureComponent {
       dispatch(routerRedux.push(`/`));
     }
   }
-  onChange = (key) => {
+  onChange = key => {
     this.setState({ activeKey: key });
   };
 
@@ -57,6 +58,11 @@ export default class EnterpriseSetting extends PureComponent {
               <Management {...this.props} />
             </TabPane>
           )}
+          {/* {adminer && (
+            <TabPane tab={<div>数据备份</div>} key="backup">
+              <BackupManage {...this.props} />
+            </TabPane>
+          )} */}
         </Tabs>
       </PageHeaderLayout>
     );

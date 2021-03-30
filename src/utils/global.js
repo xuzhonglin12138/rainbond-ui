@@ -46,6 +46,53 @@ const global = {
     cookie.remove('enterprise_edition', { domain: '' });
     cookie.remove('platform_url', { domain: '' });
   },
+  putClusterInfoLog(eid, clusters) {
+    try {
+      const defaultOptions = {
+        credentials: 'same-origin'
+      };
+      defaultOptions.url = 'https://log.rainbond.com/log';
+      defaultOptions.method = 'post';
+      defaultOptions.data = JSON.stringify({
+        eid,
+        cluster_sizes: clusters.length,
+        cluster_types: clusters.map(cluster => {
+          return cluster.provider;
+        }),
+        day: moment(new Date())
+          .locale('zh-cn')
+          .format('YYYYMMDD')
+      });
+      defaultOptions.data = JSON.parse(defaultOptions.data);
+      axios(defaultOptions);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  putRegistLog(info) {
+    try {
+      const defaultOptions = {
+        credentials: 'same-origin'
+      };
+      defaultOptions.url = 'https://log.rainbond.com/log';
+      defaultOptions.method = 'post';
+      defaultOptions.data = JSON.stringify({
+        eid: info.enterprise_id,
+        e_name: info.enterprise_alias,
+        real_name: info.real_name,
+        phone: info.phone,
+        version: info.version,
+        email: info.email,
+        day: moment(new Date())
+          .locale('zh-cn')
+          .format('YYYYMMDD')
+      });
+      defaultOptions.data = JSON.parse(defaultOptions.data);
+      axios(defaultOptions);
+    } catch (e) {
+      console.log(e);
+    }
+  },
   putLog(info) {
     if (!info || (info && !info.enterprise_id)) {
       return null;
@@ -69,7 +116,9 @@ const global = {
       });
       defaultOptions.data = JSON.parse(defaultOptions.data);
       axios(defaultOptions);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   },
   getCurrEnterpriseId() {
     const reg = /enterprise\/([^\/]+)/;
@@ -1112,9 +1161,9 @@ const global = {
       'delete-service': '删除组件',
       'upgrade-service': '升级组件',
       'delete-buildversion': '删除构建版本',
-      'share-service': '分享组件',
-      'share-wb': '分享到内部市场',
-      'share-ws': '分享到云端市场',
+      'share-service': '发布组件',
+      'share-wb': '发布到内部市场',
+      'share-ws': '发布到云端市场',
       'share-yb': '发布到市场',
       'share-ys': '发布到市场',
       updata: '更新组件',
@@ -1153,7 +1202,11 @@ const global = {
       'app-restore-probe': '重新加载应用探针',
       'app-restore-deps': '重新加载应用依赖',
       'app-restore-depvols': '重新加载应用依赖存储',
-      'app-restore-plugins': '重新加载应用插件'
+      'app-restore-plugins': '重新加载应用插件',
+      'create-service-plugin': '创建组件插件',
+      'update-service-plugin': '更新组件插件',
+      'delete-service-plugin': '删除组件插件',
+      'update-service-plugin-config': '更新组件插件配置'
     };
     return statusOptType[state] || state;
   },

@@ -1,12 +1,12 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
 import { Card, notification } from 'antd';
-import ScrollerX from '../../ScrollerX';
+import { connect } from 'dva';
+import React, { PureComponent } from 'react';
 import globalUtil from '../../../utils/global';
 import userUtil from '../../../utils/user';
-import TeamMemberTable from '../../TeamMemberTable';
 import AddMember from '../../AddMember';
 import ConfirmModal from '../../ConfirmModal';
+import ScrollerX from '../../ScrollerX';
+import TeamMemberTable from '../../TeamMemberTable';
 
 @connect(({ teamControl }) => ({
   regions: teamControl.regions,
@@ -29,13 +29,13 @@ export default class MemberList extends PureComponent {
   componentDidMount() {
     this.loadMembers();
   }
-  onMoveTeam = (member) => {
+  onMoveTeam = member => {
     this.setState({ toMoveTeam: member });
   };
-  onDelMember = (member) => {
+  onDelMember = member => {
     this.setState({ toDeleteMember: member });
   };
-  onEditAction = (member) => {
+  onEditAction = member => {
     this.setState({ toEditAction: member });
   };
   hideMoveTeam = () => {
@@ -50,9 +50,9 @@ export default class MemberList extends PureComponent {
         user_name: this.state.toMoveTeam.user_name,
         user_id: this.state.toMoveTeam.user_id
       },
-      callback: (res) => {
+      callback: res => {
         let message = '';
-        if (res && res._code == 200 && res.msg_show) {
+        if (res && res.status_code == 200 && res.msg_show) {
           message = res.msg_show;
           this.updateCurrentUser();
         }
@@ -73,7 +73,7 @@ export default class MemberList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'user/fetchCurrent',
-      callback: (res) => {
+      callback: res => {
         if (res && res._code === 200) {
           const team = userUtil.getTeamByTeamName(
             res.bean,
@@ -87,7 +87,7 @@ export default class MemberList extends PureComponent {
   hideEditAction = () => {
     this.setState({ toEditAction: null });
   };
-  handleEditAction = (data) => {
+  handleEditAction = data => {
     const toEditMember = this.state.toEditAction;
     this.props.dispatch({
       type: 'teamControl/editMember',
@@ -108,12 +108,12 @@ export default class MemberList extends PureComponent {
   hideAddMember = () => {
     this.setState({ showAddMember: false });
   };
-  handleAddMember = (values) => {
+  handleAddMember = values => {
     this.props.dispatch({
       type: 'teamControl/addMember',
       payload: {
         team_name: globalUtil.getCurrTeamName(),
-        user_ids: values.user_ids.map((item) => item.key).join(','),
+        user_ids: values.user_ids.map(item => item.key).join(','),
         role_ids: values.role_ids.join(',')
       },
       callback: () => {
@@ -150,7 +150,7 @@ export default class MemberList extends PureComponent {
         page_size: this.state.pageSize,
         page: this.state.page
       },
-      callback: (data) => {
+      callback: data => {
         if (data) {
           this.setState({
             members: data.list || [],
@@ -160,7 +160,7 @@ export default class MemberList extends PureComponent {
       }
     });
   };
-  hanldePageChange = (page) => {
+  hanldePageChange = page => {
     this.setState({ page }, () => {
       this.loadMembers();
     });
@@ -187,7 +187,7 @@ export default class MemberList extends PureComponent {
       current: page,
       pageSize,
       total,
-      onChange: (v) => {
+      onChange: v => {
         this.hanldePageChange(v);
       }
     };

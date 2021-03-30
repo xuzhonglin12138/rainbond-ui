@@ -59,6 +59,15 @@ class CreateUserForm extends PureComponent {
       }
     });
   };
+
+  checkAccountPass = (rule, value, callback) => {
+    if (value && value.length < 8) {
+      callback('密码长度至少为8位');
+    } else {
+      callback();
+    }
+  };
+
   render() {
     const {
       eid,
@@ -98,8 +107,16 @@ class CreateUserForm extends PureComponent {
                 rules: [
                   { required: true, message: '请填写用户名!' },
                   {
-                    pattern: /^[a-z0-9_\-]+$/,
+                    pattern: /^[a-zA-Z0-9_\-]+$/,
                     message: '只支持小写英文字母、数字、下划线、中划线'
+                  },
+                  {
+                    max: 3,
+                    message: '最小长度3位'
+                  },
+                  {
+                    max: 24,
+                    message: '最大长度24位'
                   }
                 ]
               })(<Input placeholder="请填写用户名!" />)}
@@ -110,7 +127,9 @@ class CreateUserForm extends PureComponent {
             {getFieldDecorator('real_name', {
               initialValue: (userInfo && userInfo.real_name) || '',
               rules: [{ required: true, message: '请填写姓名!' }]
-            })(<Input type="text" placeholder="请填写姓名!" />)}
+            })(
+              <Input autoComplete="off" type="text" placeholder="请填写姓名!" />
+            )}
           </FormItem>
 
           {!userInfo && (
@@ -148,7 +167,29 @@ class CreateUserForm extends PureComponent {
                     { required: true, message: '请填写邮箱!' },
                     { type: 'email', message: '邮箱格式不正确!' }
                   ]
-                })(<Input type="text" placeholder="请填写邮箱!" />)}
+                })(
+                  <Input
+                    type="text"
+                    placeholder="请填写邮箱!"
+                    autoComplete="off"
+                  />
+                )}
+              </FormItem>
+              <FormItem {...formItemLayout} label="电话">
+                {getFieldDecorator('phone', {
+                  rules: [
+                    {
+                      pattern: /^[0-9]{11}$/,
+                      message: '请输入正确的手机号'
+                    }
+                  ]
+                })(
+                  <Input
+                    type="text"
+                    placeholder="请填写手机号"
+                    autoComplete="off"
+                  />
+                )}
               </FormItem>
 
               <FormItem {...formItemLayout} label="所属团队">

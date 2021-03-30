@@ -1,5 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-underscore-dangle */
 /*
-
 	当对应用进行重新部署、启动、关闭、回滚等操作时会先去服务器请求一个操作事件eventId
 	请求成功后会根据这个eventId发起ajax进行相应的操作
 	操作成功后可以用webSocket来获取对应的操作日志信息， 需要把eventId send给服务器
@@ -8,7 +9,7 @@
 	本类依赖TimerQueue工具类
 */
 
-import TimerQueue from "./timerQueue";
+import TimerQueue from './timerQueue';
 
 function noop() {}
 
@@ -28,7 +29,11 @@ function AppPubSubSocket(op) {
   // 当close 事件发生时， 是否自动重新连接
   this.isAutoConnect = option.isAutoConnect;
   this.destroyed = option.destroyed;
-  this.init();
+  try {
+    this.init();
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 AppPubSubSocket.prototype = {
@@ -78,7 +83,7 @@ AppPubSubSocket.prototype = {
     if (this.eventLogQueue.has(channel)) {
       this.eventLogQueue.get(channel).onExecute = item => {
         if (item.action !== undefined && item.status !== undefined) {
-          if (item.status === "success") {
+          if (item.status === 'success') {
             onSuccess(item.message);
           } else {
             onFailure(item.message);
@@ -93,7 +98,7 @@ AppPubSubSocket.prototype = {
           autoStart: true,
           onExecute: item => {
             if (item.action !== undefined && item.status !== undefined) {
-              if (item.status === "success") {
+              if (item.status === 'success') {
                 onSuccess(item.message);
               } else {
                 onFailure(item.message);
@@ -104,7 +109,7 @@ AppPubSubSocket.prototype = {
         })
       );
       const message = {
-        event: "pusher:subscribe",
+        event: 'pusher:subscribe',
         data: {
           channel: `e-${eventID}`
         }
@@ -116,7 +121,7 @@ AppPubSubSocket.prototype = {
           this.waitingSendMessage.push(JSON.stringify(message));
         }
       } catch (err) {
-        console.log("err", err);
+        console.log('err', err);
         return false;
       }
     }
@@ -125,7 +130,7 @@ AppPubSubSocket.prototype = {
     try {
       if (this.serviceId) {
         const message = {
-          event: "pusher:subscribe",
+          event: 'pusher:subscribe',
           data: {
             channel: `l-${this.serviceId}`
           }
@@ -136,7 +141,7 @@ AppPubSubSocket.prototype = {
       this.onLogMessage = onLogMessage;
       this.serviceLogQueue.start();
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       return false;
     }
   },
@@ -144,7 +149,7 @@ AppPubSubSocket.prototype = {
     try {
       if (this.serviceId) {
         const message = {
-          event: "pusher:subscribe",
+          event: 'pusher:subscribe',
           data: {
             channel: `m-${this.serviceId}`
           }
@@ -154,7 +159,7 @@ AppPubSubSocket.prototype = {
       this.onMonitorMessage = onMonitorMessage;
       this.monitorLogQueue.start();
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       return false;
     }
   },
@@ -162,7 +167,7 @@ AppPubSubSocket.prototype = {
     try {
       if (this.serviceId) {
         const message = {
-          event: "cancel:subscribe",
+          event: 'cancel:subscribe',
           data: {
             channel: `docker-${this.serviceId}`
           }
@@ -171,7 +176,7 @@ AppPubSubSocket.prototype = {
       }
       this.serviceLogQueue.stop();
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       return false;
     }
   },
@@ -179,7 +184,7 @@ AppPubSubSocket.prototype = {
     try {
       if (this.serviceId) {
         const message = {
-          event: "cancel:subscribe",
+          event: 'cancel:subscribe',
           data: {
             channel: `newmonitor-${this.serviceId}`
           }
@@ -187,7 +192,7 @@ AppPubSubSocket.prototype = {
         this.webSocket.send(JSON.stringify(message));
       }
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       return false;
     }
   },
@@ -208,7 +213,7 @@ AppPubSubSocket.prototype = {
         });
       }
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
     }
   },
   _onMessage(message) {
@@ -219,7 +224,7 @@ AppPubSubSocket.prototype = {
     if (!me.event) {
       return;
     }
-    if (me.event === "monitor") {
+    if (me.event === 'monitor') {
       if (me.data) {
         const msg = JSON.parse(me.data);
         if (msg) {
@@ -227,12 +232,12 @@ AppPubSubSocket.prototype = {
         }
       }
     }
-    if (me.event === "service:log") {
+    if (me.event === 'service:log') {
       if (me.data) {
         this.serviceLogQueue.add(me.data);
       }
     }
-    if (me.event === "event:log") {
+    if (me.event === 'event:log') {
       if (me.data) {
         const msg = JSON.parse(me.data);
         if (msg) {
@@ -240,18 +245,18 @@ AppPubSubSocket.prototype = {
         }
       }
     }
-    if (me.event === "event:success") {
+    if (me.event === 'event:success') {
       this.getEventLogQueue(me.channel).add({
-        action: "closed",
+        action: 'closed',
         message: me.data,
-        status: "success"
+        status: 'success'
       });
     }
-    if (me.event === "event:failure") {
+    if (me.event === 'event:failure') {
       this.getEventLogQueue(me.channel).add({
-        action: "closed",
+        action: 'closed',
         message: me.data,
-        status: "failure"
+        status: 'failure'
       });
     }
   },

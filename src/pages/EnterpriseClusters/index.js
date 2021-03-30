@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-underscore-dangle */
 import {
@@ -8,11 +9,13 @@ import {
   Card,
   Col,
   Form,
+  Icon,
   InputNumber,
   Modal,
   notification,
   Row,
-  Table
+  Table,
+  Tooltip
 } from 'antd';
 import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
@@ -20,6 +23,7 @@ import React, { PureComponent } from 'react';
 import EditClusterInfo from '../../components/Cluster/EditClusterInfo';
 import ConfirmModal from '../../components/ConfirmModal';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import globalUtil from '../../utils/global';
 import userUtil from '../../utils/user';
 
 const { confirm } = Modal;
@@ -27,7 +31,7 @@ const { confirm } = Modal;
 @connect(({ user, list, loading, global, index }) => ({
   user: user.currentUser,
   list,
-  loading: loading.models.list,
+  clusterLoading: loading.effects['region/fetchEnterpriseClusters'],
   rainbondInfo: global.rainbondInfo,
   enterprise: global.enterprise,
   isRegist: global.isRegist,
@@ -136,8 +140,10 @@ export default class EnterpriseClusters extends PureComponent {
           res.list.map((item, index) => {
             item.key = `cluster${index}`;
             clusters.push(item);
+            return item;
           });
           this.setState({ clusters });
+          globalUtil.putClusterInfoLog(eid, res.list);
         }
       }
     });
@@ -193,7 +199,7 @@ export default class EnterpriseClusters extends PureComponent {
         region_id: regionID
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             regionInfo: res.bean,
             editClusterShow: true,
@@ -325,7 +331,7 @@ export default class EnterpriseClusters extends PureComponent {
         team_name: teamName
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.onJumpTeam(teamName, regionName);
         }
       }
@@ -342,6 +348,7 @@ export default class EnterpriseClusters extends PureComponent {
       match: {
         params: { eid }
       },
+      clusterLoading,
       form
     } = this.props;
     const {
@@ -395,7 +402,8 @@ export default class EnterpriseClusters extends PureComponent {
         title: '类型',
         dataIndex: 'region_type',
         align: 'center',
-        render: (val, _) => {
+        width: '100px',
+        render: val => {
           return (
             <span>
               {val && val instanceof Array && val.length > 0
@@ -421,10 +429,53 @@ export default class EnterpriseClusters extends PureComponent {
                         </span>
                       );
                     }
+                    return item;
                   })
                 : '普通集群'}
             </span>
           );
+        }
+      },
+      {
+        title: '安装方式',
+        dataIndex: 'provider',
+        align: 'center',
+        width: '150px',
+        render: item => {
+          switch (item) {
+            case 'ack':
+              return (
+                <span style={{ marginRight: '8px' }} key={item}>
+                  ACK
+                </span>
+              );
+            case 'custom':
+              return (
+                <span style={{ marginRight: '8px' }} key={item}>
+                  自建Kubernetes
+                </span>
+              );
+            case 'rke':
+              return (
+                <Tooltip title="支持节点扩容">
+                  <span style={{ marginRight: '8px' }} key={item}>
+                    基于主机自建
+                  </span>
+                </Tooltip>
+              );
+            case 'tke':
+              return (
+                <span style={{ marginRight: '8px' }} key={item}>
+                  TKE
+                </span>
+              );
+            default:
+              return (
+                <span style={{ marginRight: '8px' }} key={item}>
+                  直接对接
+                </span>
+              );
+          }
         }
       },
       {
@@ -511,9 +562,9 @@ export default class EnterpriseClusters extends PureComponent {
         title: '操作',
         dataIndex: 'method',
         align: 'center',
-        width: '170px',
+        width: '240px',
         render: (_, item) => {
-          return [
+          const mlist = [
             <a
               onClick={() => {
                 this.delUser(item);
@@ -536,6 +587,16 @@ export default class EnterpriseClusters extends PureComponent {
               资源限额
             </a>
           ];
+          if (item.provider === 'rke') {
+            mlist.push(
+              <Link
+                to={`/enterprise/${eid}/provider/rke/kclusters?clusterID=${item.provider_cluster_id}&updateKubernetes=true`}
+              >
+                节点扩容
+              </Link>
+            );
+          }
+          return mlist;
         }
       }
     ];
@@ -616,6 +677,14 @@ export default class EnterpriseClusters extends PureComponent {
             <Link to={`/enterprise/${eid}/addCluster`}>
               <Button type="primary">添加集群</Button>
             </Link>
+            <Button
+              style={{ marginLeft: '16px' }}
+              onClick={() => {
+                this.loadClusters();
+              }}
+            >
+              <Icon type="reload" />
+            </Button>
           </Col>
         </Row>
         <Card>
@@ -643,7 +712,11 @@ export default class EnterpriseClusters extends PureComponent {
             style={{ marginBottom: '16px' }}
             message="注意！集群内存使用量是指当前集群的整体使用量，一般都大于租户内存使用量的总和"
           />
-          <Table dataSource={clusters} columns={columns} />
+          <Table
+            loading={clusterLoading}
+            dataSource={clusters}
+            columns={columns}
+          />
         </Card>
         {showTenantList && (
           <Modal

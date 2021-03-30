@@ -314,11 +314,11 @@ class DrawerForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请添加域名',
+                    message: '请添加域名'
                   },
                   {
                     pattern: /^(?=^.{3,255}$)[a-zA-Z0-9*][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
-                    message: '请填写正确的域名格式，支持泛域名',
+                    message: '请填写正确的域名格式，支持泛域名'
                   }
                 ],
                 initialValue: editInfo.domain_name

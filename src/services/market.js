@@ -313,11 +313,12 @@ export function importApp(body = {}) {
      查询包导入状态
   */
 
-export function queryImportApp(body = { team_name, event_id }) {
+export function queryImportApp(body = { team_name, event_id }, handleError) {
   return request(
     `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/app-models/import/${body.event_id}`,
     {
-      method: 'get'
+      method: 'get',
+      handleError
     }
   );
 }
@@ -340,14 +341,18 @@ export function importDir(body = { team_name }) {
      查询本次导入的目录下的文件
   */
 
-export function queryImportDirApp(body = { enterprise_id, event_id }) {
+export function queryImportDirApp(
+  body = { enterprise_id, event_id },
+  handleError
+) {
   return request(
     `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/app-models/import/${body.event_id}/dir`,
     {
       method: 'get',
       params: {
         event_id: body.event_id
-      }
+      },
+      handleError
     }
   );
 }
@@ -422,7 +427,7 @@ export async function getStoreList(
   );
 }
 
-/* 获取分享的应用模型列表 */
+/* 获取发布的应用模型列表 */
 export async function getShareModelList(body) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.app_id}/shared/apps`,
@@ -432,6 +437,15 @@ export async function getShareModelList(body) {
         scope: body.scope,
         market_id: body.market_id
       }
+    }
+  );
+}
+
+export async function storehubCheck(body) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${body.eid}/storehub-check`,
+    {
+      method: 'get'
     }
   );
 }

@@ -8,6 +8,7 @@ import {
   Icon,
   Menu,
   notification,
+  Popconfirm,
   Table,
   Tooltip
 } from 'antd';
@@ -104,7 +105,7 @@ export default class ComponentList extends Component {
         page_size: pageSize
       },
       callback: data => {
-        if (data && data._code == 200) {
+        if (data && data.status_code === 200) {
           this.setState({
             apps: data.list || [],
             total: data.total || 0
@@ -127,7 +128,7 @@ export default class ComponentList extends Component {
         page_size: pageSize
       },
       callback: data => {
-        if (data && data._code === 200) {
+        if (data && data.status_code === 200) {
           this.setState(
             {
               apps: data.list || [],
@@ -321,7 +322,7 @@ export default class ComponentList extends Component {
             }/overview`}
           >
             {' '}
-            {data.service_source && data.service_source == 'third_party' ? (
+            {data.service_source && data.service_source === 'third_party' ? (
               <span>
                 <Tooltip title="第三方组件">
                   <span
@@ -361,7 +362,7 @@ export default class ComponentList extends Component {
         dataIndex: 'min_memory',
         render: (val, data) => (
           <span>
-            {data.service_source && data.service_source == 'third_party'
+            {data.service_source && data.service_source === 'third_party'
               ? '-'
               : `${val}MB`}
           </span>
@@ -371,15 +372,15 @@ export default class ComponentList extends Component {
         title: '状态',
         dataIndex: 'status_cn',
         render: (val, data) =>
-          data.service_source && data.service_source == 'third_party' ? (
+          data.service_source && data.service_source === 'third_party' ? (
             <Badge
               status={appUtil.appStatusToBadgeStatus(data.status)}
               text={
-                val == '运行中'
+                val === '运行中'
                   ? '健康'
-                  : val == '运行异常'
+                  : val === '运行异常'
                   ? '不健康'
-                  : val == '已关闭'
+                  : val === '已关闭'
                   ? '下线'
                   : val
               }
@@ -407,36 +408,36 @@ export default class ComponentList extends Component {
             {data.service_source && data.service_source !== 'third_party' && (
               <Fragment>
                 {isRestart && (
-                  <Button
-                    type="link"
-                    onClick={() => {
+                  <Popconfirm
+                    title="确认要重启该组件吗？"
+                    onConfirm={() => {
                       this.handleOperation('putReStart', data);
                     }}
                     loading={reStartLoading}
                   >
-                    重启
-                  </Button>
+                    <Button type="link">重启</Button>
+                  </Popconfirm>
                 )}
                 {isStart && (
-                  <Button
-                    type="link"
-                    onClick={() => {
+                  <Popconfirm
+                    title="确认要启动该组件吗？"
+                    onConfirm={() => {
                       this.handleOperation('putStart', data);
                     }}
                     loading={startLoading}
                   >
-                    启动
-                  </Button>
+                    <Button type="link">启动</Button>
+                  </Popconfirm>
                 )}
                 {isStop && (
-                  <Button
-                    type="link"
-                    onClick={() => {
+                  <Popconfirm
+                    title="确认要关闭该组件吗？"
+                    onConfirm={() => {
                       this.handleOperation('putStop', data);
                     }}
                   >
-                    关闭
-                  </Button>
+                    <Button type="link">关闭</Button>
+                  </Popconfirm>
                 )}
               </Fragment>
             )}

@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unused-state */
+/* eslint-disable radix */
 /* eslint-disable react/sort-comp */
 /* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-underscore-dangle */
@@ -107,7 +109,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             overviewMonitorInfo: res.bean,
             overviewMonitorInfoLoading: false
@@ -127,7 +129,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             overviewTeamInfo: res.bean,
             overviewTeamInfoLoading: false
@@ -147,7 +149,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             overviewInfo: res.bean,
             overviewInfoLoading: false
@@ -167,7 +169,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             overviewAppInfo:
               res.bean && JSON.stringify(res.bean) !== '{}' ? res.bean : false,
@@ -188,7 +190,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             enterpriseInfo: res.bean,
             enterpriseInfoLoading: false
@@ -223,7 +225,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           this.setState({
             total: res.list.length,
             collectionInfoLoading: false,
@@ -247,7 +249,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           if (
             res.list.length > 0 &&
             res.list[0].access_key === '' &&
@@ -353,7 +355,7 @@ export default class Enterprise extends PureComponent {
         enterprise_id: eid
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           notification.success({ message: '删除成功' });
           this.fetchCollectionViewInfo();
           this.handleCloseDelCollectionVisible();

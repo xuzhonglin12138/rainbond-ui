@@ -40,7 +40,7 @@ class CreateTeam extends PureComponent {
     });
   };
   render() {
-    const { onCancel, form, Loading } = this.props;
+    const { onCancel, form, Loading, title } = this.props;
     const { getFieldDecorator } = form;
 
     const formItemLayout = {
@@ -56,8 +56,9 @@ class CreateTeam extends PureComponent {
 
     return (
       <Modal
-        title="创建团队"
+        title={title || '创建团队'}
         visible
+        maskClosable={false}
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}
         onCancel={onCancel}

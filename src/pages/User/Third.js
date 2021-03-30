@@ -54,7 +54,7 @@ export default class ThirdLogin extends Component {
                   dispatch(routerRedux.push(`/`));
                 }
               );
-            } else if (resdata && resdata._code === 200) {
+            } else if (resdata && resdata.status_code === 200) {
               this.setState(
                 {
                   resultState: 'success',
@@ -62,6 +62,9 @@ export default class ThirdLogin extends Component {
                   desc: ''
                 },
                 () => {
+                  if (resdata.bean && resdata.bean.token) {
+                    cookie.set('token', resdata.bean.token);
+                  }
                   this.handleSuccess();
                 }
               );
@@ -89,7 +92,7 @@ export default class ThirdLogin extends Component {
           domain: window.location.host
         },
         callback: res => {
-          if (res && (res._code === 400 || res._code === 401)) {
+          if (res && (res.status_code === 400 || res.status_code === 401)) {
             this.setState(
               {
                 resultState: 'error',
@@ -102,7 +105,7 @@ export default class ThirdLogin extends Component {
                 );
               }
             );
-          } else if (res && res._code === 200) {
+          } else if (res && res.status_code === 200) {
             const data = res.bean;
             if (data && data.token) {
               cookie.set('token', data.token);
@@ -144,7 +147,7 @@ export default class ThirdLogin extends Component {
   handleSuccess() {
     const { dispatch } = this.props;
     let redirect = window.localStorage.getItem('redirect');
-    if (!redirect || redirect == '') {
+    if (!redirect || redirect === '') {
       redirect = '/';
     }
     window.localStorage.setItem('redirect', '');

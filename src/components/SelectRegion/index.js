@@ -8,7 +8,7 @@ import style from '../SelectTeam/index.less';
 
 
 @connect(({ user }) => ({
-  currentUser: user.currentUser,
+  currentUser: user.currentUser
 }))
 export default class SelectRegion extends PureComponent {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class SelectRegion extends PureComponent {
       teamRegions: [],
       showOpenRegion: false,
       loading: true,
-      visible: false,
+      visible: false
     };
   }
   componentDidMount() {
@@ -26,7 +26,10 @@ export default class SelectRegion extends PureComponent {
 
   loadTeamRegions = () => {
     const { currentTeam } = this.props;
-    this.setState({ loading: false, teamRegions: currentTeam && currentTeam.region });
+    this.setState({
+      loading: false,
+      teamRegions: currentTeam && currentTeam.region
+    });
   };
   showOpenRegion = () => {
     this.handleOut();
@@ -41,11 +44,11 @@ export default class SelectRegion extends PureComponent {
       type: 'teamControl/openRegion',
       payload: {
         team_name: currentTeam.team_name,
-        region_names: regions.join(','),
+        region_names: regions.join(',')
       },
       callback: () => {
         notification.success({
-          message: formatMessage({ id: 'open.success' }),
+          message: formatMessage({ id: 'open.success' })
         });
         this.cancelOpenRegion();
         this.props.dispatch({
@@ -56,9 +59,9 @@ export default class SelectRegion extends PureComponent {
                 `/team/${currentTeam.team_name}/region/${regions[0]}/index`
               )
             );
-          },
+          }
         });
-      },
+      }
     });
   };
   cancelOpenRegion = () => {
@@ -79,12 +82,10 @@ export default class SelectRegion extends PureComponent {
       currentTeam,
       currentEnterprise,
       currentRegion,
-      currentUser,
+      currentUser
     } = this.props;
     const { teamRegions, loading, showOpenRegion, visible } = this.state;
-    const currentTeamRegionLink = `/team/${currentTeam.team_name}/region/${
-      currentRegion.team_region_name
-    }/index`;
+    const currentTeamRegionLink = `/team/${currentTeam.team_name}/region/${currentRegion.team_region_name}/index`;
     const dropdown = (
       <div className={style.dropBox}>
         <div>
@@ -92,9 +93,7 @@ export default class SelectRegion extends PureComponent {
             <ul>
               {teamRegions &&
                 teamRegions.map(item => {
-                  const link = `/team/${currentTeam.team_name}/region/${
-                    item.team_region_name
-                  }/index`;
+                  const link = `/team/${currentTeam.team_name}/region/${item.team_region_name}/index`;
                   return (
                     <li key={item.team_region_alias}>
                       <Link to={link} title={item.team_region_alias}>

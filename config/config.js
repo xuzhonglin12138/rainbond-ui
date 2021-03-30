@@ -2,7 +2,9 @@ import moment from 'moment';
 import defaultSettings from '../src/defaultSettings';
 import routerConfig from './router.config';
 
-const dayFormat = moment(new Date()).locale('zh-cn').format('YYYY-MM-DD');
+const dayFormat = moment(new Date())
+  .locale('zh-cn')
+  .format('YYYY-MM-DD');
 let publcPath = '/';
 if (process.env.ENABLE_CDN === 'true') {
   publcPath = `https://static.goodrain.com/rainbond-cloud/publish/${dayFormat}/`;
@@ -38,7 +40,8 @@ export default {
   ],
   ignoreMomentLocale: true,
   theme: {
-    'card-actions-background': defaultSettings.primaryColor
+    'card-actions-background': defaultSettings.primaryColor,
+    'primary-color': defaultSettings.primaryColor
   },
   lessLoaderOptions: {
     javascriptEnabled: true
@@ -48,7 +51,11 @@ export default {
   routes: routerConfig,
   proxy: {
     '/console': {
-      target: 'http://7070.gr255017.2c9v614j.17f4cc.grapps.cn',
+      target: 'http://127.0.0.1:8000',
+      changeOrigin: true
+    },
+    '/data': {
+      target: 'http://127.0.0.1:7070',
       changeOrigin: true
     }
   }

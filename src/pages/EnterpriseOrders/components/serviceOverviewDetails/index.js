@@ -10,13 +10,13 @@ import {
   Row,
   Slider,
   Spin
-} from "antd";
-import { connect } from "dva";
-import { routerRedux } from "dva/router";
-import moment from "moment";
-import React, { PureComponent } from "react";
-import ordersUtil from "../../../../utils/orders";
-import styles from "../../index.less";
+} from 'antd';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
+import moment from 'moment';
+import React, { PureComponent } from 'react';
+import ordersUtil from '../../../../utils/orders';
+import styles from '../../index.less';
 
 @connect(({ order }) => ({
   enterpriseServiceInfo: order.enterpriseServiceInfo
@@ -34,7 +34,7 @@ export default class ServiceOverview extends PureComponent {
       price: 49,
       capacity: 30,
       discountMoney: 0.8,
-      discountText: "8折优惠",
+      discountText: '8折优惠',
       yearsPay: (49 * 30 * 12).toFixed(2) / 1,
       discount: (49 * 30 * 12 * 0.8).toFixed(2) / 1,
       monthNumber: 1,
@@ -42,9 +42,9 @@ export default class ServiceOverview extends PureComponent {
       originalMonthPay: (1 * 49 * 30).toFixed(2) / 1,
       extended: 0,
       noDiscountExtended: 0,
-      computingYears: "",
-      computingMonth: "",
-      computingNewOrder: ""
+      computingYears: '',
+      computingMonth: '',
+      computingNewOrder: ''
     };
   }
   componentWillMount() {
@@ -65,7 +65,7 @@ export default class ServiceOverview extends PureComponent {
           : 0.8,
         discountText: enterpriseServiceInfo.discount
           ? `${enterpriseServiceInfo.discount * 10}折优惠`
-          : "8.0折优惠",
+          : '8.0折优惠',
         capacity: ordersUtil.handlUnitMemory(enterpriseServiceInfo.memory_limit)
       },
       () => {
@@ -101,7 +101,7 @@ export default class ServiceOverview extends PureComponent {
       discountMoney
     } = this.state;
     const timeDelay = selected === 3;
-    const isRenewal = info && info.type === "vip";
+    const isRenewal = info && info.type === 'vip';
     const memoryLimit = ordersUtil.handlUnitMemory(info && info.memory_limit);
     const billing = capacity - memoryLimit <= 0;
     const expiredTime = info && info.expired_time;
@@ -134,15 +134,15 @@ export default class ServiceOverview extends PureComponent {
       `${
         MonthNum !== 0
           ? `¥${price}/GB/月 x ${newCapacity}GB容量 x ${MonthNum}月 ${
-              MonthNum >= 12 ? `x ${discountText}` : ""
+              MonthNum >= 12 ? `x ${discountText}` : ''
             } `
-          : ""
+          : ''
       }
-      ${MonthNum !== 0 && DayNum !== 0 ? " + " : ""}
+      ${MonthNum !== 0 && DayNum !== 0 ? ' + ' : ''}
       ${
         DayNum !== 0
           ? ` ¥${price}/GB/月 x ( ${newCapacity}GB容量 x ${DayNum}天 / 30 ) `
-          : ""
+          : ''
       } `;
 
     this.fetchmonths(selected, monthNumber, expiredTime, isRenewal);
@@ -215,8 +215,8 @@ export default class ServiceOverview extends PureComponent {
 
     if (isRenewal) {
       computingYears = `${
-        newCapacity !== 0 ? `不延长费用 ( ${Filling} ) +` : ""
-      } ${newCapacity !== 0 ? `延长费用` : ""} ${computingYears}`;
+        newCapacity !== 0 ? `不延长费用 ( ${Filling} ) +` : ''
+      } ${newCapacity !== 0 ? `延长费用` : ''} ${computingYears}`;
       yearsPay = noDiscountSupplementarys + yearsPay;
       discount = supplementarys + discount;
     }
@@ -265,8 +265,8 @@ export default class ServiceOverview extends PureComponent {
 
     if (isRenewal) {
       computingMonth = `${
-        newCapacity !== 0 ? `不延长费用 ( ${Filling} ) +` : ""
-      } ${newCapacity !== 0 ? `延长费用` : ""} ${computingMonth}`;
+        newCapacity !== 0 ? `不延长费用 ( ${Filling} ) +` : ''
+      } ${newCapacity !== 0 ? `延长费用` : ''} ${computingMonth}`;
       monthPay = supplementarys + monthPay;
       originalMonthPay = noDiscountSupplementarys + originalMonthPay;
     }
@@ -291,7 +291,7 @@ export default class ServiceOverview extends PureComponent {
       this.setState({
         extended: billing ? 0 : supplementarys,
         noDiscountExtended: billing ? 0 : noDiscountSupplementarys,
-        computingNewOrder: billing ? "" : Filling
+        computingNewOrder: billing ? '' : Filling
       });
     }
   };
@@ -321,7 +321,7 @@ export default class ServiceOverview extends PureComponent {
           width="1em"
           viewBox="0 0 18 18"
           className={styles.cukIconCheck}
-          style={{ verticalAlign: "middle" }}
+          style={{ verticalAlign: 'middle' }}
         >
           <g>
             <path
@@ -375,7 +375,7 @@ export default class ServiceOverview extends PureComponent {
         ? originalMonthPay
         : noDiscountExtended;
     dispatch({
-      type: "order/createOrder",
+      type: 'order/createOrder',
       payload: {
         enterprise_id: eid,
         final_price: totalPrice,
@@ -384,12 +384,10 @@ export default class ServiceOverview extends PureComponent {
         original_price: originalPrice
       },
       callback: res => {
-        if (res && res._code === 200 && res.bean) {
+        if (res && res.status_code === 200 && res.bean) {
           dispatch(
             routerRedux.push(
-              `/enterprise/${eid}/orders/orderManagement/orderDetails/${
-                res.bean.order_id
-              }`
+              `/enterprise/${eid}/orders/orderManagement/orderDetails/${res.bean.order_id}`
             )
           );
         }
@@ -402,21 +400,21 @@ export default class ServiceOverview extends PureComponent {
           switch (res.data.code) {
             case 6000:
               return notification.warning({
-                message: "请求的价格, 和实际计算出来的价格不一致"
+                message: '请求的价格, 和实际计算出来的价格不一致'
               });
             case 6002:
-              return notification.warning({ message: "参数 months 不正确" });
+              return notification.warning({ message: '参数 months 不正确' });
             case 6003:
-              return notification.warning({ message: "参数 memory 不正确" });
+              return notification.warning({ message: '参数 memory 不正确' });
             case 6005:
               return notification.warning({
-                message: "内存不能小于已使用内存"
+                message: '内存不能小于已使用内存'
               });
             case 6006:
-              return notification.warning({ message: "还有未支付的订单" });
+              return notification.warning({ message: '还有未支付的订单' });
             default:
               return notification.warning({
-                message: "未知错误"
+                message: '未知错误'
               });
           }
         }
@@ -430,36 +428,36 @@ export default class ServiceOverview extends PureComponent {
     for (let i = 0; i <= totalNumber; i++) {
       const interval = i * 5;
       obj[`${interval}`] =
-        interval !== 0 && interval % 50 === 0 ? `${interval}GB` : "";
+        interval !== 0 && interval % 50 === 0 ? `${interval}GB` : '';
     }
     return obj;
   };
 
   fetchmonths = (selected, monthNumber, expired_time, isRenewal) => {
-    let moments = "";
+    let moments = '';
     const date = new Date(); // 获取当前日期
     if (selected === 1) {
       moments = isRenewal
         ? moment(expired_time)
-            .add(12, "months")
-            .locale("zh-cn")
-            .format("YYYY年MM月DD日")
+            .add(12, 'months')
+            .locale('zh-cn')
+            .format('YYYY年MM月DD日')
         : moment(date.setMonth(date.getMonth() + 12))
-            .locale("zh-cn")
-            .format("YYYY年MM月DD日");
+            .locale('zh-cn')
+            .format('YYYY年MM月DD日');
     } else if (selected === 2) {
       moments = isRenewal
         ? moment(expired_time)
-            .add(monthNumber, "months")
-            .locale("zh-cn")
-            .format("YYYY年MM月DD日")
+            .add(monthNumber, 'months')
+            .locale('zh-cn')
+            .format('YYYY年MM月DD日')
         : moment(date.setMonth(date.getMonth() + monthNumber))
-            .locale("zh-cn")
-            .format("YYYY年MM月DD日");
+            .locale('zh-cn')
+            .format('YYYY年MM月DD日');
     } else {
       moments = moment(expired_time)
-        .locale("zh-cn")
-        .format("YYYY年MM月DD日");
+        .locale('zh-cn')
+        .format('YYYY年MM月DD日');
     }
 
     this.setState({
@@ -490,7 +488,7 @@ export default class ServiceOverview extends PureComponent {
       maxSlider
     } = this.state;
 
-    const free = info && info.type === "free";
+    const free = info && info.type === 'free';
     const minCapacity = ordersUtil.handlUnitMemory(info && info.memory_limit);
     const usedMemory = ordersUtil.handlUnitMemory(info && info.used_memory);
     const minSlider = usedMemory > minCapacity ? usedMemory : minCapacity;
@@ -513,11 +511,11 @@ export default class ServiceOverview extends PureComponent {
         {loading ? (
           <div
             style={{
-              width: "100%",
-              height: "100%",
-              margin: "auto",
+              width: '100%',
+              height: '100%',
+              margin: 'auto',
               paddingTop: 50,
-              textAlign: "center"
+              textAlign: 'center'
             }}
           >
             <Spin size="large" />
@@ -527,8 +525,8 @@ export default class ServiceOverview extends PureComponent {
             <Card
               loading={loading}
               bordered={false}
-              style={{ marginBottom: "30px", background: "#f3f5f9" }}
-              bodyStyle={{ padding: "35px 55px 10px 72px" }}
+              style={{ marginBottom: '30px', background: '#f3f5f9' }}
+              bodyStyle={{ padding: '35px 55px 10px 72px' }}
             >
               <Row className={styles.serviceDetailsBox}>
                 <div className={styles.serviceDetailsL}>
@@ -565,16 +563,16 @@ export default class ServiceOverview extends PureComponent {
                 showIcon
                 closable
                 afterClose={() => {
-                  this.handleClose("visible");
+                  this.handleClose('visible');
                 }}
               />
             )}
             <Row>
-              <Col span={22} style={{ overflow: "hidden" }}>
+              <Col span={22} style={{ overflow: 'hidden' }}>
                 <Slider
                   className={styles.zslSlider}
                   tooltipVisible
-                  style={{ margin: "70px 0 50px 0 " }}
+                  style={{ margin: '70px 0 50px 0 ' }}
                   marks={marks}
                   step={null}
                   onAfterChange={value => {
@@ -594,7 +592,7 @@ export default class ServiceOverview extends PureComponent {
               <Col span={1}>
                 <InputNumber
                   min={minSlider}
-                  style={{ margin: "70px 16px 50px" }}
+                  style={{ margin: '70px 16px 50px' }}
                   value={capacity}
                   onChange={value => {
                     if (value % 5 > 0) {
@@ -610,23 +608,23 @@ export default class ServiceOverview extends PureComponent {
               </Col>
             </Row>
             <div className={styles.capacityBox}>
-              <span>{free ? "时长选择" : "延长周期选择"}</span>
+              <span>{free ? '时长选择' : '延长周期选择'}</span>
             </div>
             {!free && cycleVisible && info && (
               <Alert
                 message={`当前服务到期时间为 ${moment(info.expired_time)
-                  .locale("zh-cn")
-                  .format("YYYY年MM月DD日")}`}
+                  .locale('zh-cn')
+                  .format('YYYY年MM月DD日')}`}
                 type="info"
                 showIcon
                 closable
                 afterClose={() => {
-                  this.handleClose("cycleVisible");
+                  this.handleClose('cycleVisible');
                 }}
-                style={{ marginBottom: "20px" }}
+                style={{ marginBottom: '20px' }}
               />
             )}
-            <Row gutter={24} style={{ marginBottom: "30px" }}>
+            <Row gutter={24} style={{ marginBottom: '30px' }}>
               <Col
                 span={8}
                 onClick={() => {
@@ -670,7 +668,7 @@ export default class ServiceOverview extends PureComponent {
                         min={1}
                         max={12}
                         value={monthNumber}
-                        style={{ width: "50px", marginRight: "5px" }}
+                        style={{ width: '50px', marginRight: '5px' }}
                         onChange={this.onChangeMonthNumber}
                       />
                     </span>
@@ -695,8 +693,8 @@ export default class ServiceOverview extends PureComponent {
                     className={`${styles.orders} ${selected === 3 &&
                       styles.checked}`}
                   >
-                    <div style={{ width: "0px" }} />
-                    <div style={{ width: "100%", paddingLeft: "0" }}>
+                    <div style={{ width: '0px' }} />
+                    <div style={{ width: '100%', paddingLeft: '0' }}>
                       不延长
                     </div>
                     {selected === 3 && this.durationChecked()}
@@ -706,7 +704,7 @@ export default class ServiceOverview extends PureComponent {
             </Row>
             <Card
               className={styles.amount}
-              bodyStyle={{ padding: "20px 0 15px 24px" }}
+              bodyStyle={{ padding: '20px 0 15px 24px' }}
             >
               <div>
                 <span>应付总额：</span>

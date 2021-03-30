@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-void */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-underscore-dangle */
@@ -79,13 +80,6 @@ export default function request(url, options) {
 
   newOptions.headers = {
     ...headers
-
-    // "Authorization": 'GRJWT '+ (cookie.get('token') ||
-    // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpY2hhbyIsImV4cCI6MTU
-    // x
-    // ODY2MzYyNCwiZW1haWwiOiJsaWNAZ29vZHJhaW4uY29tIiwidXNlcl9pZCI6Nn0.N95RuiLn0nA8T
-    // w RR0TGh6luHnJ9A_IYJtGxHQdtc2jE'), "Authorization": 'GRJWT '+
-    // (cookie.get('token'))
   };
 
   const token = cookie.get('token');
@@ -137,18 +131,20 @@ export default function request(url, options) {
     });
   return axios(newOptions)
     .then(checkStatus)
-    .then((response) => {
+    .then(response => {
       showLoading &&
         window.g_app._store.dispatch({
           type: 'global/hiddenLoading'
         });
       const res = response.data.data || {};
       res._code = response.status;
+      res.status_code = response.status;
       res._condition = response.data.code;
+      res.business_code = response.data.code;
       res.msg_show = response.data.msg_show;
       return res;
     })
-    .catch((error) => {
+    .catch(error => {
       if (showLoading) {
         window.g_app._store.dispatch({
           type: 'global/hiddenLoading'
@@ -157,14 +153,14 @@ export default function request(url, options) {
 
       if (error.response) {
         const { response } = error;
-        // 请求已发出，但服务器响应的状态码不在 2xx 范围内
-
-        const { status } = error.response;
+        // 请求已发出，但服务器响应的状态码不在 2xx 范围
 
         let resData = {};
         try {
           resData = error.response.data;
-        } catch (e) {}
+        } catch (e) {
+          console.log(e);
+        }
         if (resData.code === 10410) {
           window.g_app._store.dispatch({
             type: 'global/showPayTip'

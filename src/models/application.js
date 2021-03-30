@@ -15,6 +15,7 @@ import {
   editAppCreateCompose,
   editGroup,
   getAppDetailState,
+  getAppLogs,
   getAppResourcesStatistics,
   getBackup,
   getBackupStatus,
@@ -39,7 +40,6 @@ import {
   setGovernancemode,
   startPluginShareEventInShareApp,
   startShareEvent,
-  getAppLogs,
   submitShare
 } from '../services/application';
 
@@ -191,7 +191,7 @@ export default {
       }
     },
 
-    // 查询未完成分享记录
+    // 查询未完成发布记录
     *recordShare({ payload, callback }, { call }) {
       const response = yield call(recordShare, payload);
       if (response && callback) {
@@ -216,28 +216,28 @@ export default {
         callback(response);
       }
     },
-    // 创建分享记录
+    // 创建发布记录
     *ShareGroup({ payload, callback }, { call }) {
       const response = yield call(createShare, payload);
       if (response && callback) {
         callback(response);
       }
     },
-    // 查询分享信息
+    // 查询发布信息
     *getShareInfo({ payload, callback }, { call }) {
       const response = yield call(getShare, payload);
       if (response && callback) {
         callback(response);
       }
     },
-    // 提交分享信息
+    // 提交发布信息
     *subShareInfo({ payload, callback, handleError }, { call }) {
       const response = yield call(submitShare, payload, handleError);
       if (response && callback) {
         callback(response);
       }
     },
-    // 放弃分享
+    // 放弃发布
     *giveupShare({ payload, callback }, { call }) {
       const response = yield call(giveupShare, payload);
       if (response && callback) {
@@ -323,8 +323,8 @@ export default {
     },
     *fetchAppLogs({ payload, callback }, { call }) {
       const response = yield call(getAppLogs, payload);
-      if (response) {
-        callback && callback(response);
+      if (response && callback) {
+        callback(response);
       }
     }
   },

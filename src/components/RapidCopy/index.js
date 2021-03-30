@@ -110,7 +110,7 @@ export default class Index extends PureComponent {
         page_size: 999
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           const { list } = res;
           const arr = [];
           if (list && list.length > 0) {
@@ -150,7 +150,7 @@ export default class Index extends PureComponent {
         group_id: groupDetail.app_id
       },
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           const { list } = res;
           const arr = [];
           if (list && list.length > 0) {
@@ -270,7 +270,7 @@ export default class Index extends PureComponent {
       },
       callback: res => {
         this.handleCloseLoading();
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           notification.success({ message: '复制成功' });
           const { tar_team_name, tar_region_name, tar_group_id } = res.bean;
           dispatch(
@@ -303,55 +303,6 @@ export default class Index extends PureComponent {
       ...row
     });
     this.setState({ inputValue: '', dataSource: newData });
-  };
-
-  // 团队
-  getUserTeams = () => {
-    const { dispatch, currentUser, currentEnterprise } = this.props;
-    dispatch({
-      type: 'global/fetchUserTeams',
-      payload: {
-        enterprise_id: currentEnterprise.enterprise_id,
-        user_id: currentUser.user_id,
-        page: 1,
-        page_size: 999
-      },
-      callback: res => {
-        if (res && res._code === 200) {
-          const { list } = res;
-          const arr = [];
-
-          list &&
-            list.length > 0 &&
-            list.map(team => {
-              team.region_list.map(region => {
-                const item = {
-                  name: `${team.team_alias} | ${region.region_alias}`,
-                  value: [team.team_name, region.region_name]
-                };
-                arr.push(item);
-              });
-            });
-          this.setState({
-            userTeamList: arr
-          });
-        }
-      }
-    });
-  };
-
-  onSelectChange = value => {
-    const { form } = this.props;
-    const { userTeamList } = this.state;
-    const { setFieldsValue } = form;
-    const arr = userTeamList.filter(item => item.name === value);
-    if (arr) {
-      if (arr.length > 0) {
-        this.fetchTeamApps(arr[0].value[0], arr[0].value[1]);
-      } else {
-        setFieldsValue({ apps: '' });
-      }
-    }
   };
 
   handleOverDiv = content => {

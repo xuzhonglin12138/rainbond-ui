@@ -136,6 +136,26 @@ export default [
             name: 'AddCluster',
             authority: ['admin', 'user']
           },
+          {
+            path: '/enterprise/:eid/provider/:provider/kclusters',
+            component: './AddCluster/KClusterList',
+            name: 'KClusterList',
+            authority: ['admin', 'user']
+          },
+          {
+            path:
+              '/enterprise/:eid/provider/:provider/kclusters/:clusterID/init',
+            component: './AddCluster/RainbondInit',
+            name: 'RainbondInit',
+            authority: ['admin', 'user']
+          },
+          {
+            path:
+              '/enterprise/:eid/provider/:provider/kclusters/:clusterID/link',
+            component: './AddCluster/ClusterLink',
+            name: 'ClusterLink',
+            authority: ['admin', 'user']
+          },
           { component: '404' }
         ]
       },

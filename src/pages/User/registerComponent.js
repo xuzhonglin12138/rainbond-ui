@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/alt-text */
 import { Button, Col, Form, Input, Row } from 'antd';
@@ -113,7 +114,9 @@ export default class RegisterComponent extends Component {
                   message: '请输入企业名称'
                 }
               ]
-            })(<Input size="large" placeholder="企业名称" />)}
+            })(
+              <Input autoComplete="off" size="large" placeholder="企业名称" />
+            )}
           </FormItem>
         )}
         <FormItem>
@@ -122,15 +125,36 @@ export default class RegisterComponent extends Component {
             rules: [
               { required: true, message: '请输入用户名!' },
               {
-                pattern: /^[a-z0-9_\-]+$/,
-                message: '只支持小写英文字母、数字、下划线、中划线'
+                min: 3,
+                message: '最小长度3位'
+              },
+              {
+                max: 24,
+                message: '最大长度24位'
+              },
+              {
+                pattern: /^[a-zA-Z0-9_\-]+$/,
+                message: '只支持字母、数字、下划线、中划线'
               }
             ]
           })(<Input size="large" placeholder="用户名" />)}
         </FormItem>
         <FormItem>
-          {getFieldDecorator('name')(<Input size="large" placeholder="姓名" />)}
+          {getFieldDecorator('name', {
+            rules: [
+              { required: true, message: '请输入姓名' },
+              {
+                max: 24,
+                message: '最大长度24位'
+              },
+              {
+                pattern: /^[a-zA-Z0-9_\-]+$/,
+                message: '只支持字母、数字、中文、_和-组合'
+              }
+            ]
+          })(<Input autoComplete="off" size="large" placeholder="姓名" />)}
         </FormItem>
+
         <FormItem>
           {getFieldDecorator('email', {
             initialValue: (userInfo && userInfo.oauth_user_email) || '',
@@ -158,6 +182,7 @@ export default class RegisterComponent extends Component {
               size="large"
               type="password"
               placeholder="密码不能少于8位！"
+              autoComplete="new-password"
             />
           )}
         </FormItem>
@@ -172,7 +197,14 @@ export default class RegisterComponent extends Component {
                 validator: this.checkConfirm
               }
             ]
-          })(<Input size="large" type="password" placeholder="确认密码" />)}
+          })(
+            <Input
+              size="large"
+              type="password"
+              placeholder="确认密码"
+              autoComplete="new-password"
+            />
+          )}
         </FormItem>
         <FormItem>
           <Row gutter={8}>
@@ -184,7 +216,9 @@ export default class RegisterComponent extends Component {
                     message: '请输入验证码！'
                   }
                 ]
-              })(<Input size="large" placeholder="验证码" />)}
+              })(
+                <Input autoComplete="off" size="large" placeholder="验证码" />
+              )}
             </Col>
             <Col span={8}>
               <div id="codeImg" onClick={this.getSetCodeImg} />
@@ -213,6 +247,16 @@ export default class RegisterComponent extends Component {
             </Link>
           )}
         </FormItem>
+        {firstRegist && (
+          <Row>
+            <Col
+              span={24}
+              style={{ fontSize: 12, marginTop: -12, color: '#666666' }}
+            >
+              请注意：注册使用即同意 Rainbond 发行版用户许可协议。
+            </Col>
+          </Row>
+        )}
       </Form>
     );
   }
