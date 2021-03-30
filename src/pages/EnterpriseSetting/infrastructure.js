@@ -400,30 +400,30 @@ class Infrastructure extends PureComponent {
       providers,
       openBasicInformation
     } = this.state;
-    const UserRegistered = (
-      <Card
-        hoverable
-        bordered={false}
-        style={{ borderTop: enterpriseEdition ? '1px solid  #ccc' : 'none' }}
-      >
-        <Row type="flex" align="middle">
-          <Col span={3}>用户注册</Col>
-          <Col span={17}>
-            <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
-              控制用户是否可以注册功能
-            </span>
-          </Col>
+    // const UserRegistered = (
+    //   <Card
+    //     hoverable
+    //     bordered={false}
+    //     style={{ borderTop: enterpriseEdition ? '1px solid  #ccc' : 'none' }}
+    //   >
+    //     <Row type="flex" align="middle">
+    //       <Col span={3}>用户注册</Col>
+    //       <Col span={17}>
+    //         <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
+    //           控制用户是否可以注册功能
+    //         </span>
+    //       </Col>
 
-          <Col span={4} style={{ textAlign: 'right' }}>
-            <Switch
-              onChange={this.onRegistChange}
-              className={styles.automaTictelescopingSwitch}
-              checked={this.props.isRegist}
-            />
-          </Col>
-        </Row>
-      </Card>
-    );
+    //       <Col span={4} style={{ textAlign: 'right' }}>
+    //         <Switch
+    //           onChange={this.onRegistChange}
+    //           className={styles.automaTictelescopingSwitch}
+    //           checked={this.props.isRegist}
+    //         />
+    //       </Col>
+    //     </Row>
+    //   </Card>
+    // );
     const Oauth = (
       <div>
         <Card
@@ -463,7 +463,11 @@ class Infrastructure extends PureComponent {
       enterprise
     );
     const AutomaticIssueCertificate = (
-      <Card hoverable bordered={false} style={{ borderTop: '1px solid  #ccc' }}>
+      <Card
+        hoverable
+        bordered={false}
+        style={{ borderTop: enterpriseEdition ? '1px solid  #ccc' : 'none' }}
+      >
         <Row type="flex" align="middle">
           <Col span={3}>自动签发证书</Col>
           <Col span={17}>
@@ -704,7 +708,7 @@ class Infrastructure extends PureComponent {
         ) : (
           <div>
             {enterpriseEdition && BasicInformation}
-            {UserRegistered}
+            {/* {UserRegistered} */}
             {AutomaticIssueCertificate}
             {Oauth}
             {MirrorWarehouseInformation}
