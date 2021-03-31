@@ -619,10 +619,11 @@ const cloud = {
       steps.push(step);
       if (
         item.status === 'failure' ||
-        (item.type === 'InitRainbondRegion' && item.status === 'success')
+        (item.type === 'UpdateKubernetes' && item.status === 'success')
       ) {
         complete = true;
       }
+      return item;
     });
     return { complete, steps };
   },
@@ -654,7 +655,6 @@ const cloud = {
       ) {
         complete = true;
       }
-      return item;
     });
     return { complete, steps };
   },
