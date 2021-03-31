@@ -119,7 +119,7 @@ class CreateUserForm extends PureComponent {
                     message: '最大长度24位'
                   }
                 ]
-              })(<Input placeholder="请填写用户名!" />)}
+              })(<Input autoComplete="off" placeholder="请填写用户名!" />)}
             </FormItem>
           )}
 
