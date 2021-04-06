@@ -111,7 +111,7 @@ class CreateUserForm extends PureComponent {
                     message: '只支持小写英文字母、数字、下划线、中划线'
                   },
                   {
-                    max: 3,
+                    min: 3,
                     message: '最小长度3位'
                   },
                   {

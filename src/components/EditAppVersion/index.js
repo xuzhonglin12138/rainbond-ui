@@ -1,6 +1,5 @@
+import { Checkbox, Form, Input, Modal } from 'antd';
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import { Form, Modal, Input, Checkbox } from 'antd';
 import styles from '../CreateTeam/index.less';
 
 const FormItem = Form.Item;
@@ -60,8 +59,8 @@ export default class EditAppVersion extends PureComponent {
               rules: [
                 { required: true, message: '请填写版本别名' },
                 {
-                  max: 64,
-                  message: '最大长度64位'
+                  max: 32,
+                  message: '最大长度32位'
                 }
               ]
             })(<Input placeholder="请填写版本别名" />)}

@@ -587,6 +587,10 @@ class CreateAppModels extends PureComponent {
                   {
                     required: false,
                     message: '请输入描述'
+                  },
+                  {
+                    max: 255,
+                    message: '最大长度255位'
                   }
                 ]
               })(<TextArea placeholder="请输入描述" />)}
