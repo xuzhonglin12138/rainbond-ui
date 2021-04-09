@@ -252,10 +252,11 @@ class EnvGroup extends PureComponent {
     let setGroup = [].concat(group);
     if (setGroup.length === 1) return;
     setGroup = group.filter(item => !!item).filter(item => item.key !== key);
-    this.setState({ group: setGroup });
-    if (onChange) {
-      onChange(this.state.group.map(item => item.value));
-    }
+    this.setState({ group: setGroup }, () => {
+      if (onChange) {
+        onChange(this.state.group.map(item => item.value));
+      }
+    });
   };
   handleChange = (index, val) => {
     const { onChange } = this.props;
@@ -280,6 +281,10 @@ class EnvGroup extends PureComponent {
   render() {
     let { group } = this.state;
     group = group.filter(item => !!item);
+    const IconStyle = {
+      cursor: 'pointer',
+      fontSize: 20
+    };
     return (
       <div>
         {(group || []).map(item => (
@@ -298,20 +303,14 @@ class EnvGroup extends PureComponent {
                 onClick={() => {
                   this.handlePlus(item.key);
                 }}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 20
-                }}
+                style={IconStyle}
                 type="plus"
               />
               <Icon
                 onClick={() => {
                   this.handleMinus(item.key);
                 }}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 20
-                }}
+                style={IconStyle}
                 type="minus"
               />
             </div>
@@ -353,7 +352,8 @@ export default class Index extends PureComponent {
             return item;
           });
         }
-        onSubmit(fieldsValue);
+        console.log('fieldsValue', fieldsValue);
+        // onSubmit(fieldsValue);
       }
     });
   };

@@ -1,7 +1,8 @@
-import React from 'react';
-import { Icon } from 'antd';
-import styles from './PageHeaderLayout.less';
+/* eslint-disable no-script-url */
 import { DefaultFooter } from '@ant-design/pro-layout';
+import { Icon } from 'antd';
+import React from 'react';
+import styles from './PageHeaderLayout.less';
 
 export default () => (
   <DefaultFooter
@@ -17,8 +18,8 @@ export default () => (
       {
         key: 'poc',
         title: '企业服务',
-        href: 'https://goodrain.goodrain.com/page/price#customForm',
-        blankTarget: true
+        href: 'javascript:;',
+        blankTarget: false
       },
       {
         key: 'community',
