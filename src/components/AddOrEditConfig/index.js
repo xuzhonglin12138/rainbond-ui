@@ -352,8 +352,7 @@ export default class Index extends PureComponent {
             return item;
           });
         }
-        console.log('fieldsValue', fieldsValue);
-        // onSubmit(fieldsValue);
+        onSubmit(fieldsValue);
       }
     });
   };
