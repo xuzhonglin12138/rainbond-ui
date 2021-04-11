@@ -15,7 +15,8 @@ import {
   Modal,
   notification,
   Row,
-  Spin
+  Spin,
+  Tooltip
 } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
@@ -732,7 +733,24 @@ class Main extends PureComponent {
             <div>
               <span>负责人</span>
               <span>
-                {currApp.principal || '-'}
+                {currApp.principal ? (
+                  <Tooltip
+                    placement="top"
+                    title={
+                      <div>
+                        <div>账号:{currApp.username}</div>
+                        <div>姓名:{currApp.principal}</div>
+                        <div>邮箱:{currApp.email}</div>
+                      </div>
+                    }
+                  >
+                    <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
+                      {currApp.principal}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  '-'
+                )}
                 {isEdit && (
                   <Icon
                     style={{

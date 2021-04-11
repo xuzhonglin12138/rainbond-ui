@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react';
-import { Form, Modal, Input, Select, notification } from 'antd';
+/* eslint-disable react/no-redundant-should-component-update */
+import { Form, Input, Modal, notification, Select } from 'antd';
 import { connect } from 'dva';
-import { getCodeBranch } from '../../../services/app';
-import globalUtil from '../../../utils/global';
-import appUtil from '../../../utils/app';
+import React, { PureComponent } from 'react';
 import ShowRegionKey from '../../../components/ShowRegionKey';
+import { getCodeBranch } from '../../../services/app';
+import appUtil from '../../../utils/app';
+import globalUtil from '../../../utils/global';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -63,7 +64,7 @@ export default class ChangeBuildSource extends PureComponent {
     });
   }
   handleSubmit = () => {
-    const form = this.props.form;
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       if (fieldsValue.version_type == 'tag') {
@@ -96,7 +97,7 @@ export default class ChangeBuildSource extends PureComponent {
 
   render() {
     const { title, onCancel, appBuidSourceLoading } = this.props;
-    const branch = this.state.branch;
+    const { branch } = this.state;
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { showUsernameAndPass, showKey } = this.state;
     const formItemLayout = {
@@ -172,7 +173,13 @@ export default class ChangeBuildSource extends PureComponent {
             label="镜像名称"
           >
             {getFieldDecorator('image', {
-              rules: [{ required: true, message: '镜像名称不能为空' }],
+              rules: [
+                { required: true, message: '镜像名称不能为空' },
+                {
+                  max: 190,
+                  message: '最大长度190位'
+                }
+              ],
               initialValue: this.state.buildSource.image
             })(<Input />)}
           </FormItem>
