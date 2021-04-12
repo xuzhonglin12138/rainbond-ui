@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-indent */
-/* eslint-disable react/no-danger */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/sort-comp */
 /* eslint-disable camelcase */

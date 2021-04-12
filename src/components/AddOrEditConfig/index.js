@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable react/no-multi-comp */
 /*
   添加或者修改插件配置
@@ -102,13 +103,12 @@ class EvnOption extends React.Component {
             rules: [{ required: false, message: '协议' }]
           })(
             <Select
-              mode="multiple"
               onChange={values => {
-                this.handleOnchange('protocol', values);
+                this.handleOnchange('protocal', values);
               }}
               style={{ width: 100 }}
             >
-              <Option value="">所有协议</Option>
+              <Option value="">协议</Option>
               {protocols.map(item => (
                 <Option value={item}>{item}</Option>
               ))}
@@ -254,7 +254,7 @@ class EnvGroup extends PureComponent {
     setGroup = group.filter(item => !!item).filter(item => item.key !== key);
     this.setState({ group: setGroup }, () => {
       if (onChange) {
-        onChange(this.state.group.map(item => item.value));
+        onChange(group.map(item => item.value));
       }
     });
   };
