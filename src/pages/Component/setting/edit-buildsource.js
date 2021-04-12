@@ -45,7 +45,7 @@ export default class ChangeBuildSource extends PureComponent {
   changeServerType = value => {
     this.setState({ serverType: value, showUsernameAndPass: false });
   };
-  checkURL = (rule, value, callback) => {
+  checkURL = (_rule, value, callback) => {
     const urlCheck = this.getUrlCheck();
     if (urlCheck.test(value)) {
       callback();
@@ -91,7 +91,7 @@ export default class ChangeBuildSource extends PureComponent {
     this.setState({ showKey: false });
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(_nextProps, __nextState) {
     return true;
   }
 
