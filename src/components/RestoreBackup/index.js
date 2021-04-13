@@ -6,16 +6,7 @@ import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import globalUtil from '../../utils/global';
 
-const FormItem = Form.Item;
-const { Option } = Select;
-
-const appRestore = {
-  starting: '迁移中',
-  success: '成功',
-  failed: '失败'
-};
-
-@connect(({ user, global }) => ({ currUser: user.currentUser }))
+@connect(({ user }) => ({ currUser: user.currentUser }))
 @Form.create()
 export default class Index extends PureComponent {
   constructor(props) {
