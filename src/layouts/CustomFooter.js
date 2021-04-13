@@ -1,38 +1,45 @@
 /* eslint-disable no-script-url */
 import { DefaultFooter } from '@ant-design/pro-layout';
 import { Icon } from 'antd';
+import moment from 'moment';
 import React from 'react';
 import styles from './PageHeaderLayout.less';
 
-export default () => (
-  <DefaultFooter
-    className={styles.customFooter}
-    copyright="2020 北京好雨科技有限公司出品"
-    links={[
-      {
-        key: 'Rainbond',
-        title: '官网',
-        href: 'https://www.rainbond.com',
-        blankTarget: true
-      },
-      {
-        key: 'poc',
-        title: '企业服务',
-        href: 'javascript:;',
-        blankTarget: false
-      },
-      {
-        key: 'community',
-        title: '社区',
-        href: 'https://t.goodrain.com',
-        blankTarget: true
-      },
-      {
-        key: 'github',
-        title: <Icon type="github" />,
-        href: 'https://github.com/goodrain/rainbond',
-        blankTarget: true
-      }
-    ]}
-  />
-);
+export default () => {
+  const years = moment()
+    .locale('zh-cn')
+    .format('YYYY');
+
+  return (
+    <DefaultFooter
+      className={styles.customFooter}
+      copyright={`${years} 北京好雨科技有限公司出品`}
+      links={[
+        {
+          key: 'Rainbond',
+          title: '官网',
+          href: 'https://www.rainbond.com',
+          blankTarget: true
+        },
+        {
+          key: 'poc',
+          title: '企业服务',
+          href: 'javascript:;',
+          blankTarget: false
+        },
+        {
+          key: 'community',
+          title: '社区',
+          href: 'https://t.goodrain.com',
+          blankTarget: true
+        },
+        {
+          key: 'github',
+          title: <Icon type="github" />,
+          href: 'https://github.com/goodrain/rainbond',
+          blankTarget: true
+        }
+      ]}
+    />
+  );
+};
