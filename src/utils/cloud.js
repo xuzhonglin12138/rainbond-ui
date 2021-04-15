@@ -486,6 +486,9 @@ const cloud = {
       case 3002:
         notification.warning({ message: '用户不存在' });
         break;
+      case 2003:
+        notification.warning({ message: '用户手机号已注册' });
+        break;
       case 3003:
         notification.warning({ message: '邮箱已存在' });
         break;
