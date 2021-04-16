@@ -225,7 +225,14 @@ export default class EnterpriseUsers extends PureComponent {
     });
   };
   handleSearch = () => {
-    this.loadUser();
+    this.setState(
+      {
+        page: 1
+      },
+      () => {
+        this.loadUser();
+      }
+    );
   };
   handelChange = value => {
     this.setState({ name: value && value.trim() });
