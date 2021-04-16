@@ -89,7 +89,8 @@ export default class SetRegionConfig extends PureComponent {
             }
           }
         },
-        handleError: () => {
+        handleError: err => {
+          cloud.handleCloudAPIError(err);
           this.setState({ commitloading: false });
         }
       });
