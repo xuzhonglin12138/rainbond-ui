@@ -297,7 +297,9 @@ class TeamLayout extends PureComponent {
     if (!eid) {
       return null;
     }
-    this.fetchEnterpriseService(eid);
+    if (rainbondUtil.isEnableBillingFunction()) {
+      this.fetchEnterpriseService(eid);
+    }
     const { dispatch } = this.props;
     dispatch({
       type: 'global/fetchEnterpriseInfo',

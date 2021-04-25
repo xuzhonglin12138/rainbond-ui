@@ -222,7 +222,9 @@ class EnterpriseLayout extends PureComponent {
       return null;
     }
     const { dispatch } = this.props;
-    this.fetchEnterpriseService(eid);
+    if (rainbondUtil.isEnableBillingFunction()) {
+      this.fetchEnterpriseService(eid);
+    }
     this.loadClusters(eid);
     dispatch({
       type: 'global/fetchEnterpriseInfo',

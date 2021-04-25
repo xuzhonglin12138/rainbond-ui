@@ -75,7 +75,9 @@ class AccountLayout extends PureComponent {
   fetchEnterpriseInfo = () => {
     const { dispatch, currentUser } = this.props;
     if (currentUser && currentUser.enterprise_id) {
-      this.fetchEnterpriseService(currentUser.enterprise_id);
+      if (rainbondUtil.isEnableBillingFunction()) {
+        this.fetchEnterpriseService(currentUser.enterprise_id);
+      }
       dispatch({
         type: 'global/fetchEnterpriseInfo',
         payload: {
