@@ -34,7 +34,7 @@ export default {
   // 获取当前版本
   fetchIsSource: () => true,
   // BillingFunction
-  isEnableBillingFunction: () => true,
+  isEnableBillingFunction: () => false,
   // footer
   isEnableDefaultFooter: () => false,
   // Kubernetes Cluster
