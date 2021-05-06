@@ -257,6 +257,7 @@ export default class GlobalHeader extends PureComponent {
         </Menu>
       </div>
     );
+    const platform_url = rainbondUtil.documentPlatform_url(rainbondInfo);
     return (
       <Header className={styles.header}>
         <Icon
@@ -274,17 +275,18 @@ export default class GlobalHeader extends PureComponent {
                 升级付费服务
               </Button>
             )}
-          {rainbondUtil.documentPlatform_url(rainbondInfo) && (
+          {platform_url && (
             <a
               className={styles.action}
               style={{ color: '#fff' }}
-              href={`${rainbondUtil.documentPlatform_url(rainbondInfo)}docs/`}
+              href={`${platform_url}docs/`}
               target="_blank"
               rel="noopener noreferrer"
             >
               平台使用手册
             </a>
           )}
+
           <NoticeIcon
             className={styles.action}
             count={total}
