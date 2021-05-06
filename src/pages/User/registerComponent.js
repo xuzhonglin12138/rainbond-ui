@@ -5,10 +5,10 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import React, { Component } from 'react';
+import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Register.less';
-
 const FormItem = Form.Item;
 
 @connect(({ user, loading, global }) => ({
@@ -24,7 +24,8 @@ export default class RegisterComponent extends Component {
   state = {
     confirmDirty: false,
     visible: false,
-    help: ''
+    help: '',
+    time: Date.now()
   };
   componentDidMount() {
     userUtil.removeCookie();
@@ -90,7 +91,11 @@ export default class RegisterComponent extends Component {
       }
     }
   };
-
+  changeTime = () => {
+    this.setState({
+      time: Date.now()
+    });
+  };
   render() {
     const {
       form,
@@ -102,7 +107,7 @@ export default class RegisterComponent extends Component {
     } = this.props;
     const { getFieldDecorator } = form;
     const firstRegist = !rainbondUtil.fetchIsFirstRegist(rainbondInfo);
-    const { help } = this.state;
+    const { help, time } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
         {firstRegist && (
@@ -148,7 +153,7 @@ export default class RegisterComponent extends Component {
                 message: '最大长度24位'
               },
               {
-                pattern: /^[a-zA-Z0-9_\-]+$/,
+                pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
                 message: '只支持字母、数字、中文、_和-组合'
               }
             ]
@@ -221,7 +226,15 @@ export default class RegisterComponent extends Component {
               )}
             </Col>
             <Col span={8}>
-              <div id="codeImg" onClick={this.getSetCodeImg} />
+              {/* <div id="codeImg" onClick={this.getSetCodeImg} /> */}
+              <img
+                onClick={this.changeTime}
+                src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
+                style={{
+                  width: '100%',
+                  height: 40
+                }}
+              />
             </Col>
           </Row>
         </FormItem>
