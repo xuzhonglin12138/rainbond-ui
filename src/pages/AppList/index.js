@@ -1,4 +1,13 @@
-import { Button, Card, Form, Input, notification, Row, Table } from 'antd';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  notification,
+  Row,
+  Table,
+  Tooltip
+} from 'antd';
 import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
 import moment from 'moment';
@@ -299,7 +308,18 @@ export default class AppList extends PureComponent {
                   dataIndex: 'group_note',
                   render: val => {
                     return (
-                      <p style={{ marginBottom: 0, color: '#999999' }}>{val}</p>
+                      <Tooltip title={val} placement="top">
+                        <div
+                          style={{
+                            maxWidth: '74px',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {val}
+                        </div>
+                      </Tooltip>
                     );
                   }
                 }
