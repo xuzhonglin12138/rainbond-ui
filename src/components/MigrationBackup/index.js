@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-closing-tag-location */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/jsx-indent */
 import {
   Alert,
@@ -118,7 +120,7 @@ export default class Index extends PureComponent {
                 `/team/${data.bean.migrate_team}/region/${data.bean.migrate_region}/apps/${data.bean.group_id}`
               )
             );
-            location.reload();
+            window.location.reload();
           }
           if (data.bean.status === 'failed') {
             // this.props.onCancel && this.props.onCancel()

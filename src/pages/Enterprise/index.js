@@ -57,6 +57,7 @@ export default class Enterprise extends PureComponent {
     const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
       showAddTeam: false,
+      consulting: false,
       eid: params ? params.eid : '',
       adminer,
       enterpriseInfo: false,
@@ -524,7 +525,6 @@ export default class Enterprise extends PureComponent {
                 <img src={EnterpriseInfo} alt="" />
                 <span>企业信息</span>
               </div>
-
               {enterpriseInfo && (
                 <div className={styles.enterpriseName}>
                   企业名称：{enterpriseInfo.enterprise_alias}
@@ -939,7 +939,7 @@ export default class Enterprise extends PureComponent {
                           <li>
                             <Tooltip
                               className={styles.cen}
-                              title={`${memoryUsed}${memoryUsedUnit} 包含各团队内存使用量、系统使用量和rainbond组件使用量`}
+                              title={`${memoryUsed}${memoryUsedUnit} 包含各团队内存使用量、系统使用量和平台组件使用量`}
                             >
                               <span className={styles.numbers}>
                                 {memoryUsed}
@@ -1161,7 +1161,7 @@ export default class Enterprise extends PureComponent {
           <AuthCompany
             eid={eid}
             marketName={marketName}
-            title="欢迎使用Rainbond，请先完成连接云应用商店授权"
+            title="欢迎使用该平台，请先完成连接云应用商店授权"
             onCancel={() => {
               this.setState({ showMarketCloudAuth: false });
             }}

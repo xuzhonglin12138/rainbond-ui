@@ -43,9 +43,8 @@ export default class RegisterComponent extends Component {
       (err, values) => {
         if (!err && onSubmit) {
           userUtil.removeCookie();
-          onSubmit(values);
-          if (!values.name) {
-            values.name = values.user_name;
+          if (onSubmit) {
+            onSubmit(values);
           }
         }
       }
@@ -253,7 +252,7 @@ export default class RegisterComponent extends Component {
               span={24}
               style={{ fontSize: 12, marginTop: -12, color: '#666666' }}
             >
-              请注意：注册使用即同意 Rainbond 发行版用户许可协议。
+              请注意：注册使用即同意产品发行版用户许可协议。
             </Col>
           </Row>
         )}
