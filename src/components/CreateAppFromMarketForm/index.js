@@ -32,6 +32,9 @@ export default class Index extends PureComponent {
     this.setState({ addGroup: true });
   };
   cancelAddGroup = () => {
+    this.setState({
+      loading: false
+    });
     this.setState({ addGroup: false });
   };
   handleAddGroup = vals => {
@@ -56,9 +59,6 @@ export default class Index extends PureComponent {
             },
             callback: () => {
               setFieldsValue({ group_id: group.group_id });
-              this.setState({
-                loading: false
-              });
               this.cancelAddGroup();
             }
           });

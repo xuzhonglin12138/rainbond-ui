@@ -22,7 +22,7 @@ export default class EditGroupName extends PureComponent {
       form,
       group_name: groupName,
       note,
-      loading
+      loading = false
     } = this.props;
     const { getFieldDecorator } = form;
     const formItemLayout = {
