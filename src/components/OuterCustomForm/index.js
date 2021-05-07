@@ -308,8 +308,10 @@ export default class Index extends PureComponent {
                         href={`${platform_url}docs/component-create/thirdparty-service/thirdparty-create`}
                         style={{ color: '#fff' }}
                       >
-                        点击阅读文档
-                        <Icon type="question-circle-o" />
+                        <Icon
+                          type="question-circle-o"
+                          style={{ color: '#000000', margin: '0px 5px' }}
+                        />
                       </a>
                     </Tooltip>
                   )}
