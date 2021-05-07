@@ -82,7 +82,6 @@ class UploadForm extends PureComponent {
         <div className="ant-upload-text">上传图标</div>
       </div>
     );
-    console.log(imageUrl, 'imageUrl地址');
     return (
       <Form.Item {...formItemLayout} label={label} extra={extra}>
         {getFieldDecorator(name, {
