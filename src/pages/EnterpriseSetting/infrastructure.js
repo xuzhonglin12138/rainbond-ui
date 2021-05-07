@@ -361,11 +361,12 @@ class Infrastructure extends PureComponent {
         params: { eid }
       }
     } = this.props;
+    console.log(rainbondInfo, 'rainbondInfo');
     let infos = {};
     if (rainbondInfo) {
       const fetchLogo =
         rainbondUtil.fetchLogo(rainbondInfo, enterprise) || defaultLogo;
-      const fetchFavicon = rainbondUtil.fetchFavicon(enterprise);
+      const fetchFavicon = rainbondUtil.fetchFavicon(rainbondInfo);
 
       const title =
         rainbondInfo && rainbondInfo.title && rainbondInfo.title.value;

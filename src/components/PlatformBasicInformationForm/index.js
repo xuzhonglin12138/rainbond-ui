@@ -1,13 +1,12 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-const-assign */
 /* eslint-disable prefer-destructuring */
-import { Form, Input, Modal, Icon, Upload } from 'antd';
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import styles from '../CreateTeam/index.less';
-import apiconfig from '../../../config/api.config';
-import cookie from '../../utils/cookie';
 import UploadForm from '@/components/UploadForm';
+import { Form, Input, Modal } from 'antd';
+import { connect } from 'dva';
+import React, { PureComponent } from 'react';
+import cookie from '../../utils/cookie';
+import styles from '../CreateTeam/index.less';
 
 const FormItem = Form.Item;
 

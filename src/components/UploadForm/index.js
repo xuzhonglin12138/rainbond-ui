@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import { Form, Icon, Spin, Upload } from 'antd';
 import { connect } from 'dva';
-import { Form, Upload, Icon, Spin } from 'antd';
+import React, { PureComponent } from 'react';
 import apiconfig from '../../../config/api.config';
 import cookie from '../../utils/cookie';
 import styles from '../CreateTeam/index.less';
@@ -82,6 +82,7 @@ class UploadForm extends PureComponent {
         <div className="ant-upload-text">上传图标</div>
       </div>
     );
+    console.log(imageUrl, 'imageUrl地址');
     return (
       <Form.Item {...formItemLayout} label={label} extra={extra}>
         {getFieldDecorator(name, {
