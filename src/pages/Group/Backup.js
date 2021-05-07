@@ -145,7 +145,8 @@ class Backup extends PureComponent {
       is_configed,
       componentList,
       warningText,
-      onCancel
+      onCancel,
+      loading = false
     } = this.props;
     const { getFieldDecorator } = form;
     const formItemLayout = {
@@ -168,7 +169,7 @@ class Backup extends PureComponent {
         onCancel={onCancel}
         footer={[
           <Button onClick={onCancel}> 取消 </Button>,
-          <Button type="primary" onClick={this.onOk}>
+          <Button type="primary" onClick={this.onOk} loading={loading}>
             {warningText ? '强制备份' : '确定'}
           </Button>
         ]}
@@ -252,7 +253,8 @@ export default class AppList extends PureComponent {
       group_uuid: '',
       warningText: '',
       componentList: [],
-      operationPermissions: this.handlePermissions('queryAppInfo')
+      operationPermissions: this.handlePermissions('queryAppInfo'),
+      loading: false
     };
   }
 
@@ -306,9 +308,17 @@ export default class AppList extends PureComponent {
   };
 
   cancelBackup = () => {
-    this.setState({ showBackup: false, warningText: '', componentList: [] });
+    this.setState({
+      showBackup: false,
+      warningText: '',
+      componentList: [],
+      loading: false
+    });
   };
   handleBackup = data => {
+    this.setState({
+      loading: true
+    });
     this.props.dispatch({
       type: 'application/backup',
       payload: {
@@ -474,7 +484,8 @@ export default class AppList extends PureComponent {
       appDetail,
       loadingDetail,
       list = [],
-      operationPermissions: { isMigrate, isImport, isExport }
+      operationPermissions: { isMigrate, isImport, isExport },
+      loading
     } = this.state;
     const columns = [
       {
@@ -639,6 +650,7 @@ export default class AppList extends PureComponent {
             is_configed={this.state.is_configed}
             onOk={this.handleBackup}
             onCancel={this.cancelBackup}
+            loading={loading}
           />
         )}
         {this.state.showMove && (
