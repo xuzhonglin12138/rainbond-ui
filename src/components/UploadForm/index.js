@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import { Form, Icon, Spin, Upload } from 'antd';
 import { connect } from 'dva';
-import { Form, Upload, Icon, Spin } from 'antd';
+import React, { PureComponent } from 'react';
 import apiconfig from '../../../config/api.config';
 import cookie from '../../utils/cookie';
 import styles from '../CreateTeam/index.less';

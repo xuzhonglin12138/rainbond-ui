@@ -365,7 +365,7 @@ class Infrastructure extends PureComponent {
     if (rainbondInfo) {
       const fetchLogo =
         rainbondUtil.fetchLogo(rainbondInfo, enterprise) || defaultLogo;
-      const fetchFavicon = rainbondUtil.fetchFavicon(enterprise);
+      const fetchFavicon = rainbondUtil.fetchFavicon(rainbondInfo);
 
       const title =
         rainbondInfo && rainbondInfo.title && rainbondInfo.title.value;
