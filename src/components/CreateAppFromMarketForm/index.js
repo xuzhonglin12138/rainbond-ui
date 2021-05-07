@@ -24,16 +24,23 @@ export default class Index extends PureComponent {
     super(props);
     this.state = {
       addGroup: false,
-      is_deploy: true
+      is_deploy: true,
+      loading: false
     };
   }
   onAddGroup = () => {
     this.setState({ addGroup: true });
   };
   cancelAddGroup = () => {
+    this.setState({
+      loading: false
+    });
     this.setState({ addGroup: false });
   };
   handleAddGroup = vals => {
+    this.setState({
+      loading: true
+    });
     const { setFieldsValue } = this.props.form;
     this.props.dispatch({
       type: 'application/addGroup',
@@ -104,7 +111,7 @@ export default class Index extends PureComponent {
       showCreate.versions &&
       showCreate.versions.length > 0 &&
       showCreate.versions;
-
+    const { loading } = this.state;
     return (
       <Modal
         className={styles.TelescopicModal}
@@ -201,6 +208,7 @@ export default class Index extends PureComponent {
             <AddGroup
               onCancel={this.cancelAddGroup}
               onOk={this.handleAddGroup}
+              loading={loading}
             />
           )}
         </Form>
