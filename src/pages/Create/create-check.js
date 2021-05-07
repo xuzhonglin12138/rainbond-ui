@@ -18,14 +18,15 @@ import {
   getCreateCheckResult
 } from '../../services/createApp';
 import globalUtil from '../../utils/global';
+import rainbondUtil from '../../utils/rainbond';
 import regionUtil from '../../utils/region';
 import userUtil from '../../utils/user';
 import ModifyImageCmd from './modify-image-cmd';
 import ModifyImageName from './modify-image-name';
 import ModifyUrl from './modify-url';
-
 @connect(
-  ({ user, appControl }) => ({
+  ({ user, appControl, global }) => ({
+    rainbondInfo: global.rainbondInfo,
     currUser: user.currentUser,
     appDetail: appControl.appDetail
   }),
@@ -705,7 +706,7 @@ export default class CreateCheck extends React.Component {
     } else if (ServiceGetData && (ButtonGroupState || ErrState)) {
       handleServiceBotton(actions, false, false);
     }
-
+    const doc_url = rainbondUtil.documentPlatform_url(this.props.rainbondInfo);
     return (
       <Result
         type="success"
@@ -724,7 +725,7 @@ export default class CreateCheck extends React.Component {
               </div>
               90%以上的用户在检测通过后可部署成功，如遇部署失败，可参考{' '}
               <a
-                href="http://www.rainbond.com/docs/user-manual/app-creation/language-support/"
+                href={`${doc_url}/docs/user-manual/app-creation/language-support/`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -876,7 +877,7 @@ export default class CreateCheck extends React.Component {
               <div>组件构建源检测通过仅代表平台可以检测到多模块构建。</div>
               90%以上的用户在检测通过后可部署成功，如遇部署失败，可参考{' '}
               <a
-                href="http://www.rainbond.com/docs/user-manual/app-creation/language-support/"
+                href={`${doc_url}/docs/user-manual/app-creation/language-support/`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
