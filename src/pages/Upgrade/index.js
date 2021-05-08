@@ -349,6 +349,7 @@ export default class AppList extends PureComponent {
                       actions={[
                         <a
                           onClick={e => {
+                            console.log(item, 'item');
                             e.preventDefault();
                             if (item.can_upgrade) {
                               this.setState(
@@ -367,6 +368,7 @@ export default class AppList extends PureComponent {
                           }}
                           style={{
                             display: 'block',
+                            width: '106px',
                             marginTop: '15px',
                             color: item.can_upgrade ? '#1890ff' : '#bfbfbf'
                           }}
