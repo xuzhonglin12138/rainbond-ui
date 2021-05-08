@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import React, { PureComponent } from 'react';
 import { Button, Icon, Modal } from 'antd';
-import styles from './index.less';
+import React, { PureComponent } from 'react';
 import styless from '../CreateTeam/index.less';
+import styles from './index.less';
 
 class ConfirmModal extends PureComponent {
   render() {
