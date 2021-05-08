@@ -336,7 +336,7 @@ export default class shareCheck extends PureComponent {
     this.fails = [];
     this.setState({ status: 'checking' });
   };
-  handleSameFun = () => {
+  handleJumpRelease = () => {
     const params = this.getParams();
     this.props.dispatch(
       routerRedux.replace(
@@ -345,6 +345,14 @@ export default class shareCheck extends PureComponent {
         }/publish`
       )
     );
+  };
+  handleError = err => {
+    if (err.data.code === 404) {
+      notification.warning({ message: err.data.msg_show });
+      this.handleJumpRelease();
+    } else {
+      cloud.handleCloudAPIError(err);
+    }
   };
   handleCompleteShare = () => {
     this.setState({ completeLoading: true });
@@ -359,15 +367,10 @@ export default class shareCheck extends PureComponent {
         if (data && data.app_market_url) {
           openInNewTab(data.app_market_url);
         }
-        this.handleSameFun();
+        this.handleJumpRelease();
       },
       handleError: err => {
-        if (err.data.code === 404) {
-          notification.warning({ message: err.data.msg_show });
-          this.handleSameFun();
-        } else {
-          cloud.handleCloudAPIError(err);
-        }
+        this.handleError(err);
       }
     });
   };
@@ -381,15 +384,10 @@ export default class shareCheck extends PureComponent {
       },
       callback: () => {
         this.hideShowDelete();
-        this.handleSameFun();
+        this.handleJumpRelease();
       },
       handleError: err => {
-        if (err.data.code === 404) {
-          notification.warning({ message: err.data.msg_show });
-          this.handleSameFun();
-        } else {
-          cloud.handleCloudAPIError(err);
-        }
+        this.handleError(err);
       }
     });
   };
