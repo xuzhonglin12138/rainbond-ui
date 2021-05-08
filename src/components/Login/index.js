@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Form, Tabs } from 'antd';
+import classNames from 'classnames';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import classNames from 'classnames';
-import LoginItem from './LoginItem';
-import LoginTab from './LoginTab';
-import LoginSubmit from './LoginSubmit';
-import styles from './index.less';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import rainbondUtil from '../../utils/rainbond';
+import styles from './index.less';
+import LoginItem from './LoginItem';
+import LoginSubmit from './LoginSubmit';
+import LoginTab from './LoginTab';
 
 @Form.create()
 class Login extends Component {
@@ -16,37 +16,37 @@ class Login extends Component {
     className: '',
     defaultActiveKey: '',
     onTabChange: () => {},
-    onSubmit: () => {},
+    onSubmit: () => {}
   };
   static propTypes = {
     className: PropTypes.string,
     defaultActiveKey: PropTypes.string,
     onTabChange: PropTypes.func,
-    onSubmit: PropTypes.func,
+    onSubmit: PropTypes.func
   };
   static childContextTypes = {
     tabUtil: PropTypes.object,
     form: PropTypes.object,
-    updateActive: PropTypes.func,
+    updateActive: PropTypes.func
   };
   state = {
     type: this.props.defaultActiveKey,
     tabs: [],
-    active: {},
+    active: {}
   };
   getChildContext() {
     return {
       tabUtil: {
         addTab: id => {
           this.setState({
-            tabs: [...this.state.tabs, id],
+            tabs: [...this.state.tabs, id]
           });
         },
         removeTab: id => {
           this.setState({
-            tabs: this.state.tabs.filter(currentId => currentId !== id),
+            tabs: this.state.tabs.filter(currentId => currentId !== id)
           });
-        },
+        }
       },
       form: this.props.form,
       updateActive: activeItem => {
@@ -57,9 +57,9 @@ class Login extends Component {
           active[type] = [activeItem];
         }
         this.setState({
-          active,
+          active
         });
-      },
+      }
     };
   }
   componentWillMount() {
@@ -72,7 +72,7 @@ class Login extends Component {
   }
   onSwitch = type => {
     this.setState({
-      type,
+      type
     });
     this.props.onTabChange(type);
   };
@@ -132,5 +132,5 @@ Object.keys(LoginItem).forEach(item => {
 });
 
 export default connect(({ global }) => ({
-  rainbondInfo: global.rainbondInfo,
+  rainbondInfo: global.rainbondInfo
 }))(Login);

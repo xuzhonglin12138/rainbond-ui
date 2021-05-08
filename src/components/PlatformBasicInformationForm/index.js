@@ -54,6 +54,7 @@ export default class PlatformBasicInformationForm extends PureComponent {
       basicInformationLoading,
       data = {}
     } = this.props;
+
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
