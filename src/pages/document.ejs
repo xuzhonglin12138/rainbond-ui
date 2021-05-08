@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="description" content="云原生应用交付的最佳实践，简单易用。专注于以应用为中心的理念。赋能企业搭建云原生开发云、云原生交付云。" />
     <meta name="keywords" content="云原生应用管理平台，云原生开发云，云原生交付云" />
-    <meta
-      name="viewport"
-      content="width=1200,minimum-scale=0.5,maximum-scale=1.0,user-scalable=yes, initial-scale=1.0"
-    />
-    <title>
-        Rainbond | 云原生且易用的应用管理平台
-    </title>
+    <meta name="viewport"
+        content="width=1200,minimum-scale=0.5,maximum-scale=1.0,user-scalable=yes, initial-scale=1.0" />
     <link rel="icon" href="/favicon.png" type="image/x-icon" />
     <style type="text/css">
         * {
@@ -184,23 +180,29 @@
         }
     </style>
     <script>
-      let link =
-        document.querySelector("link[rel*='icon']") ||
-        document.createElement('link');
-      link.type = 'image/x-icon';
-      link.rel = 'shortcut icon';
-      link.href = window.localStorage.faviconurl;
-      document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
-  </head>
+        let link =
+            document.querySelector("link[rel*='icon']") ||
+            document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = window.localStorage.faviconurl;
+        let head = document.getElementsByTagName("head")[0]
 
-  <body>
+        head.appendChild(link);
+        let title = document.createElement("title")
+        title.innerHTML = window.localStorage.headTitle
+        head.appendChild(title)
+    </script>
+</head>
+
+<body>
     <div id="root">
-      <div class="loader">
-        <span></span> <span></span> <span></span> <span></span> <span></span>
-        <span></span> <span></span> <span></span> <span></span> <span></span>
-        <span></span> <span></span> <span></span> <span></span> <span></span>
-      </div>
+        <div class="loader">
+            <span></span> <span></span> <span></span> <span></span> <span></span>
+            <span></span> <span></span> <span></span> <span></span> <span></span>
+            <span></span> <span></span> <span></span> <span></span> <span></span>
+        </div>
     </div>
-  </body>
+</body>
+
 </html>

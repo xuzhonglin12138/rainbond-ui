@@ -428,6 +428,10 @@ export default {
           'faviconurl',
           rainbondUtil.fetchFavicon(data.bean)
         );
+        window.localStorage.setItem(
+          'headTitle',
+          rainbondUtil.fetchSiteTitle(data.bean)
+        );
         cookie.setGuide(
           'enterprise_edition',
           rainbondUtil.isEnterpriseEdition(data.bean)

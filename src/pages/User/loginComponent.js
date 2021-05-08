@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import userUtil from '../../utils/global';
+import React, { Component } from 'react';
 import Login from '../../components/Login';
+import userUtil from '../../utils/global';
 import styles from './Login.less';
 
 const { UserName, Password, Submit } = Login;
