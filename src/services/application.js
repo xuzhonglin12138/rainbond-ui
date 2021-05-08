@@ -442,11 +442,12 @@ export async function giveupShare(
   body = {
     team_name,
     share_id
-  }
+  },
+  handleError
 ) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/share/${body.share_id}/giveup`,
-    { method: 'delete' }
+    { method: 'delete', handleError }
   );
 }
 
@@ -595,16 +596,10 @@ export async function getShareStatus(
 /*
     完成发布
 */
-export async function completeShare(
-  body = {
-    team_name,
-    share_id,
-    event_id
-  }
-) {
+export async function completeShare(body = {}, handleError) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/share/${body.share_id}/complete`,
-    { method: 'post' }
+    { method: 'post', handleError }
   );
 }
 

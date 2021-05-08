@@ -238,8 +238,8 @@ export default {
       }
     },
     // 放弃发布
-    *giveupShare({ payload, callback }, { call }) {
-      const response = yield call(giveupShare, payload);
+    *giveupShare({ payload, callback, handleError }, { call }) {
+      const response = yield call(giveupShare, payload, handleError);
       if (response && callback) {
         callback(response);
       }
@@ -281,8 +281,8 @@ export default {
         callback(response);
       }
     },
-    *completeShare({ payload, callback }, { call }) {
-      const response = yield call(completeShare, payload);
+    *completeShare({ payload, callback, handleError }, { call }) {
+      const response = yield call(completeShare, payload, handleError);
       if (response && callback) {
         callback(response);
       }

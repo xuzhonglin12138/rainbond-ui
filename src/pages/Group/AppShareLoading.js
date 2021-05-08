@@ -1,6 +1,6 @@
 /* eslint-disable react/sort-comp */
 /* eslint-disable react/no-multi-comp */
-import { Button, Card, Icon } from 'antd';
+import { Button, Card, Icon, notification } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
@@ -8,6 +8,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import LogProcress from '../../components/LogProcress';
 import Result from '../../components/Result';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import cloud from '../../utils/cloud';
 import globalUtil from '../../utils/global';
 import regionUtil from '../../utils/region';
 import userUtil from '../../utils/user';
@@ -335,6 +336,24 @@ export default class shareCheck extends PureComponent {
     this.fails = [];
     this.setState({ status: 'checking' });
   };
+  handleJumpRelease = () => {
+    const params = this.getParams();
+    this.props.dispatch(
+      routerRedux.replace(
+        `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps/${
+          params.appID
+        }/publish`
+      )
+    );
+  };
+  handleError = err => {
+    if (err.data.code === 404) {
+      notification.warning({ message: err.data.msg_show });
+      this.handleJumpRelease();
+    } else {
+      cloud.handleCloudAPIError(err);
+    }
+  };
   handleCompleteShare = () => {
     this.setState({ completeLoading: true });
     const params = this.getParams();
@@ -348,13 +367,10 @@ export default class shareCheck extends PureComponent {
         if (data && data.app_market_url) {
           openInNewTab(data.app_market_url);
         }
-        this.props.dispatch(
-          routerRedux.replace(
-            `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps/${
-              params.appID
-            }/publish`
-          )
-        );
+        this.handleJumpRelease();
+      },
+      handleError: err => {
+        this.handleError(err);
       }
     });
   };
@@ -368,13 +384,10 @@ export default class shareCheck extends PureComponent {
       },
       callback: () => {
         this.hideShowDelete();
-        this.props.dispatch(
-          routerRedux.replace(
-            `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps/${
-              params.appID
-            }`
-          )
-        );
+        this.handleJumpRelease();
+      },
+      handleError: err => {
+        this.handleError(err);
       }
     });
   };
