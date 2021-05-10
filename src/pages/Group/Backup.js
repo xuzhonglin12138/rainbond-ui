@@ -316,9 +316,11 @@ export default class AppList extends PureComponent {
     });
   };
   handleBackup = data => {
-    this.setState({
-      loading: true
-    });
+    if (data.force) {
+      this.setState({
+        loading: true
+      });
+    }
     this.props.dispatch({
       type: 'application/backup',
       payload: {
