@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
+import Logs from '@/components/Logs';
 import { Card, Col, Form, Modal, Popconfirm, Row, Select, Table } from 'antd';
 import { connect } from 'dva';
 import React, { Fragment, PureComponent } from 'react';
 import globalUtil from '../../../utils/global';
 import roleUtil from '../../../utils/role';
-import Logs from '@/components/Logs';
 import styles from './index.less';
 
 const { Option } = Select;
@@ -73,7 +73,7 @@ export default class EventList extends PureComponent {
       type: 'teamControl/getJoinTeamUsers',
       payload: {
         page_size,
-        page_num:page,
+        page_num: page,
         team_name: teamName
       },
       callback: data => {
@@ -244,6 +244,7 @@ export default class EventList extends PureComponent {
                   ]
                 })(
                   <Select
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     mode="multiple"
                     placeholder="请选择角色"
                     style={{ width: '100%' }}

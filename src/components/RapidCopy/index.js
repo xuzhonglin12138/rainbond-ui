@@ -436,6 +436,9 @@ export default class Index extends PureComponent {
                         ]
                       })(
                         <Select
+                          getPopupContainer={triggerNode =>
+                            triggerNode.parentNode
+                          }
                           onChange={this.onSelectChange}
                           placeholder="团队/集群"
                         >
@@ -465,6 +468,9 @@ export default class Index extends PureComponent {
                       ]
                     })(
                       <Select
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
                         style={{ width: '180px' }}
                         placeholder="请选择应用"
                       >
@@ -538,6 +544,7 @@ export default class Index extends PureComponent {
                 let versionConetent = '';
                 const versionSelector = (
                   <Select
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     style={{ width: 70 }}
                     defaultValue={isImageApp ? 'Tag' : 'branch'}
                   >

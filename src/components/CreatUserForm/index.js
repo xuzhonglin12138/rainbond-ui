@@ -42,15 +42,6 @@ class CreateUserForm extends PureComponent {
       }
     });
   };
-  checkAccountPass = (rule, value, callback) => {
-    if (value && value.length < 8) {
-      callback('密码长度至少为8位');
-    } else if (value && value.length > 16) {
-      callback('最大长度16位');
-    } else {
-      callback();
-    }
-  };
   handleSubmit = () => {
     const { form, onOk } = this.props;
     form.validateFields((err, values) => {
@@ -58,6 +49,18 @@ class CreateUserForm extends PureComponent {
         onOk(values);
       }
     });
+  };
+
+  checkAccountPass = (_, value, callback) => {
+    if (!value) {
+      callback('请填写密码');
+    } else if (value && value.length < 8) {
+      callback('密码长度至少为8位');
+    } else if (value && value.length > 16) {
+      callback('最大长度16位');
+    } else {
+      callback();
+    }
   };
 
   render() {
@@ -98,7 +101,6 @@ class CreateUserForm extends PureComponent {
                 initialValue: userInfo ? userInfo.nick_name : '',
                 rules: [
                   { required: true, message: '请填写用户名!' },
-
                   {
                     min: 3,
                     message: '最小长度3位'
@@ -109,7 +111,7 @@ class CreateUserForm extends PureComponent {
                   },
                   {
                     pattern: /^[a-zA-Z0-9_\-]+$/,
-                    message: '只支持字母、数字、下划线、中划线'
+                    message: '只支持英文字母、数字、下划线、中划线'
                   }
                 ]
               })(<Input autoComplete="off" placeholder="请填写用户名!" />)}
@@ -168,10 +170,6 @@ class CreateUserForm extends PureComponent {
                 {getFieldDecorator('email', {
                   rules: [
                     { required: true, message: '请填写邮箱!' },
-                    {
-                      max: 30,
-                      message: '最大长度30位'
-                    },
                     { type: 'email', message: '邮箱格式不正确!' }
                   ]
                 })(
@@ -217,6 +215,7 @@ class CreateUserForm extends PureComponent {
                   rules: [{ required: false, message: '请选择用户角色!' }]
                 })(
                   <Select
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     mode="multiple"
                     style={{ width: '100%' }}
                     placeholder="请选择用户角色"

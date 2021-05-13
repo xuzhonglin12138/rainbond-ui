@@ -1,4 +1,4 @@
-import { Button, Card, Modal, notification, Table } from 'antd';
+import { Alert, Button, Card, Modal, notification, Table } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';
 import { unOpenRegion } from '../../services/team';
@@ -22,13 +22,19 @@ class OpenRegion extends PureComponent {
   }
 
   getUnRelationedApp = () => {
-    unOpenRegion({
-      team_name: globalUtil.getCurrTeamName()
-    }).then(data => {
-      if (data) {
-        this.setState({ regions: data.list || [] });
-      }
-    });
+    let { teamName } = this.props;
+    if (!teamName) {
+      teamName = globalUtil.getCurrTeamName();
+    }
+    if (teamName) {
+      unOpenRegion({
+        team_name: teamName
+      }).then(data => {
+        if (data) {
+          this.setState({ regions: data.list || [] });
+        }
+      });
+    }
   };
 
   handleSubmit = () => {
@@ -52,7 +58,6 @@ class OpenRegion extends PureComponent {
   };
   render() {
     const mode = this.props.mode || 'modal';
-    const { enterprise } = this.props;
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         this.setState({
@@ -72,6 +77,13 @@ class OpenRegion extends PureComponent {
           onOk={this.handleSubmit}
           onCancel={this.handleCancel}
         >
+          {this.state.regions.length === 0 && (
+            <Alert
+              type="warning"
+              style={{ marginBottom: '16px' }}
+              message="暂无其他集群，请到集群管理面板中添加更多集群"
+            />
+          )}
           <Table
             size="small"
             pagination={false}
@@ -79,7 +91,7 @@ class OpenRegion extends PureComponent {
             rowSelection={rowSelection}
             columns={[
               {
-                title: '集群',
+                title: '名称',
                 dataIndex: 'region_alias'
               },
               {

@@ -684,8 +684,8 @@ export default class Main extends PureComponent {
                         serapp.attr_name == indexarr[1] &&
                         ID === indexarr[3]
                       ) {
-                        serapp.is_change = true;
                         serapp[indexarr[2]] = appvalue[index];
+                        serapp.is_change = true;
                       }
                     });
                   }
@@ -1071,6 +1071,9 @@ export default class Main extends PureComponent {
                       ]
                     })(
                       <Select
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
                         style={{ width: 280 }}
                         onChange={this.changeCurrentModel}
                         placeholder="选择发布的应用模版"
@@ -1236,13 +1239,13 @@ export default class Main extends PureComponent {
                       const id = apptit.service_share_uuid;
                       return (
                         <TabPane
-                          key={apptit.service_share_uuid}
+                          key={id}
                           tab={
                             <span className={mytabcss.cont}>
                               <a
                                 tab={apptit.service_cname}
                                 onClick={() => {
-                                  this.tabClick(apptit.service_share_uuid);
+                                  this.tabClick(id);
                                 }}
                               >
                                 {apptit.service_cname}

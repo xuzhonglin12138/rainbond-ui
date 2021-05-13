@@ -86,6 +86,7 @@ export default class JoinTeam extends PureComponent {
               ]
             })(
               <Select
+                getPopupContainer={triggerNode => triggerNode.parentNode}
                 style={{ width: '100%' }}
                 onChange={this.handleTeamChange}
                 placeholder="请选择一个团队"

@@ -1,3 +1,5 @@
+/* eslint-disable react/sort-comp */
+/* eslint-disable camelcase */
 import {
   Alert,
   Button,
@@ -50,7 +52,6 @@ export default class Index extends PureComponent {
     super(props);
     this.state = {
       addGroup: false,
-      serverType: 'git',
       endpointsType: 'static',
       visible: false,
       staticList: ['']
@@ -97,7 +98,7 @@ export default class Index extends PureComponent {
   };
   handleSubmit = e => {
     e.preventDefault();
-    const { form } = this.props;
+    const { form, onSubmit } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) {
         if (
@@ -113,8 +114,8 @@ export default class Index extends PureComponent {
           });
         }
       }
-      if (!err) {
-        this.props.onSubmit && this.props.onSubmit(fieldsValue);
+      if (!err && onSubmit) {
+        onSubmit(fieldsValue);
       }
     });
   };
@@ -252,6 +253,7 @@ export default class Index extends PureComponent {
               rules: [{ required: true, message: '请选择' }]
             })(
               <Select
+                getPopupContainer={triggerNode => triggerNode.parentNode}
                 placeholder="请选择要所属应用"
                 style={{
                   display: 'inline-block',
@@ -306,12 +308,8 @@ export default class Index extends PureComponent {
                       <a
                         target="_blank"
                         href={`${platform_url}docs/component-create/thirdparty-service/thirdparty-create`}
-                        style={{ color: '#fff' }}
                       >
-                        <Icon
-                          type="question-circle-o"
-                          style={{ color: '#000000', margin: '0px 5px' }}
-                        />
+                        <Icon type="question-circle-o" />
                       </a>
                     </Tooltip>
                   )}
@@ -375,6 +373,7 @@ export default class Index extends PureComponent {
                   initialValue: ''
                 })(
                   <Select
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     onChange={this.handleChange}
                     placeholder="请选择类型"
                     style={{
@@ -410,9 +409,7 @@ export default class Index extends PureComponent {
                           <a
                             href={`${platform_url}docs/component-create/thirdparty-service/thirdparty-create`}
                             target="_blank"
-                            style={{ color: '#fff' }}
                           >
-                            点击阅读文档
                             <Icon type="question-circle-o" />
                           </a>
                         </Tooltip>

@@ -199,9 +199,7 @@ export default class AppList extends PureComponent {
       page
     };
 
-    const ListContent = ({
-      data: { upgrade_versions, current_version, min_memory }
-    }) => (
+    const ListContent = ({ data: { upgrade_versions, current_version } }) => (
       <div className={styles.listContent}>
         <div className={styles.listContentItem}>
           <span>当前版本</span>
@@ -236,7 +234,6 @@ export default class AppList extends PureComponent {
                       size="small"
                       key={index}
                     >
-                      {' '}
                       {item}
                     </Tag>
                   );
@@ -336,7 +333,7 @@ export default class AppList extends PureComponent {
             onChange={this.callback}
             className={styles.tabss}
           >
-            <TabPane tab="云市应用列表" key="1">
+            <TabPane tab="应用模型列表" key="1">
               <div className={styles.cardList}>
                 <List
                   rowKey="id"
@@ -373,7 +370,7 @@ export default class AppList extends PureComponent {
                             color: item.can_upgrade ? '#1890ff' : '#bfbfbf'
                           }}
                         >
-                          {item.not_upgrade_record_status != 1
+                          {item.not_upgrade_record_status !== 1
                             ? infoUtil.getStatusCN(
                                 item.not_upgrade_record_status
                               )
@@ -388,7 +385,7 @@ export default class AppList extends PureComponent {
                           <Avatar
                             src={
                               item.pic ||
-                              require('../../../public/images/app_icon.jpg')
+                              require('../../../public/images/app_icon.svg')
                             }
                             shape="square"
                             size="large"
@@ -411,7 +408,7 @@ export default class AppList extends PureComponent {
                 />
               </div>
             </TabPane>
-            <TabPane tab="云市应用升级记录" key="2">
+            <TabPane tab="升级记录" key="2">
               <Table
                 columns={columns}
                 dataSource={dataList}
@@ -436,7 +433,7 @@ export default class AppList extends PureComponent {
             group_id={this.getGroupId()}
             setInfoShow={() => {
               this.setState({ infoShow: false }, () => {
-                this.state.activeKey == '2'
+                this.state.activeKey === '2'
                   ? this.getUpgradeRecordsList()
                   : this.getApplication();
               });

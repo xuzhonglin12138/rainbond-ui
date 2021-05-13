@@ -220,7 +220,11 @@ export default class Index extends PureComponent {
     const prefixSelector = getFieldDecorator('server_type', {
       initialValue: data.server_type || serverType
     })(
-      <Select onChange={this.onChangeServerType} style={{ width: 100 }}>
+      <Select
+        onChange={this.onChangeServerType}
+        style={{ width: 100 }}
+        getPopupContainer={triggerNode => triggerNode.parentNode}
+      >
         <Option value="git">Git</Option>
         <Option value="svn">Svn</Option>
       </Select>
@@ -228,7 +232,10 @@ export default class Index extends PureComponent {
     const versionSelector = getFieldDecorator('version_type', {
       initialValue: this.state.version_type || 'branch'
     })(
-      <Select style={{ width: 100 }}>
+      <Select
+        style={{ width: 100 }}
+        getPopupContainer={triggerNode => triggerNode.parentNode}
+      >
         <Option value="branch">分支</Option>
         <Option value="tag">Tag</Option>
       </Select>

@@ -23,7 +23,6 @@ export default class Register extends Component {
       payload: {
         ...values
       },
-      complete: () => {},
       handleError: res => {
         if (
           res &&

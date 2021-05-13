@@ -9,6 +9,7 @@ import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Register.less';
+
 const FormItem = Form.Item;
 
 @connect(({ user, loading, global }) => ({
@@ -33,6 +34,18 @@ export default class RegisterComponent extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getPasswordStatus = () => {
+    const { form } = this.props;
+    const value = form.getFieldValue('password');
+    if (value && value.length > 9) {
+      return 'ok';
+    }
+    if (value && value.length > 5) {
+      return 'pass';
+    }
+    return 'poor';
+  };
 
   handleSubmit = e => {
     e.preventDefault();
@@ -225,7 +238,6 @@ export default class RegisterComponent extends Component {
               )}
             </Col>
             <Col span={8}>
-              {/* <div id="codeImg" onClick={this.getSetCodeImg} /> */}
               <img
                 onClick={this.changeTime}
                 src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}

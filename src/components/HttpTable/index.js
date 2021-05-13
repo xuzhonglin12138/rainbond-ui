@@ -675,7 +675,7 @@ export default class HttpTable extends PureComponent {
             marginBottom: '20px'
           }}
         >
-          <Search onSearch={this.handleSearch} />
+          <Search onSearch={this.handleSearch} type="HTTP" />
           {isCreate && (
             <Button
               type="primary"

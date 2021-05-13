@@ -13,6 +13,7 @@ import {
   Spin
 } from 'antd';
 import { connect } from 'dva';
+import moment from 'moment';
 import React, { Fragment, PureComponent } from 'react';
 import AddAdmin from '../../components/AddAdmin';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -285,7 +286,9 @@ export default class Management extends PureComponent {
                       );
                     })}
                   </Col>
-                  <Col span={5}>{createTime}</Col>
+                  <Col span={5}>
+                    {moment(createTime).format('YYYY-MM-DD HH:mm:ss')}
+                  </Col>
                   <Col span={2} />
                   <Col span={1} className={styles.bor}>
                     <Dropdown

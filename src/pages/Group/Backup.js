@@ -254,7 +254,8 @@ export default class AppList extends PureComponent {
       warningText: '',
       componentList: [],
       operationPermissions: this.handlePermissions('queryAppInfo'),
-      loading: false
+      loading: false,
+      deleteLoading: false
     };
   }
 
@@ -316,7 +317,7 @@ export default class AppList extends PureComponent {
     });
   };
   handleBackup = data => {
-    if (data.force) {
+    if (data && data.force) {
       this.setState({
         loading: true
       });
@@ -443,10 +444,13 @@ export default class AppList extends PureComponent {
     });
   };
   // 删除应用备份
-  handleDel = (data, e) => {
+  handleDel = data => {
     this.setState({ showDel: true, backup_id: data.backup_id });
   };
   handleDelete = () => {
+    this.setState({
+      deleteLoading: true
+    });
     this.props.dispatch({
       type: 'application/delBackup',
       payload: {
@@ -467,9 +471,12 @@ export default class AppList extends PureComponent {
     });
   };
   cancelDelete = () => {
-    this.setState({ showDel: false, backup_id: '' }, () => {
-      this.fetchBackup();
-    });
+    this.setState(
+      { showDel: false, backup_id: '', deleteLoading: false },
+      () => {
+        this.fetchBackup();
+      }
+    );
   };
   jumpToAllbackup = () => {
     this.props.dispatch(
@@ -487,7 +494,8 @@ export default class AppList extends PureComponent {
       loadingDetail,
       list = [],
       operationPermissions: { isMigrate, isImport, isExport },
-      loading
+      loading,
+      deleteLoading
     } = this.state;
     const columns = [
       {
@@ -537,39 +545,36 @@ export default class AppList extends PureComponent {
         title: '操作',
         dataIndex: 'action',
         render: (val, data) => {
+          const backupSuccess = isMigrate && data.status === 'success';
           return (
             <div>
-              {data.status === 'success' ? (
-                <Fragment>
-                  {isMigrate && (
-                    <a
-                      style={{ marginRight: '5px' }}
-                      onClick={this.handleRecovery.bind(this, data)}
-                    >
-                      恢复
-                    </a>
-                  )}
-                  {isMigrate && (
-                    <a
-                      style={{ marginRight: '5px' }}
-                      onClick={this.handleMove.bind(this, data)}
-                    >
-                      迁移
-                    </a>
-                  )}
-                  {data.mode === 'full-online' && isExport && (
-                    <a
-                      style={{ marginRight: '5px' }}
-                      onClick={this.handleExport.bind(this, data)}
-                    >
-                      导出
-                    </a>
-                  )}
-                  <a onClick={this.handleDel.bind(this, data)}>删除</a>
-                </Fragment>
-              ) : (
-                ''
-              )}
+              <Fragment>
+                {backupSuccess && (
+                  <a
+                    style={{ marginRight: '5px' }}
+                    onClick={this.handleRecovery.bind(this, data)}
+                  >
+                    恢复
+                  </a>
+                )}
+                {backupSuccess && (
+                  <a
+                    style={{ marginRight: '5px' }}
+                    onClick={this.handleMove.bind(this, data)}
+                  >
+                    迁移
+                  </a>
+                )}
+                {data.mode === 'full-online' && isExport && (
+                  <a
+                    style={{ marginRight: '5px' }}
+                    onClick={this.handleExport.bind(this, data)}
+                  >
+                    导出
+                  </a>
+                )}
+                {<a onClick={this.handleDel.bind(this, data)}>删除</a>}
+              </Fragment>
               {data.status === 'failed' ? (
                 <Fragment>
                   <a onClick={this.handleDel.bind(this, data)}>删除</a>
@@ -693,6 +698,7 @@ export default class AppList extends PureComponent {
             title="删除备份"
             desc="确定要删除此备份吗？"
             subDesc="此操作不可恢复"
+            deleteLoading={deleteLoading}
           />
         )}
       </PageHeaderLayout>
