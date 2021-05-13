@@ -105,7 +105,6 @@ class Index extends PureComponent {
       activeMaven,
       mavenPermissions
     } = this.state;
-
     let isDefault = false;
     const Default_BUILD_MAVEN_SETTING_NAME =
       (envs && envs.BUILD_MAVEN_SETTING_NAME) ||
@@ -171,6 +170,7 @@ class Index extends PureComponent {
             ]
           })(
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               placeholder="请选择Maven配置"
               style={{ width: '300px', marginRight: '20px' }}
             >

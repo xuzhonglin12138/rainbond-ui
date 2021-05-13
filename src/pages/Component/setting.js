@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 import {
   Button,
   Card,
@@ -63,20 +64,16 @@ export default class Index extends React.Component {
       tabData: [],
       showAddMember: false,
       toEditAction: null,
-      toDeleteMember: null,
       memberslist: null,
-      buildSource: null,
-      changeBuildSource: false,
       showMarketAppDetail: false,
       showApp: {},
       // appStatus: null,
       visibleAppSetting: false,
       tags: [],
-      isInput: false,
       page: 1,
       page_size: 5,
-      total: 0,
-      env_name: ''
+      env_name: '',
+      loading: false
     };
   }
   componentDidMount() {
@@ -154,11 +151,6 @@ export default class Index extends React.Component {
         page,
         page_size,
         env_name
-      },
-      callback: res => {
-        if (res && res.status_code === 200) {
-          this.setState({ total: res.bean.total });
-        }
       }
     });
   };
@@ -322,8 +314,17 @@ export default class Index extends React.Component {
         ...startProbe,
         is_used: isUsed
       },
-      callback: () => {
-        this.fetchStartProbe();
+      callback: res => {
+        if (res && res.status_code) {
+          if (res.status_code === 200) {
+            this.fetchStartProbe();
+            if (isUsed) {
+              notification.success({ message: '启用成功,请更新组件后生效' });
+            } else {
+              notification.success({ message: '禁用成功,请更新组件后生效' });
+            }
+          }
+        }
       }
     });
   };
@@ -344,6 +345,9 @@ export default class Index extends React.Component {
   };
   handleEditHealth = vals => {
     const { startProbe } = this.props;
+    this.setState({
+      loading: true
+    });
     if (appProbeUtil.isStartProbeUsed(this.state.editStartHealth)) {
       this.props.dispatch({
         type: 'appControl/editStartProbe',
@@ -353,9 +357,12 @@ export default class Index extends React.Component {
           ...vals,
           old_mode: startProbe.mode
         },
-        callback: () => {
-          this.onCancelEditStartProbe();
-          this.fetchStartProbe();
+        callback: res => {
+          if (res && res.status_code && res.status_code === 200) {
+            this.onCancelEditStartProbe();
+            this.fetchStartProbe();
+            notification.success({ message: '编辑成功,请更新组件后生效!' });
+          }
         }
       });
     } else {
@@ -415,7 +422,7 @@ export default class Index extends React.Component {
     this.setState({ viewRunHealth: null });
   };
   onCancelEditStartProbe = () => {
-    this.setState({ editStartHealth: null });
+    this.setState({ editStartHealth: null, loading: false });
   };
   onCancelEditRunProbe = () => {
     this.setState({ editRunHealth: null });
@@ -569,33 +576,6 @@ export default class Index extends React.Component {
       isShow: false
     });
   };
-  modifyText = () => {
-    this.setState({ isInput: true });
-  };
-  handlePressenter = e => {
-    const { dispatch } = this.props;
-    const service_name = e.target.value;
-    const { baseInfo } = this.props;
-    if (service_name == baseInfo.service_name) {
-      this.setState({ isInput: false });
-      return;
-    }
-    dispatch({
-      type: 'appControl/updateServiceName',
-      payload: {
-        service_name,
-        team_name: globalUtil.getCurrTeamName(),
-        app_alias: this.props.appAlias
-      },
-      callback: data => {
-        if (data) {
-          this.fetchBaseInfo();
-          notification.success({ message: '修改成功' });
-          this.setState({ isInput: false });
-        }
-      }
-    });
-  };
 
   onChange1 = e => {
     const show =
@@ -648,7 +628,14 @@ export default class Index extends React.Component {
       teamControl,
       componentPermissions: { isDeploytype, isCharacteristic, isHealth }
     } = this.props;
-    const { viewStartHealth, is_fix, tags, tabData, isShow } = this.state;
+    const {
+      viewStartHealth,
+      is_fix,
+      tags,
+      tabData,
+      isShow,
+      loading
+    } = this.state;
 
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const formItemLayout = {
@@ -895,6 +882,7 @@ export default class Index extends React.Component {
             title="健康检测"
             data={this.state.editStartHealth}
             onCancel={this.onCancelEditStartProbe}
+            loading={loading}
           />
         )}
         {this.state.toEditAction && (

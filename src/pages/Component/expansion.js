@@ -825,7 +825,7 @@ export default class Index extends PureComponent {
                         style={{ background: '#F9FAFC', textAlign: 'center' }}
                       />
                       <div className={styles.remindDesc}>
-                        查询详细的组件实例信息，请复制查询命令到Rainbond管理节点查询
+                        查询详细的组件实例信息,请复制查询命令到集群管理节点查询
                       </div>
                     </div>
 
@@ -879,7 +879,10 @@ export default class Index extends PureComponent {
                   {getFieldDecorator('memory', {
                     initialValue: `${extendInfo.current_memory}`
                   })(
-                    <Select className={styles.memorySelect}>
+                    <Select
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                      className={styles.memorySelect}
+                    >
                       {(extendInfo.memory_list || []).map(item => (
                         <Option key={item} value={item}>
                           {sourceUtil.getMemoryAndUnit(item)}
@@ -923,7 +926,10 @@ export default class Index extends PureComponent {
                   {getFieldDecorator('node', {
                     initialValue: extendInfo.current_node
                   })(
-                    <Select className={styles.nodeSelect}>
+                    <Select
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                      className={styles.nodeSelect}
+                    >
                       {(extendInfo.node_list || []).map(item => (
                         <Option key={item} value={item}>
                           {item}

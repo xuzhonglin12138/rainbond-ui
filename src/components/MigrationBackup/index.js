@@ -118,7 +118,7 @@ export default class Index extends PureComponent {
                 `/team/${data.bean.migrate_team}/region/${data.bean.migrate_region}/apps/${data.bean.group_id}`
               )
             );
-            location.reload();
+            window.location.reload();
           }
           if (data.bean.status === 'failed') {
             // this.props.onCancel && this.props.onCancel()

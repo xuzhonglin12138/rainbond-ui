@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/sort-comp */
@@ -23,6 +25,7 @@ import WarningImg from '../../../public/images/warning.png';
 import ConfirmModal from '../../components/ConfirmModal';
 import CreateTeam from '../../components/CreateTeam';
 import JoinTeam from '../../components/JoinTeam';
+import OpenRegion from '../../components/OpenRegion';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import roleUtil from '../../utils/role';
 import userUtil from '../../utils/user';
@@ -59,6 +62,7 @@ export default class EnterpriseTeams extends PureComponent {
       total: 1,
       joinTeam: false,
       delTeamLoading: false,
+      showOpenRegion: false,
       initShow: false
     };
   }
@@ -404,6 +408,26 @@ export default class EnterpriseTeams extends PureComponent {
       }
     });
   };
+
+  handleOpenRegion = regions => {
+    const { openRegionTeamName } = this.state;
+    this.props.dispatch({
+      type: 'teamControl/openRegion',
+      payload: {
+        team_name: openRegionTeamName,
+        region_names: regions.join(',')
+      },
+      callback: () => {
+        this.load();
+        this.cancelOpenRegion();
+      }
+    });
+  };
+
+  cancelOpenRegion = () => {
+    this.setState({ showOpenRegion: false, openRegionTeamName: '' });
+  };
+
   onJumpTeam = (team_name, region) => {
     const { dispatch } = this.props;
     dispatch(routerRedux.push(`/team/${team_name}/region/${region}/index`));
@@ -508,6 +532,18 @@ export default class EnterpriseTeams extends PureComponent {
               }}
             >
               关闭所有组件
+            </a>
+          </Menu.Item>
+          <Menu.Item>
+            <a
+              onClick={() => {
+                this.setState({
+                  showOpenRegion: true,
+                  openRegionTeamName: exitTeamName
+                });
+              }}
+            >
+              开通集群
             </a>
           </Menu.Item>
           <Menu.Item>
@@ -633,8 +669,7 @@ export default class EnterpriseTeams extends PureComponent {
               team_id,
               team_name,
               team_alias,
-              owner_name,
-              role
+              owner_name
             } = item;
             return (
               <Card
@@ -807,6 +842,14 @@ export default class EnterpriseTeams extends PureComponent {
             onCancel={this.cancelCreateTeam}
           />
         )}
+        {initShow && (
+          <CreateTeam
+            title="创建您的第一个团队"
+            enterprise_id={eid}
+            onOk={this.handleCreateTeam}
+            onCancel={this.cancelCreateTeam}
+          />
+        )}
         {this.state.showExitTeam && (
           <ConfirmModal
             onOk={this.handleExitTeam}
@@ -833,6 +876,13 @@ export default class EnterpriseTeams extends PureComponent {
             subDesc="此操作不可恢复"
             desc="确定要删除此团队和团队下的所有资源吗？"
             onCancel={this.hideDelTeam}
+          />
+        )}
+        {this.state.showOpenRegion && (
+          <OpenRegion
+            onSubmit={this.handleOpenRegion}
+            onCancel={this.cancelOpenRegion}
+            teamName={this.state.openRegionTeamName}
           />
         )}
 

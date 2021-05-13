@@ -5,7 +5,9 @@ import {
   Button,
   Card,
   Dropdown,
+  Form,
   Icon,
+  Input,
   Menu,
   notification,
   Popconfirm,
@@ -50,7 +52,10 @@ export default class ComponentList extends Component {
       moveGroupShow: false,
       batchDeleteApps: [],
       batchDeleteShow: false,
-      operationState: false
+      operationState: false,
+      query: '',
+      changeQuery: '',
+      tableDataLoading: true
     };
   }
   componentDidMount() {
@@ -84,6 +89,9 @@ export default class ComponentList extends Component {
     return res;
   }
   updateApp = () => {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     this.loadComponents();
     const { clearTime } = this.props;
     this.timer = setInterval(() => {
@@ -94,7 +102,7 @@ export default class ComponentList extends Component {
   };
   loadComponents = () => {
     const { dispatch, groupId } = this.props;
-    const { current, pageSize } = this.state;
+    const { current, pageSize, query } = this.state;
     dispatch({
       type: 'application/fetchApps',
       payload: {
@@ -102,13 +110,15 @@ export default class ComponentList extends Component {
         region_name: globalUtil.getCurrRegionName(),
         group_id: groupId,
         page: current,
-        page_size: pageSize
+        page_size: pageSize,
+        query
       },
       callback: data => {
         if (data && data.status_code === 200) {
           this.setState({
             apps: data.list || [],
-            total: data.total || 0
+            total: data.total || 0,
+            tableDataLoading: false
           });
         }
       }
@@ -117,7 +127,7 @@ export default class ComponentList extends Component {
 
   deleteData = () => {
     const { dispatch, groupId } = this.props;
-    const { current, pageSize } = this.state;
+    const { current, pageSize, query } = this.state;
     dispatch({
       type: 'application/fetchApps',
       payload: {
@@ -125,7 +135,8 @@ export default class ComponentList extends Component {
         region_name: globalUtil.getCurrRegionName(),
         group_id: groupId,
         page: current,
-        page_size: pageSize
+        page_size: pageSize,
+        query
       },
       callback: data => {
         if (data && data.status_code === 200) {
@@ -248,7 +259,23 @@ export default class ComponentList extends Component {
     const arr = this.getSelected();
     return arr && arr.length > 0;
   };
+  handelChange = e => {
+    this.setState({
+      changeQuery: e.target.value
+    });
+  };
 
+  handleSearch = () => {
+    this.setState(
+      {
+        tableDataLoading: true,
+        query: this.state.changeQuery
+      },
+      () => {
+        this.updateApp();
+      }
+    );
+  };
   render() {
     const {
       componentPermissions: {
@@ -276,7 +303,8 @@ export default class ComponentList extends Component {
       batchDeleteShow,
       batchDeleteApps,
       moveGroupShow,
-      operationState
+      operationState,
+      tableDataLoading
     } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -535,13 +563,33 @@ export default class ComponentList extends Component {
           bordered={false}
           bodyStyle={{ padding: '10px 10px' }}
         >
+          <Form layout="inline" style={{ marginBottom: '10px' }}>
+            <Form.Item>
+              <Input
+                style={{ width: 250 }}
+                placeholder="请搜索组件"
+                onChange={this.handelChange}
+                onPressEnter={this.handleSearch}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" onClick={this.handleSearch} icon="search">
+                搜索
+              </Button>
+            </Form.Item>
+          </Form>
           <ScrollerX sm={750}>
             <Table
               style={{ position: 'relative' }}
               pagination={pagination}
               rowSelection={rowSelection}
               columns={columns}
-              loading={reStartLoading || startLoading || stopLoading}
+              loading={
+                reStartLoading ||
+                startLoading ||
+                stopLoading ||
+                tableDataLoading
+              }
               dataSource={apps || []}
               footer={() => footer}
             />
