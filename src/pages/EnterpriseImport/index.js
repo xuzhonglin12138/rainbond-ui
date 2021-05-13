@@ -387,7 +387,7 @@ export default class EnterpriseShared extends PureComponent {
           <Card bodyStyle={{ padding: '0 0 0 27px' }} className={styles.mb10}>
             <Row className={styles.box}>
               <Col span={23} className={styles.con}>
-                上传Rainbond APP文件
+                上传APP文件
                 {percents && (
                   <Progress
                     percent={parseInt(percents)}
@@ -478,6 +478,7 @@ export default class EnterpriseShared extends PureComponent {
                   <Radio style={radioStyle} value="team">
                     上传到团队
                     <Select
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
                       size="small"
                       defaultValue="请选择一个团队"
                       style={{ width: 150, marginLeft: '15px' }}

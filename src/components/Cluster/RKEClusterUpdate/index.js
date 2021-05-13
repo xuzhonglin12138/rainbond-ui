@@ -96,6 +96,7 @@ class EditableCell extends React.Component {
         })(
           dataIndex === 'roles' ? (
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               ref={node => (this.input = node)}
               onPressEnter={this.save}
               onBlur={this.save}
@@ -423,9 +424,7 @@ export default class RKEClusterConfig extends PureComponent {
                     </span>
                   </li>
                   <li>
-                    <span>
-                      Kubernetes 集群扩容成功后自动纳入 Rainbond 管理。
-                    </span>
+                    <span>Kubernetes 集群扩容成功后自动纳入平台管理。</span>
                   </li>
                 </ul>
               </Paragraph>

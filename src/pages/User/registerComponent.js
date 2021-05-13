@@ -5,6 +5,7 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import React, { Component } from 'react';
+import apiconfig from '../../../config/api.config';
 import userUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Register.less';
@@ -24,7 +25,8 @@ export default class RegisterComponent extends Component {
   state = {
     confirmDirty: false,
     visible: false,
-    help: ''
+    help: '',
+    time: Date.now()
   };
   componentDidMount() {
     userUtil.removeCookie();
@@ -32,6 +34,18 @@ export default class RegisterComponent extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getPasswordStatus = () => {
+    const { form } = this.props;
+    const value = form.getFieldValue('password');
+    if (value && value.length > 9) {
+      return 'ok';
+    }
+    if (value && value.length > 5) {
+      return 'pass';
+    }
+    return 'poor';
+  };
 
   handleSubmit = e => {
     e.preventDefault();
@@ -91,6 +105,12 @@ export default class RegisterComponent extends Component {
     }
   };
 
+  changeTime = () => {
+    this.setState({
+      time: Date.now()
+    });
+  };
+
   render() {
     const {
       form,
@@ -102,7 +122,7 @@ export default class RegisterComponent extends Component {
     } = this.props;
     const { getFieldDecorator } = form;
     const firstRegist = !rainbondUtil.fetchIsFirstRegist(rainbondInfo);
-    const { help } = this.state;
+    const { help, time } = this.state;
     return (
       <Form onSubmit={this.handleSubmit}>
         {firstRegist && (
@@ -221,7 +241,14 @@ export default class RegisterComponent extends Component {
               )}
             </Col>
             <Col span={8}>
-              <div id="codeImg" onClick={this.getSetCodeImg} />
+              <img
+                onClick={this.changeTime}
+                src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
+                style={{
+                  width: '100%',
+                  height: 40
+                }}
+              />
             </Col>
           </Row>
         </FormItem>
@@ -253,7 +280,7 @@ export default class RegisterComponent extends Component {
               span={24}
               style={{ fontSize: 12, marginTop: -12, color: '#666666' }}
             >
-              请注意：注册使用即同意 Rainbond 发行版用户许可协议。
+              请注意：注册使用即同意产品发行版用户许可协议。
             </Col>
           </Row>
         )}

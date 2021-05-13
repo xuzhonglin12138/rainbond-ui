@@ -103,7 +103,11 @@ class CreateOAuthForm extends PureComponent {
               initialValue: oauthInfo ? oauthInfo.oauth_type : 'github',
               rules: [{ required: true, message: '请选择oauth_type类型' }]
             })(
-              <Select disabled={edit} placeholder="请选择要oauth_type类型">
+              <Select
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                disabled={edit}
+                placeholder="请选择要oauth_type类型"
+              >
                 {oauthList &&
                   oauthList.map(item => (
                     <Option key={item} value={item}>
@@ -235,7 +239,13 @@ class CreateOAuthForm extends PureComponent {
                   message: '最大长度255位'
                 }
               ]
-            })(<Input placeholder="请输入平台访问域名" />)}
+            })(
+              <Input
+                placeholder="请输入回调地址"
+                suffix={<span>/console/oauth/redirect</span>}
+              />
+            )}
+
             <div className={styles.conformDesc}>
               回调地址是用于 OAuth
               认证完回跳时的访问地址，默认填充为当前访问地址。通常也需要您在

@@ -1,4 +1,5 @@
 /* eslint-disable react/no-redundant-should-component-update */
+/* eslint-disable react/no-unused-state */
 import { Form, Input, Modal, notification, Select } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';
@@ -130,7 +131,11 @@ export default class ChangeBuildSource extends PureComponent {
     const prefixSelector = getFieldDecorator('server_type', {
       initialValue: this.state.buildSource.server_type
     })(
-      <Select onChange={this.changeServerType} style={{ width: 100 }}>
+      <Select
+        getPopupContainer={triggerNode => triggerNode.parentNode}
+        onChange={this.changeServerType}
+        style={{ width: 100 }}
+      >
         <Option value="git">Git</Option>
         <Option value="svn">Svn</Option>
       </Select>
@@ -144,7 +149,10 @@ export default class ChangeBuildSource extends PureComponent {
     const versionSelector = getFieldDecorator('version_type', {
       initialValue: versionType
     })(
-      <Select style={{ width: 100 }}>
+      <Select
+        getPopupContainer={triggerNode => triggerNode.parentNode}
+        style={{ width: 100 }}
+      >
         <Option value="branch">分支</Option>
         <Option value="tag">Tag</Option>
       </Select>
@@ -264,7 +272,7 @@ export default class ChangeBuildSource extends PureComponent {
 
           {gitUrl && isSSH ? (
             <div style={{ textAlign: 'left' }}>
-              这是一个私有仓库?{' '}
+              这是一个私有仓库?
               <a
                 onClick={() => {
                   this.setState({ showKey: true });
@@ -279,7 +287,7 @@ export default class ChangeBuildSource extends PureComponent {
           )}
           {gitUrl && isHttp ? (
             <div style={{ textAlign: 'left' }}>
-              这是一个私有仓库?{' '}
+              这是一个私有仓库?
               <a
                 onClick={() => {
                   this.setState({ showUsernameAndPass: true });

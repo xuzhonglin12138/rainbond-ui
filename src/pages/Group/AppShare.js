@@ -101,7 +101,7 @@ class AppInfo extends PureComponent {
     this.props.form.setFieldsValue({ [name]: e.target.checked });
   };
   renderConnectInfo = () => {
-    const { app = {}, form } = this.props;
+    const { app = {}, form, ID } = this.props;
     const { getFieldDecorator } = form;
     if (
       app.service_connect_info_map_list &&
@@ -125,41 +125,34 @@ class AppInfo extends PureComponent {
             {app.service_connect_info_map_list.map((item, index) => (
               <Col key={`connection_${index}`} span={8}>
                 <FormItem label={item.attr_name} style={{ padding: 16 }}>
-                  {getFieldDecorator(`connect||${item.attr_name}||attr_value`, {
-                    initialValue: item.attr_value,
-                    rules: [
-                      {
-                        required: true,
-                        message: '不能为空'
-                      }
-                    ]
-                  })(<Input placeholder={item.attr_value} />)}
-                  {getFieldDecorator(`connect||${item.attr_name}||random`, {
-                    valuePropName: 'checked',
-                    initialValue: item.attr_value === '**None**'
-                  })(
+                  {getFieldDecorator(
+                    `connect||${item.attr_name}||attr_value||${ID}`,
+                    {
+                      initialValue: item.attr_value,
+                      rules: [
+                        {
+                          required: true,
+                          message: '不能为空'
+                        }
+                      ]
+                    }
+                  )(<Input placeholder={item.attr_value} />)}
+                  {getFieldDecorator(
+                    `connect||${item.attr_name}||random||${ID}`,
+                    {
+                      valuePropName: 'checked',
+                      initialValue: item.attr_value === '**None**'
+                    }
+                  )(
                     <Checkbox
                       // eslint-disable-next-line react/jsx-no-bind
                       onChange={this.handleCheckChange.bind(
                         this,
-                        `connect||${item.attr_name}||attr_value`,
+                        `connect||${item.attr_name}||attr_value||${ID}`,
                         item.attr_value
                       )}
                     >
                       生成随机值
-                    </Checkbox>
-                  )}
-                  {getFieldDecorator(`connectIsChange||${item.attr_name}`, {
-                    valuePropName: 'checked',
-                    initialValue: item.is_change
-                  })(
-                    <Checkbox
-                      onChange={this.handleIsChange.bind(
-                        this,
-                        `connectIsChange||${item.attr_name}`
-                      )}
-                    >
-                      可修改
                     </Checkbox>
                   )}
                 </FormItem>
@@ -173,7 +166,7 @@ class AppInfo extends PureComponent {
   };
 
   renderEvn = () => {
-    const { app = {}, form } = this.props;
+    const { app = {}, form, ID } = this.props;
     const { getFieldDecorator } = form;
     if (app.service_env_map_list && app.service_env_map_list.length) {
       return (
@@ -192,35 +185,19 @@ class AppInfo extends PureComponent {
           <Divider />
           <Row>
             {app.service_env_map_list.map(item => {
-              const { attr_name, attr_value, is_change } = item;
+              const { attr_name, attr_value } = item;
               return (
                 <Col span={8}>
                   <FormItem label={attr_name} style={{ padding: 16 }}>
-                    {getFieldDecorator(
-                      `env||${attr_name}`,
-                      {
-                        initialValue: attr_value,
-                        rules: [
-                          {
-                            required: false,
-                            message: '不能为空'
-                          }
-                        ]
-                      }
-                    )(<Input />)}
-                    {getFieldDecorator(`envIschange||${attr_name}`, {
-                      valuePropName: 'checked',
-                      initialValue: is_change
-                    })(
-                      <Checkbox
-                        onChange={this.handleIsChange.bind(
-                          this,
-                          `envIschange||${attr_name}`
-                        )}
-                      >
-                        可修改
-                      </Checkbox>
-                    )}
+                    {getFieldDecorator(`env||${attr_name}||${ID}`, {
+                      initialValue: attr_value,
+                      rules: [
+                        {
+                          required: false,
+                          message: '不能为空'
+                        }
+                      ]
+                    })(<Input />)}
                   </FormItem>
                 </Col>
               );
@@ -683,53 +660,52 @@ export default class Main extends PureComponent {
         comdata.map(app => {
           const apptab = app.props.tab;
           let appvalue = null;
-          app.props.form.validateFields((err, val) => {
-            if (!err) {
+          app.props.form.validateFields((errs, val) => {
+            if (!errs) {
               appvalue = val;
             }
           });
           share_service_data.map(option => {
+            const ID = option.service_id;
             if (option.service_alias == apptab) {
               // eslint-disable-next-line no-restricted-syntax
-              for (var index in appvalue) {
+              for (const index in appvalue) {
                 var indexarr = [];
                 indexarr = index.split('||');
-                if (indexarr[0] == 'connect' && indexarr[2] != 'random') {
-                  option.service_connect_info_map_list.map(serapp => {
-                    if (serapp.attr_name == indexarr[1]) {
-                      serapp[indexarr[2]] = appvalue[index];
-                    }
-                  });
-                }
-                if (indexarr[0] === 'env') {
-                  option.service_env_map_list.map(serapp => {
-                    const {
-                      attr_name: attrName,
-                      attr_value: attrValue
-                    } = serapp;
-                    if (attrName === indexarr[1]) {
-                      serapp.attr_value = appvalue[index];
-                    }
-                  });
-                }
+                const firstInfo =
+                  indexarr && indexarr.length > 0 && indexarr[0];
+                if (firstInfo) {
+                  const isConnect = firstInfo === 'connect';
+                  const isEnv = firstInfo === 'env';
 
-                if (indexarr[0] === 'envIschange') {
-                  option.service_env_map_list.map(serapp => {
-                    const { attr_name: attrName } = serapp;
-                    if (attrName === indexarr[1]) {
-                      serapp.is_change = appvalue[index];
-                    }
-                  });
-                }
-                if (indexarr[0] === 'connectIsChange') {
-                  option.service_connect_info_map_list.map(serapp => {
-                    if (serapp.attr_name == indexarr[1]) {
-                      serapp.is_change = appvalue[index];
-                    }
-                  });
-                }
-                if (indexarr[0] === 'extend') {
-                  option.extend_method_map[indexarr[1]] = appvalue[index];
+                  if (isConnect && indexarr[2] != 'random') {
+                    option.service_connect_info_map_list.map(serapp => {
+                      if (
+                        isConnect &&
+                        indexarr[2] != 'random' &&
+                        serapp.attr_name == indexarr[1] &&
+                        ID === indexarr[3]
+                      ) {
+                        serapp[indexarr[2]] = appvalue[index];
+                        serapp.is_change = true;
+                      }
+                    });
+                  }
+
+                  if (isEnv) {
+                    option.service_env_map_list.map(serapp => {
+                      const { attr_name: attrName } = serapp;
+                      if (attrName === indexarr[1] && ID === indexarr[2]) {
+                        if (isEnv) {
+                          serapp.attr_value = appvalue[index];
+                          serapp.is_change = true;
+                        }
+                      }
+                    });
+                  }
+                  if (firstInfo === 'extend') {
+                    option.extend_method_map[indexarr[1]] = appvalue[index];
+                  }
                 }
               }
             }
@@ -758,9 +734,9 @@ export default class Main extends PureComponent {
               );
             }
           },
-          handleError: err => {
+          handleError: errs => {
             this.setState({ submitLoading: false });
-            const data = err && err.data;
+            const data = errs && errs.data;
             const msg = data && data.msg_show;
             if (data && data.code && data.code === 10501) {
               notification.warning({ message: '提示', description: msg });
@@ -1097,6 +1073,9 @@ export default class Main extends PureComponent {
                       ]
                     })(
                       <Select
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
                         style={{ width: 280 }}
                         onChange={this.changeCurrentModel}
                         placeholder="选择发布的应用模版"
@@ -1259,47 +1238,35 @@ export default class Main extends PureComponent {
                     }}
                   >
                     {apps.map(apptit => {
+                      const id = apptit.service_share_uuid;
                       return (
                         <TabPane
-                          key={apptit.service_share_uuid}
+                          key={id}
                           tab={
                             <span className={mytabcss.cont}>
                               <a
                                 tab={apptit.service_cname}
                                 onClick={() => {
-                                  this.tabClick(apptit.service_share_uuid);
+                                  this.tabClick(id);
                                 }}
                               >
                                 {apptit.service_cname}
                               </a>
                             </span>
                           }
-                        />
+                        >
+                          <AppInfo
+                            key={id}
+                            form={form}
+                            app={apptit}
+                            getref={this.save}
+                            tab={apptit.service_alias}
+                            ID={apptit.service_id}
+                          />
+                        </TabPane>
                       );
                     })}
                   </Tabs>
-                  {apps.map(apptit => {
-                    const id = apptit.service_share_uuid;
-                    return (
-                      <div
-                        style={{
-                          display:
-                            sharearrs.includes(tabk) && id === tabk
-                              ? 'block'
-                              : 'none'
-                        }}
-                      >
-                        <AppInfo
-                          key={id}
-                          form={form}
-                          app={apptit}
-                          getref={this.save}
-                          tab={apptit.service_alias}
-                          ID={apptit.service_id}
-                        />
-                      </div>
-                    );
-                  })}
                 </div>
               </div>
             </div>

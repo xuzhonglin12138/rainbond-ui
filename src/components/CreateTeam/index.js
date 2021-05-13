@@ -24,8 +24,8 @@ class CreateTeam extends PureComponent {
       this.getUnRelationedApp(ID);
     }
   }
-  getUnRelationedApp = enterprise_id => {
-    getAllRegion({ enterprise_id, status: '1' }).then(data => {
+  getUnRelationedApp = ID => {
+    getAllRegion({ enterprise_id: ID, status: '1' }).then(data => {
       if (data) {
         this.setState({ regions: data.list || [] });
       }
@@ -98,6 +98,7 @@ class CreateTeam extends PureComponent {
               ]
             })(
               <Select
+                getPopupContainer={triggerNode => triggerNode.parentNode}
                 mode="multiple"
                 style={{ width: '100%' }}
                 placeholder="选择集群"

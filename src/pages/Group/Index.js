@@ -68,7 +68,9 @@ class Main extends PureComponent {
       rapidCopy: false,
       componentTimer: true,
       customSwitch: false,
-      resources: {}
+      resources: {},
+      upgradableNum: 0,
+      upgradableNumLoading: true
     };
   }
 
@@ -225,7 +227,6 @@ class Main extends PureComponent {
       callback();
     }, times);
   };
-
   fetchAppDetail = () => {
     const { dispatch } = this.props;
     const { teamName, regionName, appID } = this.props.match.params;
@@ -254,6 +255,22 @@ class Main extends PureComponent {
               `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps`
             )
           );
+        }
+      }
+    });
+    dispatch({
+      type: 'application/fetchToupgrade',
+      payload: {
+        team_name: teamName,
+        group_id: appID
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          const info = res.bean;
+          this.setState({
+            upgradableNumLoading: false,
+            upgradableNum: (info && info.upgradable_num) || 0
+          });
         }
       }
     });
@@ -534,7 +551,9 @@ class Main extends PureComponent {
       toDelete,
       type,
       customSwitch,
-      serviceIds
+      serviceIds,
+      upgradableNumLoading,
+      upgradableNum
     } = this.state;
     const codeObj = {
       start: '启动',
@@ -805,7 +824,7 @@ class Main extends PureComponent {
                   isUpgrade && this.handleJump('upgrade');
                 }}
               >
-                <a>{currApp.upgradable_num || 0}</a>
+                <a>{upgradableNumLoading ? <Spin /> : upgradableNum}</a>
               </div>
             </div>
 

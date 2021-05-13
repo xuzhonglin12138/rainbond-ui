@@ -103,8 +103,9 @@ class EvnOption extends React.Component {
             rules: [{ required: false, message: '协议' }]
           })(
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={values => {
-                this.handleOnchange('protocal', values);
+                this.handleOnchange('protocol', values);
               }}
               style={{ width: 100 }}
             >
@@ -121,6 +122,7 @@ class EvnOption extends React.Component {
             rules: [{ required: true, message: '属性名' }]
           })(
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={values => {
                 this.handleOnchange('attr_type', values);
               }}
@@ -168,6 +170,7 @@ class EvnOption extends React.Component {
             rules: [{ required: false, message: '默认值' }]
           })(
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={values => {
                 this.handleOnchange('is_change', values);
               }}
@@ -223,7 +226,6 @@ class EnvGroup extends PureComponent {
       onDidMount(this);
     }
   }
-
   check() {
     let res = true;
     for (let i = 0; i < this.groupItem.length; i++) {
@@ -254,7 +256,7 @@ class EnvGroup extends PureComponent {
     setGroup = group.filter(item => !!item).filter(item => item.key !== key);
     this.setState({ group: setGroup }, () => {
       if (onChange) {
-        onChange(group.map(item => item.value));
+        onChange(setGroup.map(item => item.value));
       }
     });
   };

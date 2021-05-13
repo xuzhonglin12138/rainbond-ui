@@ -42,7 +42,16 @@ class CreateUserForm extends PureComponent {
       }
     });
   };
-  checkAccountPass = (rule, value, callback) => {
+  handleSubmit = () => {
+    const { form, onOk } = this.props;
+    form.validateFields((err, values) => {
+      if (!err && onOk) {
+        onOk(values);
+      }
+    });
+  };
+
+  checkAccountPass = (_, value, callback) => {
     if (!value) {
       callback('请填写密码');
     } else if (value && value.length < 8) {
@@ -52,14 +61,6 @@ class CreateUserForm extends PureComponent {
     } else {
       callback();
     }
-  };
-  handleSubmit = () => {
-    const { form, onOk } = this.props;
-    form.validateFields((err, values) => {
-      if (!err && onOk) {
-        onOk(values);
-      }
-    });
   };
 
   render() {
@@ -102,7 +103,7 @@ class CreateUserForm extends PureComponent {
                   { required: true, message: '请填写用户名!' },
                   {
                     pattern: /^[a-zA-Z0-9_\-]+$/,
-                    message: '只支持小写英文字母、数字、下划线、中划线'
+                    message: '只支持英文字母、数字、下划线、中划线'
                   },
                   {
                     min: 3,
@@ -169,10 +170,6 @@ class CreateUserForm extends PureComponent {
                 {getFieldDecorator('email', {
                   rules: [
                     { required: true, message: '请填写邮箱!' },
-                    {
-                      max: 30,
-                      message: '最大长度30位'
-                    },
                     { type: 'email', message: '邮箱格式不正确!' }
                   ]
                 })(
@@ -218,6 +215,7 @@ class CreateUserForm extends PureComponent {
                   rules: [{ required: false, message: '请选择用户角色!' }]
                 })(
                   <Select
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     mode="multiple"
                     style={{ width: '100%' }}
                     placeholder="请选择用户角色"

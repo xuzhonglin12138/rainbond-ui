@@ -95,6 +95,7 @@ class EditableCell extends React.Component {
         })(
           dataIndex === 'roles' ? (
             <Select
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               ref={node => (this.input = node)}
               onPressEnter={this.save}
               onBlur={this.save}
@@ -190,7 +191,6 @@ export default class RKEClusterConfig extends PureComponent {
     const { dataSource } = this.state;
     form.validateFields((err, fieldsValue) => {
       if (err) {
-        console.log(err);
         return;
       }
       if (dataSource.length < 1) {
