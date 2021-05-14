@@ -385,8 +385,7 @@ class Infrastructure extends PureComponent {
         favicon: fetchFavicon
       };
     }
-    const enterpriseEdition =
-      true || rainbondUtil.isEnterpriseEdition(rainbondInfo);
+    const enterpriseEdition = rainbondUtil.isEnterpriseEdition(rainbondInfo);
 
     const {
       enterpriseAdminLoading,
