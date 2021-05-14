@@ -2,7 +2,7 @@
 /* eslint-disable no-const-assign */
 /* eslint-disable prefer-destructuring */
 import UploadForm from '@/components/UploadForm';
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, Switch } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';
 import cookie from '../../utils/cookie';
@@ -122,6 +122,12 @@ export default class PlatformBasicInformationForm extends PureComponent {
               initialValue: data.doc_url || ''
             })(<Input placeholder="请输入文档地址" />)}
           </FormItem>
+          <FormItem {...formItemLayout} label="官方DEMO">
+            {getFieldDecorator('enable_official_demo')(
+              <Switch defaultChecked={data.officialDemo || false} />
+            )}
+          </FormItem>
+
           <UploadForm
             {...parameters}
             name="logo"
