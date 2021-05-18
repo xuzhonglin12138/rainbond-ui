@@ -269,6 +269,7 @@ export default class ComponentList extends Component {
     this.setState(
       {
         tableDataLoading: true,
+        current: 1,
         query: this.state.changeQuery
       },
       () => {
@@ -592,6 +593,7 @@ export default class ComponentList extends Component {
               }
               dataSource={apps || []}
               footer={() => footer}
+              scroll={{ y: 240 }}
             />
           </ScrollerX>
           {batchDeleteShow && (

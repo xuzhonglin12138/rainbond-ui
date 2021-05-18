@@ -35,7 +35,7 @@ class ConfirmModal extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { onCancel } = this.props;
+    const { onCancel, actions } = this.props;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -46,7 +46,7 @@ class ConfirmModal extends PureComponent {
         sm: { span: 14 }
       }
     };
-    const options = [];
+    const options = actions || [];
     const members = this.props.members || [];
     return (
       <Modal

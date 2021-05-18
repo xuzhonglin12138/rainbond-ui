@@ -1007,7 +1007,6 @@ export default class Main extends PureComponent {
 
     const {
       shareModal,
-      sharearrs,
       models,
       appDetail,
       showCreateAppModel,

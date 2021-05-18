@@ -573,7 +573,7 @@ class Infrastructure extends PureComponent {
           <Col span={3}>基础信息</Col>
           <Col span={17}>
             <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
-              可以修改网站的标题、企业名称、LOGO、网页图标。
+              可以修改网站的标题、企业名称、文档地址、LOGO、网页图标。
             </span>
           </Col>
           <Col span={4} style={{ textAlign: 'right' }}>

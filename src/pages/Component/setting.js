@@ -637,7 +637,7 @@ export default class Index extends React.Component {
       loading
     } = this.state;
 
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
         xs: {
