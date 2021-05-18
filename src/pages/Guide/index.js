@@ -118,7 +118,6 @@ export default class Index extends PureComponent {
 
   handleOkApplication = vals => {
     const { dispatch } = this.props;
-    const { GuideList } = this.state;
     dispatch({
       type: 'application/addGroup',
       payload: {

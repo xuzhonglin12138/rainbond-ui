@@ -48,11 +48,9 @@ export default class Index extends PureComponent {
       app_page: 1,
       apps: [],
       checkedList: [],
-      inputValue: '',
       checkAllList: [],
       indeterminate: false,
       checkAll: true,
-      errInput: '',
       addGroup: false
     };
   }
@@ -302,7 +300,7 @@ export default class Index extends PureComponent {
       ...item,
       ...row
     });
-    this.setState({ inputValue: '', dataSource: newData });
+    this.setState({ dataSource: newData });
   };
 
   handleOverDiv = content => {
@@ -321,30 +319,10 @@ export default class Index extends PureComponent {
     callback();
   };
 
-  onGroupChange = checkedList => {
-    const { checkAllList } = this.state;
-    this.setState({
-      checkedList,
-      indeterminate:
-        !!checkedList.length && checkedList.length < checkAllList.length,
-      checkAll: checkedList.length === checkAllList.length
-    });
-  };
-
-  onCheckAllChange = e => {
-    const { checkAllList } = this.state;
-    this.setState({
-      checkedList: e.target.checked ? checkAllList : [],
-      indeterminate: false,
-      checkAll: e.target.checked
-    });
-  };
-
-  save = (item, isCodeApp) => {
-    const { inputValue } = this.state;
+  save = (item, isCodeApp, val) => {
     const names = isCodeApp ? 'code_version' : 'version';
     const str = item;
-    str.build_source[names] = inputValue;
+    str.build_source[names] = val;
     this.handleSave({ ...str });
   };
 
@@ -360,8 +338,7 @@ export default class Index extends PureComponent {
       Loading,
       addGroup,
       indeterminate,
-      checkAll,
-      errInput
+      checkAll
     } = this.state;
     const userTeams = userTeamList && userTeamList.length > 0 && userTeamList;
     let defaultTeamRegion = '';
@@ -566,20 +543,14 @@ export default class Index extends PureComponent {
                       })(
                         <Input
                           addonBefore={versionSelector}
-                          onPressEnter={() => {
-                            this.save(item, isCodeApp);
+                          onPressEnter={e => {
+                            this.save(item, isCodeApp, e.target.value);
                           }}
-                          onBlur={() => {
-                            this.save(item, isCodeApp);
+                          onBlur={e => {
+                            this.save(item, isCodeApp, e.target.value);
                           }}
                           style={{
                             width: '268px'
-                          }}
-                          onChange={e => {
-                            this.setState({
-                              errInput: e.target.value,
-                              inputValue: e.target.value
-                            });
                           }}
                         />
                       )}

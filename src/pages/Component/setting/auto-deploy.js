@@ -420,7 +420,6 @@ export default class AutoDeploy extends PureComponent {
                     ''
                   }
                 >
-                  {' '}
                   <Icon type="question-circle-o" />
                 </Tooltip>
               </span>

@@ -18,7 +18,6 @@ import React, { Fragment, PureComponent } from 'react';
 import AddAdmin from '../../components/AddAdmin';
 import ConfirmModal from '../../components/ConfirmModal';
 import styles from './index.less';
-
 @connect(({ user, loading, global }) => ({
   user: user.currentUser,
   loading: loading.models.list,

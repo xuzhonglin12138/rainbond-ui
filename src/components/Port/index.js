@@ -32,7 +32,10 @@ class ChangeProtocol extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.protocol || 'http'
+      value: this.props.protocol || 'http',
+      visibleModal: false,
+      agreement: '',
+      NotHttpConnectInfo: []
     };
   }
   onChange = value => {
@@ -95,6 +98,7 @@ export default class Index extends PureComponent {
     super(props);
     this.state = {
       editProtocol: false,
+      showDomain: false,
       list: []
     };
   }

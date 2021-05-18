@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-indent */
+/* eslint-disable no-nested-ternary */
 import { Button, Form, Input, Select } from 'antd';
 import { connect } from 'dva';
 import React, { Fragment, PureComponent } from 'react';
@@ -17,7 +19,7 @@ const formItemLayout = {
 };
 
 @connect(
-  ({ user, global, loading }) => ({
+  ({ global, loading }) => ({
     groups: global.groups,
     createAppByDockerrunLoading:
       loading.effects['createApp/createAppByDockerrun']
@@ -31,9 +33,7 @@ export default class Index extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      codeType: 'Git',
       showUsernameAndPass: false,
-      showKey: false,
       addGroup: false
     };
   }
@@ -70,20 +70,25 @@ export default class Index extends PureComponent {
       }
     });
   };
-  hideShowKey = () => {
-    this.setState({ showKey: false });
-  };
   handleSubmit = e => {
     e.preventDefault();
-    const { form } = this.props;
+    const { form, onSubmit } = this.props;
     form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      this.props.onSubmit && this.props.onSubmit(fieldsValue);
+      if (!err && onSubmit) {
+        onSubmit(fieldsValue);
+      }
     });
   };
   render() {
-    const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { groups, createAppByDockerrunLoading } = this.props;
+    const {
+      groups,
+      createAppByDockerrunLoading,
+      form,
+      groupId,
+      handleType,
+      ButtonGroupState
+    } = this.props;
+    const { getFieldDecorator } = form;
     const data = this.props.data || {};
     const showSubmitBtn =
       this.props.showSubmitBtn === void 0 ? true : this.props.showSubmitBtn;
@@ -96,8 +101,8 @@ export default class Index extends PureComponent {
           <Form.Item {...formItemLayout} label="应用名称">
             {getFieldDecorator('group_id', {
               initialValue:
-                this.props.handleType && this.props.handleType === 'Service'
-                  ? Number(this.props.groupId)
+                handleType && handleType === 'Service'
+                  ? Number(groupId)
                   : data.group_id,
               rules: [{ required: true, message: '请选择' }]
             })(
@@ -106,17 +111,10 @@ export default class Index extends PureComponent {
                 placeholder="请选择要所属应用"
                 style={{
                   display: 'inline-block',
-                  width:
-                    this.props.handleType && this.props.handleType === 'Service'
-                      ? ''
-                      : 292,
+                  width: handleType && handleType === 'Service' ? '' : 292,
                   marginRight: 15
                 }}
-                disabled={
-                  !!(
-                    this.props.handleType && this.props.handleType === 'Service'
-                  )
-                }
+                disabled={!!(handleType && handleType === 'Service')}
               >
                 {(groups || []).map(group => {
                   return (
@@ -125,8 +123,7 @@ export default class Index extends PureComponent {
                 })}
               </Select>
             )}
-            {this.props.handleType &&
-            this.props.handleType === 'Service' ? null : showCreateGroup ? (
+            {handleType && handleType === 'Service' ? null : showCreateGroup ? (
               <Button onClick={this.onAddGroup}>新建应用</Button>
             ) : null}
           </Form.Item>
@@ -194,9 +191,7 @@ export default class Index extends PureComponent {
               }}
               label=""
             >
-              {this.props.handleType &&
-              this.props.handleType === 'Service' &&
-              this.props.ButtonGroupState
+              {handleType && handleType === 'Service' && ButtonGroupState
                 ? this.props.handleServiceBotton(
                     <Button
                       onClick={this.handleSubmit}
@@ -207,7 +202,7 @@ export default class Index extends PureComponent {
                     </Button>,
                     false
                   )
-                : !this.props.handleType && (
+                : !handleType && (
                     <Button
                       onClick={this.handleSubmit}
                       type="primary"

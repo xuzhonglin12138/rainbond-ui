@@ -272,19 +272,19 @@ class EnterpriseLayout extends PureComponent {
     }
     const fetchLogo = rainbondUtil.fetchLogo(rainbondInfo, enterprise) || logo;
     const customHeader = () => {
+      const enterpriseServiceType =
+        enterpriseServiceInfo && enterpriseServiceInfo.type;
       return (
         <div className={headerStype.enterprise}>
           {BillingFunction && (
             <Tooltip
               title={
-                enterpriseServiceInfo && enterpriseServiceInfo.type === 'vip'
+                enterpriseServiceType === 'vip'
                   ? '尊贵的付费企业用户'
                   : '免费用户'
               }
             >
-              {globalUtil.fetchSvg(
-                enterpriseServiceInfo && enterpriseServiceInfo.type
-              )}
+              {globalUtil.fetchSvg(enterpriseServiceType || 'free')}
             </Tooltip>
           )}
           {(enterprise && enterprise.enterprise_alias) ||
