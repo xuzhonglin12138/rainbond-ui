@@ -373,12 +373,14 @@ class Infrastructure extends PureComponent {
         (enterprise && enterprise.enterprise_alias) ||
         (rainbondInfo && rainbondInfo.enterprise_alias);
       const doc_url = rainbondUtil.documentPlatform_url(rainbondInfo);
+      const officialDemo = rainbondUtil.officialDemoEnable(enterprise);
 
       // eslint-disable-next-line no-const-assign
       infos = {
         logo: fetchLogo,
         title,
         doc_url,
+        officialDemo,
         enterprise_alias: enterpriseTitle,
         favicon: fetchFavicon
       };
