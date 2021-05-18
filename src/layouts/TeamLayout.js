@@ -445,17 +445,15 @@ class TeamLayout extends PureComponent {
     }
 
     const mode = this.getMode(appID || componentID);
+    const enterpriseServiceType =
+      enterpriseServiceInfo && enterpriseServiceInfo.type;
     const nobleIcon = (
       <Tooltip
         title={
-          enterpriseServiceInfo && enterpriseServiceInfo.type === 'vip'
-            ? '尊贵的付费企业用户'
-            : '免费用户'
+          enterpriseServiceType === 'vip' ? '尊贵的付费企业用户' : '免费用户'
         }
       >
-        {globalUtil.fetchSvg(
-          enterpriseServiceInfo && enterpriseServiceInfo.type
-        )}
+        {globalUtil.fetchSvg(enterpriseServiceType)}
       </Tooltip>
     );
 

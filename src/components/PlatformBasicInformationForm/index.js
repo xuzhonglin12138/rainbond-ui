@@ -146,7 +146,7 @@ export default class PlatformBasicInformationForm extends PureComponent {
             initialValue={data.favicon}
             required={false}
             uploadBtnStyle={{ width: '33px', height: '33px' }}
-            imgstyle={{ width: '33px', height: '33px' }}
+            imgstyle={{ width: '33px', maxHeight: '33px' }}
           />
         </Form>
       </Modal>

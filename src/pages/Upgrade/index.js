@@ -213,7 +213,6 @@ export default class AppList extends PureComponent {
               color="green"
               size="small"
             >
-              {' '}
               {current_version}
             </Tag>
           </p>

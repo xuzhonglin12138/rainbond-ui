@@ -74,7 +74,7 @@ export default class MemberList extends PureComponent {
     dispatch({
       type: 'user/fetchCurrent',
       callback: res => {
-        if (res && res._code === 200) {
+        if (res && res.status_code === 200) {
           const team = userUtil.getTeamByTeamName(
             res.bean,
             globalUtil.getCurrTeamName()

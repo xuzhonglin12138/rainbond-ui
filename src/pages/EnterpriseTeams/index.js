@@ -842,14 +842,6 @@ export default class EnterpriseTeams extends PureComponent {
             onCancel={this.cancelCreateTeam}
           />
         )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
         {this.state.showExitTeam && (
           <ConfirmModal
             onOk={this.handleExitTeam}
