@@ -24,6 +24,7 @@ import userUtil from '../../utils/user';
 import ModifyImageCmd from './modify-image-cmd';
 import ModifyImageName from './modify-image-name';
 import ModifyUrl from './modify-url';
+
 @connect(
   ({ user, appControl, global }) => ({
     rainbondInfo: global.rainbondInfo,
@@ -431,9 +432,35 @@ export default class CreateCheck extends React.Component {
       }
     });
   };
-  handleImageSubmit = () => {};
   showDelete = () => {
     this.setState({ showDelete: true });
+  };
+  handleDescription = () => {
+    const { rainbondInfo } = this.props;
+    const { appDetail } = this.state;
+    const platformUrl = rainbondUtil.documentPlatform_url(rainbondInfo);
+    const box = (
+      <span>
+        可参考
+        <a
+          href={`${platformUrl}docs/user-manual/app-creation/language-support/`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          平台源码支持规范
+        </a>
+      </span>
+    );
+    return (
+      appDetail.service_source !== 'third_party' && (
+        <div>
+          <div>组件构建源检测通过仅代表平台可以检测到多模块构建。</div>
+          90%以上的用户在检测通过后可部署成功，如遇部署失败，
+          {platformUrl && box}
+          对代码进行调整。
+        </div>
+      )
+    );
   };
   renderError = () => {
     const { errorInfo } = this.state;
@@ -557,8 +584,9 @@ export default class CreateCheck extends React.Component {
   };
 
   renderSuccess = () => {
-    const { ServiceGetData, isDeploy, appDetail, serviceInfo } = this.state;
     const { ButtonGroupState, ErrState, handleServiceBotton } = this.props;
+    const { ServiceGetData, isDeploy, appDetail, serviceInfo } = this.state;
+
     let extra = '';
     if (serviceInfo && serviceInfo.length > 0) {
       extra = serviceInfo.map((item, index) => (
@@ -706,7 +734,6 @@ export default class CreateCheck extends React.Component {
     } else if (ServiceGetData && (ButtonGroupState || ErrState)) {
       handleServiceBotton(actions, false, false);
     }
-    const doc_url = rainbondUtil.documentPlatform_url(this.props.rainbondInfo);
     return (
       <Result
         type="success"
@@ -715,26 +742,7 @@ export default class CreateCheck extends React.Component {
             ? '第三方组件检测通过'
             : '组件构建源检测通过'
         }
-        description={
-          appDetail.service_source === 'third_party' ? (
-            ''
-          ) : (
-            <div>
-              <div>
-                组件构建源检测通过仅代表平台可以检测到代码语言类型和代码源。
-              </div>
-              90%以上的用户在检测通过后可部署成功，如遇部署失败，可参考{' '}
-              <a
-                href={`${doc_url}/docs/user-manual/app-creation/language-support/`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                平台源码支持规范
-              </a>{' '}
-              对代码进行调整。
-            </div>
-          )
-        }
+        description={this.handleDescription()}
         extra={extra}
         actions={ServiceGetData ? '' : actions}
         style={{ marginTop: 48, marginBottom: 16 }}
@@ -743,14 +751,18 @@ export default class CreateCheck extends React.Component {
   };
 
   renderMoreService = () => {
+    const {
+      ButtonGroupState = false,
+      handleServiceBotton,
+      ErrState
+    } = this.props;
     const { ServiceGetData, isDeploy, appDetail, isMulti } = this.state;
     let actions = [];
     if (ServiceGetData && isMulti) {
       actions = [
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Button onClick={this.showDelete} type="default">
-            {' '}
-            放弃创建{' '}
+            放弃创建
           </Button>
           <Button type="primary" onClick={this.handleMoreService}>
             进入多组件构建
@@ -765,8 +777,7 @@ export default class CreateCheck extends React.Component {
             type="default"
             style={{ marginRight: '8px' }}
           >
-            {' '}
-            放弃创建{' '}
+            放弃创建
           </Button>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button
@@ -775,7 +786,6 @@ export default class CreateCheck extends React.Component {
               style={{ marginRight: '8px' }}
               loading={this.state.buildAppLoading}
             >
-              {' '}
               创建{' '}
             </Button>
             <div>
@@ -831,7 +841,6 @@ export default class CreateCheck extends React.Component {
         </div>
       ];
     }
-
     if (appDetail.service_source === 'third_party') {
       actions = [
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -848,13 +857,6 @@ export default class CreateCheck extends React.Component {
         </div>
       ];
     }
-
-    const {
-      ButtonGroupState = false,
-      handleServiceBotton,
-      ErrState
-    } = this.props;
-
     if (isDeploy) {
       if (ServiceGetData && (!ButtonGroupState || !ErrState)) {
         handleServiceBotton(actions, true, true);
@@ -862,7 +864,6 @@ export default class CreateCheck extends React.Component {
     } else if (ServiceGetData && (ButtonGroupState || ErrState)) {
       handleServiceBotton(actions, false, false);
     }
-
     return (
       <Result
         type="success"
@@ -871,22 +872,7 @@ export default class CreateCheck extends React.Component {
             ? '第三方组件检测通过'
             : '组件构建源检测出多模块构建'
         }
-        description={
-          appDetail.service_source !== 'third_party' && (
-            <div>
-              <div>组件构建源检测通过仅代表平台可以检测到多模块构建。</div>
-              90%以上的用户在检测通过后可部署成功，如遇部署失败，可参考{' '}
-              <a
-                href={`${doc_url}/docs/user-manual/app-creation/language-support/`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                平台源码支持规范
-              </a>{' '}
-              对代码进行调整。
-            </div>
-          )
-        }
+        description={this.handleDescription()}
         extra=""
         actions={ServiceGetData ? '' : actions}
         style={{ marginTop: 48, marginBottom: 16 }}
