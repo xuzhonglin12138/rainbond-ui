@@ -139,6 +139,7 @@ class TeamLayout extends PureComponent {
     const { teamName, regionName } = this.props.match.params;
     cookie.set('team_name', teamName);
     cookie.set('region_name', regionName);
+    console.log(cookie.get('region_name'));
     dispatch({
       type: 'global/getTeamOverview',
       payload: {

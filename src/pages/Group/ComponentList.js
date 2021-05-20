@@ -581,7 +581,7 @@ export default class ComponentList extends Component {
           </Form>
           <ScrollerX sm={750}>
             <Table
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', overflow: 'hidden' }}
               pagination={pagination}
               rowSelection={rowSelection}
               columns={columns}

@@ -35,16 +35,18 @@ class Index extends PureComponent {
   }
 
   onCancel = MavenName => {
-    this.fetchMavensettings(MavenName);
+    this.fetchMavensettings();
+    const { setFieldsValue } = this.props.form;
+    setFieldsValue({
+      BUILD_MAVEN_SETTING_NAME: MavenName || ''
+    });
     this.setState({
       mavenVisible: false
     });
   };
 
-  fetchMavensettings = MavenName => {
-    const { dispatch, currentEnterprise, form } = this.props;
-    const { setFieldsValue } = form;
-
+  fetchMavensettings = () => {
+    const { dispatch, currentEnterprise } = this.props;
     dispatch({
       type: 'appControl/fetchMavensettings',
       payload: {
@@ -54,11 +56,7 @@ class Index extends PureComponent {
       },
       callback: res => {
         if (res && res.status_code === 200) {
-          this.setState({ MavenList: res.list }, () => {
-            setFieldsValue({
-              BUILD_MAVEN_SETTING_NAME: MavenName || ''
-            });
-          });
+          this.setState({ MavenList: res.list });
         }
       }
     });
@@ -105,17 +103,23 @@ class Index extends PureComponent {
       activeMaven,
       mavenPermissions
     } = this.state;
-    let isDefault = false;
-    const Default_BUILD_MAVEN_SETTING_NAME =
-      (envs && envs.BUILD_MAVEN_SETTING_NAME) ||
-      (MavenList.length > 0 && MavenList[0].name) ||
-      '';
-
-    MavenList.map(item => {
-      if (item.name === MavenList) {
-        isDefault = true;
+    const envBUILD_MAVEN_SETTING_NAME = envs && envs.BUILD_MAVEN_SETTING_NAME;
+    const mavens = MavenList && MavenList.length > 0;
+    let Default_BUILD_MAVEN_SETTING_NAME = '';
+    if (mavens && envBUILD_MAVEN_SETTING_NAME) {
+      MavenList.map(item => {
+        if (item.name === envBUILD_MAVEN_SETTING_NAME) {
+          Default_BUILD_MAVEN_SETTING_NAME = envBUILD_MAVEN_SETTING_NAME;
+        }
+      });
+    }
+    if (mavens && !Default_BUILD_MAVEN_SETTING_NAME) {
+      const defaultMaven = MavenList.filter(item => item.is_default);
+      if (defaultMaven && defaultMaven.length > 0) {
+        Default_BUILD_MAVEN_SETTING_NAME = defaultMaven[0].name;
       }
-    });
+    }
+
     return (
       <div>
         <JavaJDK form={form} envs={envs} />
@@ -161,7 +165,7 @@ class Index extends PureComponent {
         </Form.Item>
         <Form.Item {...formItemLayout} label="Maven配置">
           {getFieldDecorator('BUILD_MAVEN_SETTING_NAME', {
-            initialValue: isDefault && Default_BUILD_MAVEN_SETTING_NAME,
+            initialValue: Default_BUILD_MAVEN_SETTING_NAME,
             rules: [
               {
                 required: true,
