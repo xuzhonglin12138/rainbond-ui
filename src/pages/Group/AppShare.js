@@ -670,7 +670,7 @@ export default class Main extends PureComponent {
             if (option.service_alias == apptab) {
               // eslint-disable-next-line no-restricted-syntax
               for (const index in appvalue) {
-                var indexarr = [];
+                let indexarr = [];
                 indexarr = index.split('||');
                 const firstInfo =
                   indexarr && indexarr.length > 0 && indexarr[0];
