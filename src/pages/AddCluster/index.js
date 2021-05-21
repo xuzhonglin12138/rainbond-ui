@@ -295,7 +295,13 @@ export default class EnterpriseClusters extends PureComponent {
                   message: '请提供具有足够权限的Secret Key'
                 }
               ]
-            })(<Input type="password" placeholder="Secret Key" />)}
+            })(
+              <Input
+                autoComplete="new-password"
+                type="password"
+                placeholder="Secret Key"
+              />
+            )}
           </Form.Item>
         </Col>
       </Form>

@@ -41,10 +41,6 @@ class EvnOption extends React.Component {
   };
 
   validAttrName = (_, value, callback) => {
-    if (!value) {
-      callback('请输入属性名');
-      return;
-    }
     if (value && !/^[-._a-zA-Z][-._a-zA-Z0-9]*$/.test(value)) {
       callback('只能由 - . _ 字母和数字组成，不能以数字开头');
       return;
@@ -86,7 +82,15 @@ class EvnOption extends React.Component {
         <Form.Item style={{ width: 100 }}>
           {getFieldDecorator('attr_name', {
             initialValue: data.attr_name || '',
-            rules: [{ validator: this.validAttrName }]
+            rules: [
+              {
+                required: true,
+                message: '请输入属性名'
+              },
+              {
+                validator: this.validAttrName
+              }
+            ]
           })(
             <Input
               onChange={e => {
@@ -103,13 +107,14 @@ class EvnOption extends React.Component {
             rules: [{ required: false, message: '协议' }]
           })(
             <Select
+              mode="multiple"
               getPopupContainer={triggerNode => triggerNode.parentNode}
               onChange={values => {
                 this.handleOnchange('protocol', values);
               }}
               style={{ width: 100 }}
             >
-              <Option value="">协议</Option>
+              <Option value="">所有协议</Option>
               {protocols.map(item => (
                 <Option value={item}>{item}</Option>
               ))}
@@ -345,16 +350,19 @@ export default class Index extends PureComponent {
   handleSubmit = () => {
     const { form, onSubmit } = this.props;
     form.validateFields((err, fieldsValue) => {
-      if (!err && onSubmit) {
-        if (fieldsValue.options) {
-          fieldsValue.options.map(item => {
-            if (item.protocol) {
-              item.protocol = item.protocol.join(',');
-            }
-            return item;
-          });
+      if (this.envGroup) {
+        const check = this.envGroup.check();
+        if (!err && onSubmit && check) {
+          if (fieldsValue.options) {
+            fieldsValue.options.map(item => {
+              if (item.protocol) {
+                item.protocol = item.protocol.join(',');
+              }
+              return item;
+            });
+          }
+          onSubmit(fieldsValue);
         }
-        onSubmit(fieldsValue);
       }
     });
   };
@@ -368,15 +376,6 @@ export default class Index extends PureComponent {
     const { setFieldsValue } = this.props.form;
     if (e.target.value !== 'un_define') {
       setFieldsValue({ injection: 'auto' });
-    }
-  };
-  checkInjection = (_rule, _value, callback) => {
-    if (this.envGroup) {
-      if (this.envGroup.check()) {
-        callback();
-      } else {
-        callback();
-      }
     }
   };
   handleEvnGroupMount = com => {
@@ -437,8 +436,7 @@ export default class Index extends PureComponent {
           </Form.Item>
           <Form.Item validateStatus="t" {...formItemLayout} label="配置项">
             {getFieldDecorator('options', {
-              initialValue: data.options || [],
-              rules: [{ validator: this.checkInjection }]
+              initialValue: data.options || []
             })(
               <EnvGroup
                 onDidMount={this.handleEvnGroupMount}

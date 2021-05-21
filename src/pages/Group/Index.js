@@ -76,6 +76,7 @@ class Main extends PureComponent {
 
   componentDidMount() {
     this.loading();
+    this.handleWaitLevel();
   }
 
   componentWillUnmount() {
@@ -275,7 +276,26 @@ class Main extends PureComponent {
       }
     });
   };
-
+  handleWaitLevel = () => {
+    const { dispatch } = this.props;
+    const { teamName, regionName, appID } = this.props.match.params;
+    dispatch({
+      type: 'application/fetchToupgrade',
+      payload: {
+        team_name: teamName,
+        group_id: appID
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          const info = res.bean;
+          this.setState({
+            upgradableNumLoading: false,
+            upgradableNum: (info && info.upgradable_num) || 0
+          });
+        }
+      }
+    });
+  };
   fetchAppDetailState = () => {
     const { dispatch } = this.props;
     const { teamName, appID } = this.props.match.params;
@@ -796,7 +816,7 @@ class Main extends PureComponent {
             </div>
 
             <div className={styles.conrBox}>
-              <div>模型发布</div>
+              <div>模版发布</div>
               <div
                 onClick={() => {
                   isShare && this.handleJump('publish');
@@ -821,7 +841,9 @@ class Main extends PureComponent {
               <div>待升级</div>
               <div
                 onClick={() => {
-                  isUpgrade && this.handleJump('upgrade');
+                  !upgradableNumLoading &&
+                    isUpgrade &&
+                    this.handleJump('upgrade');
                 }}
               >
                 <a>{upgradableNumLoading ? <Spin /> : upgradableNum}</a>

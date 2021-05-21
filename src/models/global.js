@@ -724,8 +724,8 @@ export default {
       }
     },
 
-    *fetchEnterpriseList({ payload, callback }, { call }) {
-      const response = yield call(fetchEnterpriseList, payload);
+    *fetchEnterpriseList({ callback, handleError }, { call }) {
+      const response = yield call(fetchEnterpriseList, handleError);
       if (response && callback) {
         callback(response);
       }
