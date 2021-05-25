@@ -161,11 +161,11 @@ class Index extends PureComponent {
                           visible={FinalStatus === ''}
                           placement="top"
                           arrowPointAtCenter
+                          autoAdjustOverflow={false}
+                          title="查看日志"
                           getPopupContainer={() =>
                             document.querySelector('.table-wrap')
                           }
-                          autoAdjustOverflow={false}
-                          title="查看日志"
                         >
                           <div
                             style={{

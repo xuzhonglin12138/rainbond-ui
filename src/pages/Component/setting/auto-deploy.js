@@ -213,8 +213,14 @@ export default class AutoDeploy extends PureComponent {
       status,
       tabLoading,
       support_type,
+      url,
       service_source
     } = this.state;
+    const setUrl = url.replace(
+      'http://127.0.0.1:5000',
+      `${window.location.protocol}//${window.location.host}`
+    );
+
     const dockerSvg = () => (
       <svg viewBox="0 0 30 50" version="1.1" width="20px" height="20px">
         <path
@@ -329,9 +335,9 @@ export default class AutoDeploy extends PureComponent {
                     </Description>
                     <Description term="Webhook">
                       <div style={{ marginLeft: '34px' }}>
-                        <a>{this.state.url} </a>
+                        <a>{setUrl} </a>
                         <CopyToClipboard
-                          text={this.state.url}
+                          text={setUrl}
                           onCopy={() => {
                             notification.success({ message: '复制成功' });
                           }}
@@ -449,9 +455,9 @@ export default class AutoDeploy extends PureComponent {
                   col="1"
                 >
                   <Description term="API">
-                    <a>{this.state.url} </a>
+                    <a>{setUrl} </a>
                     <CopyToClipboard
-                      text={this.state.url}
+                      text={setUrl}
                       onCopy={() => {
                         notification.success({ message: '复制成功' });
                       }}
@@ -502,7 +508,6 @@ export default class AutoDeploy extends PureComponent {
                       <a
                         href={`${platform_url}docs/user-manual/component-dev/auto_build/#基于镜像仓库操作流程`}
                         target="_blank"
-                        style={{ color: '#fff' }}
                       >
                         <Icon type="question-circle-o" />
                       </a>
@@ -535,9 +540,9 @@ export default class AutoDeploy extends PureComponent {
                     col="1"
                   >
                     <Description term="Webhook">
-                      <a>{this.state.url} </a>
+                      <a>{setUrl} </a>
                       <CopyToClipboard
-                        text={this.state.url}
+                        text={setUrl}
                         onCopy={() => {
                           notification.success({ message: '复制成功' });
                         }}

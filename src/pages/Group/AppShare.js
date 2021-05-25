@@ -1015,7 +1015,8 @@ export default class Main extends PureComponent {
       versions,
       submitLoading,
       appModelInfo,
-      batchEditShow
+      batchEditShow,
+      dep_service_name
     } = this.state;
     const Application = getFieldValue('app_id');
     let breadcrumbList = [];
@@ -1148,7 +1149,13 @@ export default class Main extends PureComponent {
                   <Form.Item {...formItemLayout} label="版本别名">
                     {getFieldDecorator('version_alias', {
                       initialValue:
-                        (versionInfo && versionInfo.version_alias) || ''
+                        (versionInfo && versionInfo.version_alias) || '',
+                      rules: [
+                        {
+                          max: 64,
+                          message: '最大长度64位'
+                        }
+                      ]
                     })(
                       <Input
                         style={{ width: 280 }}
@@ -1166,8 +1173,8 @@ export default class Main extends PureComponent {
                         '',
                       rules: [
                         {
-                          required: false,
-                          message: '请输入版本说明'
+                          max: 255,
+                          message: '最大长度255位'
                         }
                       ]
                     })(
@@ -1312,13 +1319,16 @@ export default class Main extends PureComponent {
             >
               <div>
                 该组件被需要发布的
-                {this.state.dep_service_name &&
-                  this.state.dep_service_name.length > 0 &&
-                  this.state.dep_service_name.map((item, index) => {
+                {dep_service_name &&
+                  dep_service_name.length > 0 &&
+                  dep_service_name.map((item, index) => {
                     return (
-                      <a style={{ marginLeft: '5px' }} key={index}>
+                      <span
+                        style={{ marginLeft: '5px', color: '#4d73b1' }}
+                        key={index}
+                      >
                         {item}
-                      </a>
+                      </span>
                     );
                   })}
                 组件依赖, 确认要取消该组件的发布吗？

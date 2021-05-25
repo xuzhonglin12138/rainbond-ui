@@ -39,6 +39,7 @@ import Convenient from '../../components/Convenient';
 import CreateTeam from '../../components/CreateTeam';
 import JoinTeam from '../../components/JoinTeam';
 import Meiqia from '../../layouts/Meiqia';
+import rainbondUtil from '../../utils/rainbond';
 import userUtil from '../../utils/user';
 import styles from '../List/BasicList.less';
 
@@ -427,6 +428,7 @@ export default class Enterprise extends PureComponent {
 
     const collections =
       collectionList && collectionList.length > 0 && collectionList;
+    const enterpriseEdition = rainbondUtil.isEnterpriseEdition(rainbondInfo);
 
     const colors = { color: '#3D54C4', cursor: 'pointer' };
     const memoryInfo = overviewMonitorInfo && overviewMonitorInfo.memory;
@@ -440,7 +442,6 @@ export default class Enterprise extends PureComponent {
     const runApp = AppNumInfo && AppNumInfo.running;
     const appTotal = AppNumInfo && AppNumInfo.total;
     const appClosed = AppNumInfo && AppNumInfo.closed;
-
     const comInfo = overviewAppInfo && overviewAppInfo.components;
     const runCom = comInfo && comInfo.running;
     const comTotal = comInfo && comInfo.total;
@@ -528,6 +529,14 @@ export default class Enterprise extends PureComponent {
               {enterpriseInfo && (
                 <div className={styles.enterpriseName}>
                   企业名称：{enterpriseInfo.enterprise_alias}
+                  {!enterpriseEdition && enterpriseVersion !== 'cloud' && (
+                    <a
+                      style={{ marginLeft: 32 }}
+                      onClick={this.handelConsulting}
+                    >
+                      获取商业解决方案
+                    </a>
+                  )}
                 </div>
               )}
               {enterpriseInfo && (

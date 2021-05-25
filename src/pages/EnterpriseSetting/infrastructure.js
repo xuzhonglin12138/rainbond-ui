@@ -415,7 +415,7 @@ class Infrastructure extends PureComponent {
           <Col span={3}>用户注册</Col>
           <Col span={17}>
             <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
-              控制用户是否可以注册功能
+              控制用户是否可以注册功能。
             </span>
           </Col>
 

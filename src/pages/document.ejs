@@ -189,9 +189,13 @@
         let head = document.getElementsByTagName("head")[0]
 
         head.appendChild(link);
-        let title = document.createElement("title")
-        title.innerHTML = window.localStorage.headTitle
-        head.appendChild(title)
+        const headTitle = window.localStorage.headTitle
+        if (headTitle) {
+            let title = document.createElement("title")
+            title.innerHTML = headTitle
+            head.appendChild(title)
+        }
+
     </script>
 </head>
 

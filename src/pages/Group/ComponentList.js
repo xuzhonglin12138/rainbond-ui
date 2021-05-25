@@ -20,7 +20,6 @@ import moment from 'moment';
 import React, { Component, Fragment } from 'react';
 import MoveGroup from '../../components/AppMoveGroup';
 import BatchDelete from '../../components/BatchDelete';
-import ScrollerX from '../../components/ScrollerX';
 import { batchOperation } from '../../services/app';
 import appUtil from '../../utils/app';
 import globalUtil from '../../utils/global';
@@ -579,23 +578,16 @@ export default class ComponentList extends Component {
               </Button>
             </Form.Item>
           </Form>
-          <ScrollerX sm={750}>
-            <Table
-              style={{ position: 'relative', overflow: 'hidden' }}
-              pagination={pagination}
-              rowSelection={rowSelection}
-              columns={columns}
-              loading={
-                reStartLoading ||
-                startLoading ||
-                stopLoading ||
-                tableDataLoading
-              }
-              dataSource={apps || []}
-              footer={() => footer}
-              scroll={{ y: 240 }}
-            />
-          </ScrollerX>
+          <Table
+            pagination={pagination}
+            rowSelection={rowSelection}
+            columns={columns}
+            loading={
+              reStartLoading || startLoading || stopLoading || tableDataLoading
+            }
+            dataSource={apps || []}
+            footer={() => footer}
+          />
           {batchDeleteShow && (
             <BatchDelete
               batchDeleteApps={batchDeleteApps}

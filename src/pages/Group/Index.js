@@ -278,7 +278,7 @@ class Main extends PureComponent {
   };
   handleWaitLevel = () => {
     const { dispatch } = this.props;
-    const { teamName, regionName, appID } = this.props.match.params;
+    const { teamName, appID } = this.props.match.params;
     dispatch({
       type: 'application/fetchToupgrade',
       payload: {
@@ -497,8 +497,8 @@ class Main extends PureComponent {
               message: res.msg_show || '构建成功',
               duration: '3'
             });
-            this.handlePromptModalClose();
           }
+          this.handlePromptModalClose();
           this.loadTopology(false);
         }
       });
