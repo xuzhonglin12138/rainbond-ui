@@ -54,9 +54,8 @@ class InstanceList extends PureComponent {
               title="运行内存"
               percent={this.getContainerMem(item.container)}
             />
-            <a className={style.instancename}>{this.showName(item.pod_name)}</a>
-            <br />
-            <a style={{ color: '#000' }}>{statusObj[item.pod_status]}</a>
+            <div>{this.showName(item.pod_name)}</div>
+            <div>{statusObj[item.pod_status]}</div>
           </List.Item>
         )}
       />

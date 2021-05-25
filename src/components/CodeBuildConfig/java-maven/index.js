@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable camelcase */
 import MavenConfiguration from '@/components/MavenConfiguration';
 import globalUtil from '@/utils/global';
