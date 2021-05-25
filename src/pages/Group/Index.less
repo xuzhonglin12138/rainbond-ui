@@ -4,7 +4,7 @@
 .pageHeaderContent {
   display: flex;
 
-  &>div {
+  & > div {
     width: 50%;
     margin: 0 0 24px 0;
     padding: 24px;
@@ -44,7 +44,7 @@
     .connect_Bot {
       display: flex;
 
-      &>div:nth-of-type(1) {
+      & > div:nth-of-type(1) {
         margin-right: 24px;
       }
 
@@ -76,7 +76,7 @@
   .contentr {
     background: #fff;
 
-    &>div:nth-of-type(2) {
+    & > div:nth-of-type(2) {
       margin: 31px 0;
     }
 
@@ -95,7 +95,6 @@
           color: rgba(0, 0, 0, 0.45);
         }
       }
-
       div:nth-of-type(1) {
         width: 55%;
       }
@@ -107,12 +106,12 @@
       border: 1px solid #eee;
       border-radius: 10px;
 
-      &>div:nth-of-type(1) {
+      & > div:nth-of-type(1) {
         font-size: 14px;
       }
 
       .conrBox {
-        &>div:nth-of-type(2) {
+        & > div:nth-of-type(2) {
           margin-top: 10px;
         }
 
@@ -185,7 +184,7 @@
   margin: 5px 0;
   text-align: center;
   cursor: pointer;
-
+  height: 100px;
   p {
     margin: 10px 0;
   }
@@ -216,20 +215,20 @@
     position: relative;
     display: inline-block;
 
-    >p:first-child {
+    > p:first-child {
       color: @text-color-secondary;
       font-size: @font-size-base;
       line-height: 22px;
       margin-bottom: 4px;
     }
 
-    >p {
+    > p {
       color: @heading-color;
       font-size: 30px;
       line-height: 38px;
       margin: 0;
 
-      >span {
+      > span {
         color: @text-color-secondary;
         font-size: 20px;
       }
@@ -257,7 +256,8 @@
   .ant-btn-group {
     margin-right: 10px;
 
-    .right-btn {}
+    .right-btn {
+    }
   }
 }
 

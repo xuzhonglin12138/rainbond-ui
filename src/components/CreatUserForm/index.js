@@ -204,75 +204,7 @@ class CreateUserForm extends PureComponent {
             </FormItem>
           )}
           {!userInfo && (
-            <FormItem {...formItemLayout} label="密码">
-              {getFieldDecorator('password', {
-                initialValue: (userInfo && userInfo.password) || '',
-                rules: [
-                  {
-                    required: true,
-                    validator: this.checkAccountPass
-                  }
-                ]
-              })(
-                <Input.Password
-                  autoComplete="new-password"
-                  placeholder="请填写密码"
-                />
-              )}
-            </FormItem>
-          )}
-
-          {userInfo && (
-            <FormItem {...formItemLayout} label="设置新密码">
-              {getFieldDecorator('password', {
-                initialValue: (userInfo && userInfo.password) || '',
-                rules: [
-                  {
-                    validator: this.checkAccountPass
-                  }
-                ]
-              })(
-                <Input.Password
-                  autoComplete="new-password"
-                  placeholder="留空则不修改密码"
-                />
-              )}
-            </FormItem>
-          )}
-
-          {!userInfo && (
             <div>
-              <FormItem {...formItemLayout} label="邮箱">
-                {getFieldDecorator('email', {
-                  rules: [
-                    { required: true, message: '请填写邮箱!' },
-                    { type: 'email', message: '邮箱格式不正确!' }
-                  ]
-                })(
-                  <Input
-                    type="text"
-                    placeholder="请填写邮箱!"
-                    autoComplete="off"
-                  />
-                )}
-              </FormItem>
-              <FormItem {...formItemLayout} label="电话">
-                {getFieldDecorator('phone', {
-                  rules: [
-                    {
-                      pattern: /^[0-9]{11}$/,
-                      message: '请输入正确的手机号'
-                    }
-                  ]
-                })(
-                  <Input
-                    type="text"
-                    placeholder="请填写手机号"
-                    autoComplete="off"
-                  />
-                )}
-              </FormItem>
-
               <FormItem {...formItemLayout} label="所属团队">
                 {getFieldDecorator('tenant_name', {
                   rules: [{ required: false, message: '请选择团队!' }]
