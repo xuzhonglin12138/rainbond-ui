@@ -23,6 +23,7 @@ import {
   fetchEnterpriseTeams,
   fetchEnterpriseUsers,
   fetchLoginLogs,
+  fetchMyTeams,
   fetchOperationLogs,
   fetchOverview,
   fetchOverviewApp,
@@ -717,13 +718,18 @@ export default {
         callback(response);
       }
     },
+    *fetchMyTeams({ payload, callback }, { call }) {
+      const response = yield call(fetchMyTeams, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
     *fetchUserTeams({ payload, callback }, { call }) {
       const response = yield call(fetchUserTeams, payload);
       if (response && callback) {
         callback(response);
       }
     },
-
     *fetchEnterpriseList({ callback, handleError }, { call }) {
       const response = yield call(fetchEnterpriseList, handleError);
       if (response && callback) {
