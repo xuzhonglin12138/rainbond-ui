@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Button, Card, Col, Form, Input, notification, Row, Table } from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
@@ -203,7 +202,7 @@ export default class EnterpriseUsers extends PureComponent {
       userVisible: false,
       text: '',
       userInfo: false,
-      loading: false
+      Loading: false
     });
   };
 
@@ -404,9 +403,9 @@ export default class EnterpriseUsers extends PureComponent {
             <CreatUser
               eid={eid}
               loading={Loading}
+              userInfo={userInfo}
               title={text}
               realName={user && user.user_name}
-              userInfo={userInfo}
               onOk={this.handleCreatUser}
               onCancel={this.cancelCreatUser}
             />

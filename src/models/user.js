@@ -149,8 +149,8 @@ export default {
       }
     },
     // 登录后三方用户与用户绑定接口
-    *fetchThirdBinding({ payload, callback }, { call }) {
-      const response = yield call(queryThirdBinding, payload);
+    *fetchThirdBinding({ payload, callback, handleError }, { call }) {
+      const response = yield call(queryThirdBinding, payload, handleError);
       if (response) {
         callback && callback(response);
       }

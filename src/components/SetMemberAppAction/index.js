@@ -15,8 +15,8 @@ class ConfirmModal extends PureComponent {
     this.loadMembers();
   }
   handleSubmit = () => {
-    this.props.form.validateFields((err, values) => {
-      const { onOk } = this.props;
+    const { onOk, form } = this.props;
+    form.validateFields((err, values) => {
       if (!err && onOk) {
         onOk(values);
       }
@@ -34,8 +34,8 @@ class ConfirmModal extends PureComponent {
     });
   };
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { onCancel, actions } = this.props;
+    const { onCancel, actions, form } = this.props;
+    const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },

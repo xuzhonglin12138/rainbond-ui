@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { Button, Form, Input, Modal, Select } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';

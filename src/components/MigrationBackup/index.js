@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-indent */
 import {
   Alert,
   Button,
@@ -46,6 +45,13 @@ export default class Index extends PureComponent {
   }
 
   onRegionChange = value => {
+    const { mode, currentRegion } = this.props;
+    if (mode !== 'full-online' && value !== currentRegion) {
+      notification.warning({
+        message: '当前备份模式是本地模式，不能进行跨集群迁移'
+      });
+      return;
+    }
     this.setState({ regionName: value });
   };
 
@@ -63,13 +69,21 @@ export default class Index extends PureComponent {
     this.setState({ teamsData: teamsArr });
   };
   handleSubmit = () => {
-    const { teamsName, regionName } = this.state;
+    const { mode, currentRegion } = this.props;
+    const { teamsName } = this.state;
+    const { regionName } = this.state;
     if (teamsName === '') {
       notification.warning({ message: '请选择迁移团队' });
       return;
     }
     if (regionName === '') {
       notification.warning({ message: '请选择迁移集群' });
+      return;
+    }
+    if (mode !== 'full-online' && regionName !== currentRegion) {
+      notification.warning({
+        message: '当前备份模式是本地模式，不能进行跨集群迁移'
+      });
       return;
     }
 
