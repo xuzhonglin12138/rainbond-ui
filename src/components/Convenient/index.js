@@ -19,9 +19,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 @Form.create()
-@connect(({ user }) => ({
-  user: user.currentUser
-}))
+@connect()
 export default class Convenient extends PureComponent {
   constructor(arg) {
     super(arg);
@@ -132,16 +130,14 @@ export default class Convenient extends PureComponent {
   getUserTeams = () => {
     const {
       dispatch,
-      user,
       match: {
         params: { eid }
       }
     } = this.props;
     dispatch({
-      type: 'global/fetchUserTeams',
+      type: 'global/fetchMyTeams',
       payload: {
         enterprise_id: eid,
-        user_id: user.user_id,
         page: 1,
         page_size: 999
       },
