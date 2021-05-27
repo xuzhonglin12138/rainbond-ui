@@ -206,16 +206,16 @@ export default class Index extends PureComponent {
           this.state.showRestore
             ? [
                 <Button key="back" onClick={this.props.onCancel}>
-                  关闭
+                关闭
                 </Button>
               ]
             : [
                 <Button key="back" onClick={this.props.onCancel}>
-                  关闭
+                关闭
                 </Button>,
                 <Button key="submit" type="primary" onClick={this.handleSubmit}>
-                  迁移
-                </Button>
+                迁移
+              </Button>
               ]
         }
       >

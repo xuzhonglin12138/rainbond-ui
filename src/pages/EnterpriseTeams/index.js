@@ -829,51 +829,10 @@ export default class EnterpriseTeams extends PureComponent {
             onCancel={this.cancelJoinTeam}
           />
         )}
-
         {this.state.showAddTeam && (
           <CreateTeam
             enterprise_id={eid}
             loading={this.props.createTeamLoading}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
-            onOk={this.handleCreateTeam}
-            onCancel={this.cancelCreateTeam}
-          />
-        )}
-        {initShow && (
-          <CreateTeam
-            title="创建您的第一个团队"
-            enterprise_id={eid}
             onOk={this.handleCreateTeam}
             onCancel={this.cancelCreateTeam}
           />
