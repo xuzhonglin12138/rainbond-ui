@@ -829,7 +829,6 @@ export default class EnterpriseTeams extends PureComponent {
             onCancel={this.cancelJoinTeam}
           />
         )}
-
         {this.state.showAddTeam && (
           <CreateTeam
             enterprise_id={eid}

@@ -276,7 +276,6 @@ class Main extends PureComponent {
       }
     });
   };
-
   handleWaitLevel = () => {
     const { dispatch } = this.props;
     const { teamName, appID } = this.props.match.params;

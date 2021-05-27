@@ -1,5 +1,10 @@
+/* eslint-disable react/jsx-indent */
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable eqeqeq */
 /* eslint-disable react/sort-comp */
 /* eslint-disable camelcase */
+/* eslint-disable no-nested-ternary */
 import {
   Alert,
   Button,
@@ -20,7 +25,6 @@ import globalUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 
 const FormItem = Form.Item;
-
 const RadioGroup = Radio.Group;
 const { Option } = Select;
 
@@ -139,7 +143,7 @@ export default class Index extends PureComponent {
     });
   };
 
-  handleCancel = e => {
+  handleCancel = () => {
     this.setState({
       visible: false
     });
@@ -160,13 +164,13 @@ export default class Index extends PureComponent {
   };
 
   setValues = (arr, typeName) => {
-    arr = arr || [];
-    if (!arr.length) {
-      arr.push('');
+    const setArr = arr || [];
+    if (!setArr.length) {
+      setArr.push('');
     }
-    this.setState({ staticList: arr }, () => {
+    this.setState({ staticList: setArr }, () => {
       this.props.form.setFieldsValue({
-        [typeName]: arr
+        [typeName]: setArr
       });
     });
   };
@@ -175,6 +179,16 @@ export default class Index extends PureComponent {
     const { staticList } = this.state;
     staticList[index] = e.target.value;
     this.setValues(staticList, typeName);
+  };
+  handleIsRepeat = arr => {
+    const hash = {};
+    for (const i in arr) {
+      if (hash[arr[i]]) {
+        return true;
+      }
+      hash[arr[i]] = true;
+    }
+    return false;
   };
 
   validAttrName = (rule, value, callback) => {
@@ -186,7 +200,7 @@ export default class Index extends PureComponent {
       value.map(item => {
         if (item == '') {
           callback('请输入组件地址');
-          return;
+          return null;
         }
 
         if (
@@ -196,6 +210,9 @@ export default class Index extends PureComponent {
           !rege.test(item || '')
         ) {
           callback('请输入正确的地址');
+        }
+        if (this.handleIsRepeat(value)) {
+          callback('组件地址不能相同');
         }
       });
     }
@@ -213,15 +230,29 @@ export default class Index extends PureComponent {
     callback();
   };
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { groups, rainbondInfo } = this.props;
+    const {
+      groups,
+      rainbondInfo,
+      form,
+      handleType,
+      groupId,
+      ButtonGroupState,
+      showSubmitBtn = true,
+      showCreateGroup = true
+    } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
     const { endpointsType, staticList } = this.state;
     const data = this.props.data || {};
-    const showSubmitBtn =
-      this.props.showSubmitBtn === void 0 ? true : this.props.showSubmitBtn;
-    const showCreateGroup =
-      this.props.showCreateGroup === void 0 ? true : this.props.showCreateGroup;
     const platform_url = rainbondUtil.documentPlatform_url(rainbondInfo);
+    const isService = handleType && handleType === 'Service';
+    const apiMessage = (
+      <Alert
+        message="API地址在组件创建后获取"
+        type="warning"
+        showIcon
+        style={{ width: '350px', marginBottom: '20px' }}
+      />
+    );
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit} layout="horizontal" hideRequiredMark>
@@ -234,10 +265,7 @@ export default class Index extends PureComponent {
                 placeholder="请输入组件名称"
                 style={{
                   display: 'inline-block',
-                  width:
-                    this.props.handleType && this.props.handleType === 'Service'
-                      ? 350
-                      : 277,
+                  width: isService ? 350 : 277,
                   marginRight: 15
                 }}
               />
@@ -246,10 +274,7 @@ export default class Index extends PureComponent {
 
           <Form.Item {...formItemLayout} label="应用名称">
             {getFieldDecorator('group_id', {
-              initialValue:
-                this.props.handleType && this.props.handleType === 'Service'
-                  ? Number(this.props.groupId)
-                  : data.group_id,
+              initialValue: isService ? Number(groupId) : data.group_id,
               rules: [{ required: true, message: '请选择' }]
             })(
               <Select
@@ -257,17 +282,10 @@ export default class Index extends PureComponent {
                 placeholder="请选择要所属应用"
                 style={{
                   display: 'inline-block',
-                  width:
-                    this.props.handleType && this.props.handleType === 'Service'
-                      ? 350
-                      : 277,
+                  width: isService ? 350 : 277,
                   marginRight: 15
                 }}
-                disabled={
-                  !!(
-                    this.props.handleType && this.props.handleType === 'Service'
-                  )
-                }
+                disabled={!!isService}
               >
                 {(groups || []).map(group => (
                   <Option key={group.group_id} value={group.group_id}>
@@ -276,8 +294,7 @@ export default class Index extends PureComponent {
                 ))}
               </Select>
             )}
-            {this.props.handleType &&
-            this.props.handleType === 'Service' ? null : showCreateGroup ? (
+            {isService ? null : showCreateGroup ? (
               <Button onClick={this.onAddGroup}>创建新应用</Button>
             ) : null}
           </Form.Item>
@@ -362,7 +379,6 @@ export default class Index extends PureComponent {
           {/* discovery type is disable  */}
           {endpointsType == 'discovery' && (
             <div>
-              {' '}
               <FormItem
                 {...formItemLayout}
                 label="动态注册类型"
@@ -394,7 +410,7 @@ export default class Index extends PureComponent {
                 <Button onClick={this.showModal}>补全信息</Button>
               </FormItem>
               <Modal
-                title={this.props.form.getFieldValue('type')}
+                title={getFieldValue('type')}
                 visible={this.state.visible}
                 onOk={this.handleCancel}
                 onCancel={this.handleCancel}
@@ -512,53 +528,28 @@ export default class Index extends PureComponent {
               }}
               label=""
             >
-              {this.props.handleType &&
-              this.props.handleType === 'Service' &&
-              this.props.ButtonGroupState
+              {isService && ButtonGroupState
                 ? this.props.handleServiceBotton(
                     <Button onClick={this.handleSubmit} type="primary">
                       新建组件
                     </Button>,
                     false
                   )
-                : !this.props.handleType && (
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent:
-                          endpointsType == 'api' ? 'space-evenly' : 'start'
-                      }}
-                    >
+                : !handleType && (
+                    <div>
+                      {endpointsType == 'api' && apiMessage}
                       <Button onClick={this.handleSubmit} type="primary">
                         确认创建
                       </Button>
-                      {endpointsType == 'api' && (
-                        <Alert
-                          message="API地址在组件创建后获取"
-                          type="warning"
-                          showIcon
-                        />
-                      )}
                     </div>
                   )}
-              {this.props.handleType &&
-                this.props.handleType === 'Service' &&
-                endpointsType == 'api' && (
-                  <Alert
-                    message="API地址在组件创建后获取"
-                    type="warning"
-                    showIcon
-                    style={{ width: '350px' }}
-                  />
-                )}
+              {isService && endpointsType == 'api' && apiMessage}
             </Form.Item>
           ) : null}
         </Form>
         {this.state.addGroup && (
           <AddGroup onCancel={this.cancelAddGroup} onOk={this.handleAddGroup} />
         )}
-        {/* {showKey && isSSH && <ShowRegionKey onCancel={this.hideShowKey} />} */}
       </Fragment>
     );
   }

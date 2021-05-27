@@ -300,9 +300,6 @@ export default class GlobalHeader extends PureComponent {
             loading={systemLoading || alertLoading}
             onClear={this.handleJump}
             onJump={this.handleJump}
-            // onClear={onNoticeClear}
-            // onLoadMore={this.fetchMoreNotices}
-            // onPopupVisibleChange={onNoticeVisibleChange}
           >
             <NoticeIcon.Tab
               count={alertTotal}
