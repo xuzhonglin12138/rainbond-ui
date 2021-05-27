@@ -87,11 +87,13 @@ export default class Index extends PureComponent {
       groupId,
       handleType,
       ButtonGroupState,
-      showSubmitBtn = false,
-      showCreateGroup = false
+      showSubmitBtn,
+      showCreateGroup
     } = this.props;
     const { getFieldDecorator } = form;
     const data = this.props.data || {};
+    const showSubmitBtns = showSubmitBtn === undefined || showSubmitBtn;
+    const showCreateGroups = showCreateGroup === undefined || showCreateGroup;
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit} layout="horizontal" hideRequiredMark>
@@ -120,7 +122,8 @@ export default class Index extends PureComponent {
                 })}
               </Select>
             )}
-            {handleType && handleType === 'Service' ? null : showCreateGroup ? (
+            {handleType &&
+            handleType === 'Service' ? null : showCreateGroups ? (
               <Button onClick={this.onAddGroup}>新建应用</Button>
             ) : null}
           </Form.Item>
@@ -177,7 +180,7 @@ export default class Index extends PureComponent {
               />
             )}
           </Form.Item>
-          {showSubmitBtn ? (
+          {showSubmitBtns ? (
             <Form.Item
               wrapperCol={{
                 xs: { span: 24, offset: 0 },
