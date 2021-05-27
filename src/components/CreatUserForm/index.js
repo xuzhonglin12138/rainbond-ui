@@ -91,7 +91,6 @@ class CreateUserForm extends PureComponent {
       <Modal
         visible
         maskClosable={false}
-        confirmLoading={loading}
         title={title || '添加用户'}
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}
@@ -157,18 +156,23 @@ class CreateUserForm extends PureComponent {
               )}
             </FormItem>
           )}
-
-          <FormItem {...formItemLayout} label="邮箱">
-            {getFieldDecorator('email', {
-              initialValue: (userInfo && userInfo.email) || '',
-              rules: [
-                { required: true, message: '请填写邮箱!' },
-                { type: 'email', message: '邮箱格式不正确!' }
-              ]
-            })(
-              <Input type="text" placeholder="请填写邮箱!" autoComplete="off" />
-            )}
-          </FormItem>
+          {!userInfo && (
+            <FormItem {...formItemLayout} label="邮箱">
+              {getFieldDecorator('email', {
+                initialValue: (userInfo && userInfo.email) || '',
+                rules: [
+                  { required: true, message: '请填写邮箱!' },
+                  { type: 'email', message: '邮箱格式不正确!' }
+                ]
+              })(
+                <Input
+                  type="text"
+                  placeholder="请填写邮箱!"
+                  autoComplete="off"
+                />
+              )}
+            </FormItem>
+          )}
           <FormItem {...formItemLayout} label="电话">
             {getFieldDecorator('phone', {
               initialValue: (userInfo && userInfo.phone) || '',
