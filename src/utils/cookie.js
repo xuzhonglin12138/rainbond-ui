@@ -1,4 +1,3 @@
-let Domain = 'goodrain.com';
 const cookie = {
   get: function getCookie(name) {
     let arr;
@@ -36,9 +35,6 @@ const cookie = {
   },
   remove(name) {
     this.setCookie(name, '', -1);
-  },
-  setDomain(str) {
-    Domain = str;
   }
 };
 

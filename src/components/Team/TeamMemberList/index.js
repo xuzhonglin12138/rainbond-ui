@@ -51,20 +51,12 @@ export default class MemberList extends PureComponent {
         user_id: this.state.toMoveTeam.user_id
       },
       callback: res => {
-        let message = '';
-        if (res && res.status_code == 200 && res.msg_show) {
-          message = res.msg_show;
-          this.updateCurrentUser();
+        if (res && res.status_code === 200) {
+          notification.success({ message: res.msg_show });
         }
+        this.updateCurrentUser();
         this.loadMembers();
-        setTimeout(() => {
-          this.hideMoveTeam();
-          if (message) {
-            notification.success({
-              message
-            });
-          }
-        }, 3000);
+        this.hideMoveTeam();
       }
     });
   };

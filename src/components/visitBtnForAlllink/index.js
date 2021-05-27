@@ -74,6 +74,7 @@ export default class Index extends PureComponent {
                   <Menu.Item key={item}>
                     <a
                       target="_blank"
+                      rel="noreferrer"
                       href={
                         setUrl &&
                         (setUrl.includes('http') || setUrl.includes('https'))

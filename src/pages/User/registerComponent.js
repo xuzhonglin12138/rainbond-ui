@@ -55,10 +55,14 @@ export default class RegisterComponent extends Component {
         force: true
       },
       (err, values) => {
-        if (!err && onSubmit) {
+        if (!err) {
           userUtil.removeCookie();
+          const info = Object.assign({}, values);
+          if (!values.name) {
+            info.name = values.user_name;
+          }
           if (onSubmit) {
-            onSubmit(values);
+            onSubmit(info);
           }
         }
       }
@@ -136,57 +140,88 @@ export default class RegisterComponent extends Component {
             )}
           </FormItem>
         )}
-        <FormItem>
-          {getFieldDecorator('user_name', {
-            initialValue: (userInfo && userInfo.oauth_user_name) || '',
-            rules: [
-              { required: true, message: '请输入用户名!' },
-              {
-                min: 3,
-                message: '最小长度3位'
-              },
-              {
-                max: 24,
-                message: '最大长度24位'
-              },
-              {
-                pattern: /^[a-zA-Z0-9_\-]+$/,
-                message: '只支持字母、数字、下划线、中划线'
-              }
-            ]
-          })(<Input size="large" placeholder="用户名" />)}
-        </FormItem>
-        <FormItem>
-          {getFieldDecorator('name', {
-            rules: [
-              { required: true, message: '请输入姓名' },
-              {
-                max: 24,
-                message: '最大长度24位'
-              },
-              {
-                pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
-                message: '只支持字母、数字、中文、_和-组合'
-              }
-            ]
-          })(<Input autoComplete="off" size="large" placeholder="姓名" />)}
-        </FormItem>
-
-        <FormItem>
-          {getFieldDecorator('email', {
-            initialValue: (userInfo && userInfo.oauth_user_email) || '',
-            rules: [
-              {
-                required: true,
-                message: '请输入邮箱地址！'
-              },
-              {
-                type: 'email',
-                message: '邮箱地址格式错误！'
-              }
-            ]
-          })(<Input size="large" placeholder="邮箱" />)}
-        </FormItem>
+        <Row>
+          <Col span="12" style={{ padding: '0 8px 0 0' }}>
+            <FormItem>
+              {getFieldDecorator('real_name', {
+                initialValue: userInfo ? userInfo.oauth_user_name : '',
+                rules: [
+                  { required: true, message: '请输入姓名' },
+                  {
+                    max: 24,
+                    message: '最大长度24位'
+                  },
+                  {
+                    pattern: /^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/,
+                    message: '只支持字母、数字、中文、_和-组合'
+                  }
+                ]
+              })(<Input autoComplete="off" size="large" placeholder="姓名" />)}
+            </FormItem>
+          </Col>
+          <Col span="12" style={{ padding: '0 0 0 8px' }}>
+            <FormItem>
+              {getFieldDecorator('user_name', {
+                initialValue: firstRegist ? 'admin' : '',
+                rules: [
+                  { required: true, message: '请输入用户名!' },
+                  {
+                    min: 3,
+                    message: '最小长度3位'
+                  },
+                  {
+                    max: 24,
+                    message: '最大长度24位'
+                  },
+                  {
+                    pattern: /^[a-zA-Z0-9_\-]+$/,
+                    message: '只支持字母、数字、_和-组合'
+                  }
+                ]
+              })(
+                <Input autoComplete="off" size="large" placeholder="用户名" />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="12" style={{ padding: '0 8px 0 0' }}>
+            <FormItem>
+              {getFieldDecorator('email', {
+                initialValue: userInfo ? userInfo.oauth_user_email : '',
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入邮箱地址！'
+                  },
+                  {
+                    type: 'email',
+                    message: '邮箱地址格式错误！'
+                  }
+                ]
+              })(<Input autoComplete="off" size="large" placeholder="邮箱" />)}
+            </FormItem>
+          </Col>
+          <Col span="12" style={{ padding: '0 0 0 8px' }}>
+            <FormItem>
+              {getFieldDecorator('phone', {
+                initialValue: '',
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入手机号'
+                  },
+                  {
+                    pattern: /^[0-9]{11}$/,
+                    message: '请输入正确的手机号'
+                  }
+                ]
+              })(
+                <Input autoComplete="off" size="large" placeholder="手机号" />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
         <FormItem help={help}>
           {getFieldDecorator('password', {
             rules: [

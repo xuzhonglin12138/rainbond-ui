@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/sort-comp */
 import {
   Button,
@@ -273,7 +274,7 @@ export default class Index extends React.Component {
         ID: transfer.ID,
         scope: transfer.scope == 'inner' ? 'outer' : 'inner'
       },
-      callback: res => {
+      callback: () => {
         this.cancelTransfer();
         this.fetchInnerEnvs();
         notification.success({ message: '操作成功' });
@@ -564,7 +565,7 @@ export default class Index extends React.Component {
   handleChange = checked => {
     const { onChecked } = this.props;
     if (onChecked) {
-      onChecked && onChecked(checked);
+      onChecked(checked);
       setTimeout(() => {
         this.fetchBaseInfo();
       }, 1000);
@@ -626,18 +627,11 @@ export default class Index extends React.Component {
       ports,
       baseInfo,
       teamControl,
+      form,
       componentPermissions: { isDeploytype, isCharacteristic, isHealth }
     } = this.props;
-    const {
-      viewStartHealth,
-      is_fix,
-      tags,
-      tabData,
-      isShow,
-      loading
-    } = this.state;
-
-    const { getFieldDecorator } = this.props.form;
+    const { viewStartHealth, tags, tabData, isShow, loading } = this.state;
+    const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
         xs: {
@@ -866,10 +860,10 @@ export default class Index extends React.Component {
           />
         )}
 
-        {this.state.viewStartHealth && (
+        {viewStartHealth && (
           <ViewHealthCheck
             title="健康检查查看"
-            data={this.state.viewStartHealth}
+            data={viewStartHealth}
             onCancel={() => {
               this.setState({ viewStartHealth: null });
             }}

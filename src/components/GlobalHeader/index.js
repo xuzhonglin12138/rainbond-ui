@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */

@@ -1005,6 +1005,7 @@ export default class Main extends PureComponent {
 
     const {
       shareModal,
+      dep_service_name,
       models,
       appDetail,
       showCreateAppModel,
@@ -1015,8 +1016,7 @@ export default class Main extends PureComponent {
       versions,
       submitLoading,
       appModelInfo,
-      batchEditShow,
-      dep_service_name
+      batchEditShow
     } = this.state;
     const Application = getFieldValue('app_id');
     let breadcrumbList = [];

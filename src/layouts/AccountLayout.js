@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Layout } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
@@ -221,7 +220,7 @@ class AccountLayout extends PureComponent {
   }
 }
 
-export default connect(({ user, global, order }) => ({
+export default connect(({ user, global }) => ({
   currentUser: user.currentUser,
   rainbondInfo: global.rainbondInfo,
   collapsed: global.collapsed,

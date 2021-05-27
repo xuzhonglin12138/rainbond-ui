@@ -114,7 +114,7 @@ class CreateUserForm extends PureComponent {
                   },
                   {
                     pattern: /^[a-zA-Z0-9_\-]+$/,
-                    message: '只支持英文字母、数字、下划线、中划线'
+                    message: '只支持字母、数字、_和-组合'
                   }
                 ]
               })(<Input autoComplete="off" placeholder="请填写用户名!" />)}
