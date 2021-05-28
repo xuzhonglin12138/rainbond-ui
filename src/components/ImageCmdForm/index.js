@@ -175,7 +175,7 @@ export default class Index extends PureComponent {
               />
             )}
           </Form.Item>
-          {showSubmitBtns ? (
+          {showSubmitBtn ? (
             <Form.Item
               wrapperCol={{
                 xs: { span: 24, offset: 0 },
