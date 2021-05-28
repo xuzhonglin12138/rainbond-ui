@@ -1,4 +1,3 @@
-/* eslint-disable react/sort-comp */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable import/first */

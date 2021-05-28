@@ -118,6 +118,8 @@ class Index extends PureComponent {
       const defaultMaven = MavenList.filter(item => item.is_default);
       if (defaultMaven && defaultMaven.length > 0) {
         Default_BUILD_MAVEN_SETTING_NAME = defaultMaven[0].name;
+      } else {
+        Default_BUILD_MAVEN_SETTING_NAME = MavenList[0].name;
       }
     }
 
@@ -180,9 +182,11 @@ class Index extends PureComponent {
               style={{ width: '300px', marginRight: '20px' }}
             >
               {MavenList.map(item => {
+                const { is_default = false, name } = item;
                 return (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Option key={item.name}>{item.name}</Option>
+                  <Option key={name}>
+                    {is_default ? `默认(${name})` : name}
+                  </Option>
                 );
               })}
             </Select>
