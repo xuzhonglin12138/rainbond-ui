@@ -95,6 +95,7 @@ class CreateUserForm extends PureComponent {
         className={styles.TelescopicModal}
         onOk={this.handleSubmit}
         onCancel={onCancel}
+        confirmLoading={loading}
       >
         <Form onSubmit={this.handleSubmit}>
           {!userInfo && (

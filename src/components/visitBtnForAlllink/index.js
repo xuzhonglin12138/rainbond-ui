@@ -77,9 +77,9 @@ export default class Index extends PureComponent {
                       rel="noreferrer"
                       href={
                         setUrl &&
-                        (setUrl.includes('http') || setUrl.includes('https'))
+                        (setUrl.includes('http') || setUrl.includes('https')
                           ? setUrl
-                          : `http://${setUrl}`
+                          : `http://${setUrl}`)
                       }
                     >
                       {item.service_cname}

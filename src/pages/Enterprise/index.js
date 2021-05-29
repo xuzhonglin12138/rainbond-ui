@@ -428,8 +428,6 @@ export default class Enterprise extends PureComponent {
 
     const collections =
       collectionList && collectionList.length > 0 && collectionList;
-    const enterpriseEdition = rainbondUtil.isEnterpriseEdition(rainbondInfo);
-
     const colors = { color: '#3D54C4', cursor: 'pointer' };
     const memoryInfo = overviewMonitorInfo && overviewMonitorInfo.memory;
     const memoryUsed = memoryInfo && this.handlUnit(memoryInfo.used);
@@ -450,6 +448,7 @@ export default class Enterprise extends PureComponent {
       rainbondInfo && rainbondInfo.version && rainbondInfo.version.enable
         ? rainbondInfo.version.value
         : '';
+    const enterpriseEdition = rainbondUtil.isEnterpriseEdition(rainbondInfo);
     const memoryTotalUnit =
       memoryInfo && this.handlUnit(memoryInfo.total, 'MB');
     const teamOperation = (

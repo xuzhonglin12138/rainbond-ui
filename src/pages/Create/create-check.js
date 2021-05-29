@@ -27,8 +27,7 @@ import ModifyImageName from './modify-image-name';
 import ModifyUrl from './modify-url';
 
 @connect(
-  ({ user, global, appControl, teamControl }) => ({
-    rainbondInfo: global.rainbondInfo,
+  ({ user, appControl, teamControl }) => ({
     currentTeamPermissionsInfo: teamControl.currentTeamPermissionsInfo,
     currUser: user.currentUser,
     appDetail: appControl.appDetail
@@ -885,6 +884,13 @@ export default class CreateCheck extends React.Component {
         </div>
       ];
     }
+
+    const {
+      ButtonGroupState = false,
+      handleServiceBotton,
+      ErrState
+    } = this.props;
+
     if (isDeploy) {
       if (ServiceGetData && (!ButtonGroupState || !ErrState)) {
         handleServiceBotton(actions, true, true);

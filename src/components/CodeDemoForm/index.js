@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import { Button, Form, Input, Modal, Select, Tag } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';
