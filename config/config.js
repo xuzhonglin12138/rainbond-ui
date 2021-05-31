@@ -5,7 +5,11 @@ import routerConfig from './router.config';
 const dayFormat = moment(new Date())
   .locale('zh-cn')
   .format('YYYY-MM-DD');
+
 let publcPath = '/';
+if (process.env.ALLINONE === 'true') {
+  publcPath = `/static/dists/`;
+}
 if (process.env.ENABLE_CDN === 'true') {
   publcPath = `https://static.goodrain.com/rainbond-cloud/publish/${dayFormat}/`;
 }
