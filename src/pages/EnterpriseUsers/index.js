@@ -238,9 +238,9 @@ export default class EnterpriseUsers extends PureComponent {
     const {
       match: {
         params: { eid }
-      },
-      user
+      }
     } = this.props;
+
     const columns = [
       {
         title: '用户名称',
