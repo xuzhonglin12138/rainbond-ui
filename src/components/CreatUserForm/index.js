@@ -42,6 +42,7 @@ class CreateUserForm extends PureComponent {
       }
     });
   };
+
   handleSubmit = () => {
     const { form, onOk } = this.props;
     form.validateFields((err, values) => {
@@ -75,6 +76,7 @@ class CreateUserForm extends PureComponent {
       form,
       loading = false
     } = this.props;
+
     const { getFieldDecorator } = form;
     const { authorityList } = this.state;
     const formItemLayout = {

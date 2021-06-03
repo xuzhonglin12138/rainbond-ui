@@ -276,7 +276,6 @@ class Main extends PureComponent {
       }
     });
   };
-
   handleWaitLevel = () => {
     const { dispatch } = this.props;
     const { teamName, appID } = this.props.match.params;
@@ -357,9 +356,10 @@ class Main extends PureComponent {
       },
       callback: res => {
         if (res && res.status_code === 200) {
-          notification.success({ message: '删除成功' });
           this.closeComponentTimer();
           this.cancelDelete(false);
+          this.fetchGroups();
+          notification.success({ message: '删除成功' });
           dispatch(
             routerRedux.push(
               `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps`
@@ -370,32 +370,11 @@ class Main extends PureComponent {
     });
   };
 
-  newAddress = grid => {
+  fetchGroups = () => {
     this.props.dispatch({
       type: 'global/fetchGroups',
       payload: {
         team_name: globalUtil.getCurrTeamName()
-      },
-      callback: list => {
-        if (list && list.length) {
-          if (grid == list[0].group_id) {
-            this.newAddress(grid);
-          } else {
-            this.props.dispatch(
-              routerRedux.push(
-                `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/apps/${
-                  list[0].group_id
-                }`
-              )
-            );
-          }
-        } else {
-          this.props.dispatch(
-            routerRedux.push(
-              `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/index`
-            )
-          );
-        }
       }
     });
   };

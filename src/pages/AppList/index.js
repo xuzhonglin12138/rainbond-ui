@@ -55,7 +55,7 @@ export default class AppList extends PureComponent {
     this.getTeamAppList();
   }
   onPageChange = page => {
-    this.setState({ page }, () => {
+    this.setState({ page, loading: true }, () => {
       this.getTeamAppList();
     });
   };
@@ -192,7 +192,7 @@ export default class AppList extends PureComponent {
           )}
         </Row>
 
-        <Card loading={loading}>
+        <Card>
           {addGroup && (
             <AddGroup
               onCancel={this.cancelAddGroup}
@@ -201,7 +201,9 @@ export default class AppList extends PureComponent {
           )}
           <ScrollerX sm={800}>
             <Table
+              loading={loading}
               size="default"
+              scroll={{ x: window.innerWidth > 1500 ? false : 1500 }}
               pagination={{
                 size: 'default',
                 current: page,
@@ -214,7 +216,7 @@ export default class AppList extends PureComponent {
                 {
                   title: '应用名称',
                   dataIndex: 'group_name',
-                  width: '300px',
+                  width: 300,
                   render: (val, data) => {
                     return (
                       <Link
@@ -228,8 +230,8 @@ export default class AppList extends PureComponent {
                 {
                   title: '更新时间',
                   dataIndex: 'update_time',
-                  width: '200px',
-                  render: (val, data) => {
+                  width: 200,
+                  render: val => {
                     if (val) {
                       return moment(val).format('YYYY-MM-DD HH:mm:ss');
                     }
@@ -239,8 +241,8 @@ export default class AppList extends PureComponent {
                 {
                   title: '创建时间',
                   dataIndex: 'create_time',
-                  width: '200px',
-                  render: (val, data) => {
+                  width: 200,
+                  render: val => {
                     if (val) {
                       return moment(val).format('YYYY-MM-DD HH:mm:ss');
                     }
@@ -251,7 +253,7 @@ export default class AppList extends PureComponent {
                   title: '组件(运行/总数)',
                   dataIndex: 'services_num',
                   align: 'center',
-                  width: '150px',
+                  width: 150,
                   render: (_, data) => {
                     return (
                       <p style={{ marginBottom: 0 }}>
@@ -264,7 +266,7 @@ export default class AppList extends PureComponent {
                   title: '占用内存/分配内存(MB)',
                   dataIndex: 'used_mem',
                   align: 'center',
-                  width: '200px',
+                  width: 200,
                   render: (_, data) => {
                     return (
                       <p style={{ marginBottom: 0 }}>
@@ -275,7 +277,7 @@ export default class AppList extends PureComponent {
                 },
                 {
                   title: '备份记录',
-                  width: '150px',
+                  width: 150,
                   dataIndex: 'backup_record_num',
                   align: 'center',
                   render: (val, data) => {
@@ -290,7 +292,7 @@ export default class AppList extends PureComponent {
                 },
                 {
                   title: '发布记录',
-                  width: '150px',
+                  width: 150,
                   dataIndex: 'share_record_num',
                   align: 'center',
                   render: (val, data) => {
@@ -306,6 +308,7 @@ export default class AppList extends PureComponent {
                 {
                   title: '备注',
                   dataIndex: 'group_note',
+                  width: 100,
                   render: val => {
                     return (
                       <Tooltip title={val} placement="top">

@@ -32,6 +32,7 @@ import roleUtil from '../utils/role';
 import userUtil from '../utils/user';
 import AppHeader from './components/AppHeader';
 import TeamHeader from './components/TeamHeader';
+import MemoryTip from './MemoryTip';
 import Context from './MenuContext';
 
 const { Content } = Layout;
@@ -125,7 +126,7 @@ class TeamLayout extends PureComponent {
         type: 'user/fetchCurrent',
         callback: res => {
           if (res && res.status_code === 200) {
-            this.getTeamOverview(res.bean.user_id);
+            this.getTeamOverview(res.bean && res.bean.user_id);
           }
         }
       });
@@ -362,6 +363,7 @@ class TeamLayout extends PureComponent {
 
   render() {
     const {
+      memoryTip,
       currentUser,
       enterpriseServiceInfo,
       collapsed,
@@ -653,6 +655,8 @@ class TeamLayout extends PureComponent {
             currStep={0}
           />
         )}
+        {memoryTip && <MemoryTip memoryTip={memoryTip} />}
+
         {orders && BillingFunction && (
           <ServiceOrder
             enterpriseServiceInfo={enterpriseServiceInfo}

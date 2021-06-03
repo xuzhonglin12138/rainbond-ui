@@ -240,6 +240,7 @@ export default class EnterpriseUsers extends PureComponent {
         params: { eid }
       }
     } = this.props;
+
     const columns = [
       {
         title: '用户名称',

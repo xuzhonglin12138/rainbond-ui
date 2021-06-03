@@ -106,6 +106,7 @@ class Index extends PureComponent {
     } = this.state;
     const envBUILD_MAVEN_SETTING_NAME = envs && envs.BUILD_MAVEN_SETTING_NAME;
     const mavens = MavenList && MavenList.length > 0;
+
     let Default_BUILD_MAVEN_SETTING_NAME = '';
     if (mavens && envBUILD_MAVEN_SETTING_NAME) {
       MavenList.map(item => {

@@ -62,6 +62,11 @@ class Index extends PureComponent {
     const { logVisible, selectEventID, showSocket } = this.state;
     const logsvg = globalUtil.fetchSvg('logs', '#cccccc');
     let showLogEvent = '';
+    const statusMap = {
+      success: 'logpassed',
+      timeout: 'logcanceled',
+      failure: 'logfailed'
+    };
     return (
       <Card bordered={false} title="操作记录" loading={recordLoading}>
         <Row gutter={24}>
@@ -73,6 +78,7 @@ class Index extends PureComponent {
                   FinalStatus,
                   UserName,
                   OptType,
+                  Reason,
                   Message,
                   EndTime,
                   SynType,
@@ -98,13 +104,7 @@ class Index extends PureComponent {
                   <div
                     key={EventID}
                     className={`${styles.loginfo} ${
-                      Status === 'success'
-                        ? styles.logpassed
-                        : Status === 'timeout'
-                        ? styles.logcanceled
-                        : Status === 'failure'
-                        ? styles.logfailed
-                        : styles.logfored
+                      styles[statusMap[Status] || 'logfored']
                     }`}
                   >
                     <Tooltip
@@ -126,10 +126,12 @@ class Index extends PureComponent {
                             color: globalUtil.fetchAbnormalcolor(OptType)
                           }}
                         >
-                          {globalUtil.fetchStateOptTypeText(OptType)}&nbsp;
+                          {globalUtil.fetchStateOptTypeText(OptType)}
+                          &nbsp;
                         </span>
                         {globalUtil.fetchOperation(FinalStatus, Status)}
                         &nbsp;
+                        {Status === 'failure' && globalUtil.fetchReason(Reason)}
                         {Messages}
                       </Tooltip>
                     </div>

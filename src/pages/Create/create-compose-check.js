@@ -226,6 +226,7 @@ export default class CreateCheck extends PureComponent {
         }
       });
   };
+
   handleCreate = () => {
     const appAlias = this.getAppAlias();
   };
