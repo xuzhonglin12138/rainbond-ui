@@ -409,12 +409,7 @@ class Main extends PureComponent {
         this.cancelEdit();
         this.cancelEditAppDirector();
         this.fetchAppDetail();
-        dispatch({
-          type: 'global/fetchGroups',
-          payload: {
-            team_name: globalUtil.getCurrTeamName()
-          }
-        });
+        this.fetchGroups();
       }
     });
   };
@@ -991,6 +986,7 @@ class Main extends PureComponent {
         )}
         {toEdit && (
           <EditGroupName
+            isAddGroup={false}
             teamName={teamName}
             regionName={regionName}
             group_name={groupDetail.group_name}
