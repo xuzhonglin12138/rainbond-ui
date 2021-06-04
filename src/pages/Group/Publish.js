@@ -219,16 +219,6 @@ export default class AppPublishList extends PureComponent {
     );
   };
 
-  handleBox = val => {
-    return (
-      <div className={style.version}>
-        <Tooltip placement="topLeft" title={val}>
-          {val}
-        </Tooltip>
-      </div>
-    );
-  };
-
   render() {
     let breadcrumbList = [];
     const {
