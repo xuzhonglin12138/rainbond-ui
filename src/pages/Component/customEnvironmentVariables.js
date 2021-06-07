@@ -52,7 +52,6 @@ export default class Index extends React.Component {
       deleteVar: null,
       toDeleteMember: null,
       memberslist: null,
-      members: null,
       // appStatus: null,
       page: 1,
       page_size: 5,
@@ -71,8 +70,6 @@ export default class Index extends React.Component {
     this.props.dispatch({ type: 'teamControl/fetchAllPerm' });
     this.fetchInnerEnvs();
     this.loadMembers();
-    this.loadpermsMembers();
-
     this.loadMntList();
     this.fetchVolumes();
     this.fetchBaseInfo();
@@ -193,22 +190,6 @@ export default class Index extends React.Component {
     });
   };
 
-  loadpermsMembers = () => {
-    const { dispatch } = this.props;
-    const team_name = globalUtil.getCurrTeamName();
-    dispatch({
-      type: 'appControl/fetchpermsMember',
-      payload: {
-        team_name,
-        app_alias: this.props.appAlias
-      },
-      callback: data => {
-        if (data) {
-          this.setState({ members: data.list });
-        }
-      }
-    });
-  };
   handleAddVar = () => {
     this.setState({ showAddVar: true });
   };
@@ -498,8 +479,8 @@ export default class Index extends React.Component {
 
   render() {
     if (!this.canView()) return <NoPermTip />;
-    const { mntList, isAttrNameList } = this.state;
-    const { innerEnvs, baseInfo, volumes } = this.props;
+    const { mntList } = this.state;
+    const { baseInfo, volumes } = this.props;
     const wraps = {
       wordBreak: 'break-all',
       wordWrap: 'break-word'
