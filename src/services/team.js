@@ -362,6 +362,7 @@ export async function getTeamRegionGroups(body = {}, handleError) {
         query: body.query,
         region_name: body.region_name
       },
+      noModels: body.noModels,
       handleError
     }
   );
