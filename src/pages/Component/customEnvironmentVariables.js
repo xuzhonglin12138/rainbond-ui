@@ -50,12 +50,8 @@ export default class Index extends React.Component {
       showAddVar: false,
       showEditVar: null,
       deleteVar: null,
-      toDeleteMember: null,
-      memberslist: null,
-      // appStatus: null,
       page: 1,
       page_size: 5,
-      total: 0,
       env_name: '',
       showAddVars: null,
       showAddRelation: false,
@@ -69,7 +65,6 @@ export default class Index extends React.Component {
   componentDidMount() {
     this.props.dispatch({ type: 'teamControl/fetchAllPerm' });
     this.fetchInnerEnvs();
-    this.loadMembers();
     this.loadMntList();
     this.fetchVolumes();
     this.fetchBaseInfo();
@@ -167,24 +162,7 @@ export default class Index extends React.Component {
               }
             });
           }
-          this.setState({ isAttrNameList: arr, total: res.bean.total });
-        }
-      }
-    });
-  };
-
-  loadMembers = () => {
-    const { dispatch } = this.props;
-    const team_name = globalUtil.getCurrTeamName();
-    dispatch({
-      type: 'teamControl/fetchMember',
-      payload: {
-        team_name,
-        app_alias: this.props.appAlias
-      },
-      callback: data => {
-        if (data) {
-          this.setState({ memberslist: data.list });
+          this.setState({ isAttrNameList: arr });
         }
       }
     });
@@ -277,30 +255,6 @@ export default class Index extends React.Component {
           notification.success({ message: '编辑成功' });
           this.cancelEditVar();
           this.fetchInnerEnvs();
-        }
-      }
-    });
-  };
-
-  hideDelMember = () => {
-    this.setState({ toDeleteMember: null });
-  };
-
-  handleDelMember = () => {
-    const team_name = globalUtil.getCurrTeamName();
-    this.props.dispatch({
-      type: 'appControl/deleteMember',
-      payload: {
-        team_name,
-        app_alias: this.props.appAlias,
-        user_id: this.state.toDeleteMember.user_id
-      },
-      callback: res => {
-        if (res && res.status_code === 200) {
-          notification.success({ message: '删除成功' });
-          this.loadMembers();
-          this.loadpermsMembers();
-          this.hideDelMember();
         }
       }
     });
@@ -740,14 +694,6 @@ export default class Index extends React.Component {
             title="删除变量"
             desc="确定要删除此变量吗？"
             subDesc="此操作不可恢复"
-          />
-        )}
-        {this.state.toDeleteMember && (
-          <ConfirmModal
-            onOk={this.handleDelMember}
-            title="删除成员权限"
-            desc="确定要删除此成员的应用权限吗？"
-            onCancel={this.hideDelMember}
           />
         )}
       </Fragment>
