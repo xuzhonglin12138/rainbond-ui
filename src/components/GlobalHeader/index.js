@@ -24,6 +24,7 @@ import ChangePassword from '../ChangePassword';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
 
+
 const { Header } = Layout;
 @connect(({ user, global, appControl, order }) => ({
   rainbondInfo: global.rainbondInfo,
@@ -293,7 +294,6 @@ export default class GlobalHeader extends PureComponent {
               平台使用手册
             </a>
           )}
-
           <NoticeIcon
             className={styles.action}
             count={total}
