@@ -26,3 +26,4 @@ jsconfig.json
 /build/dist
 .scannerwork
 local_allinone.sh
+local_release.sh
