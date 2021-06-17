@@ -24,6 +24,7 @@ import ChangePassword from '../ChangePassword';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
 
+
 const { Header } = Layout;
 @connect(({ user, global, appControl, order }) => ({
   rainbondInfo: global.rainbondInfo,

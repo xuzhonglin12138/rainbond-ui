@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-expressions */
 import { Card, Col, notification, Row, Spin, Switch } from 'antd';
