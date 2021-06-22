@@ -34,6 +34,7 @@ import {
   getAllRegion,
   getAllRegionFee,
   getApplication,
+  getAppRedeploy,
   getCloudPlugin,
   getCompanyInfo,
   getConfigurationDetails,
@@ -67,7 +68,6 @@ import {
   isPubCloud,
   joinTeam,
   postUpdatedTasks,
-  postUpdateOrder,
   putInternalMessages,
   putMsgAction,
   putReadAllMessages,
@@ -484,14 +484,6 @@ export default {
         });
       }
     },
-    *CloudAppUpdateOrder({ payload, callback }, { call }) {
-      const response = yield call(postUpdateOrder, payload);
-      if (response && callback) {
-        setTimeout(() => {
-          callback(response);
-        });
-      }
-    },
     *CloudAppUpdatedVersion({ payload, callback }, { call }) {
       const response = yield call(getUpdatedVersion, payload);
       if (response && callback) {
@@ -508,8 +500,16 @@ export default {
         });
       }
     },
-    *CloudAppUpdatedTasks({ payload, callback }, { call }) {
-      const response = yield call(postUpdatedTasks, payload);
+    *CloudAppUpdatedTasks({ payload, callback, handleError }, { call }) {
+      const response = yield call(postUpdatedTasks, payload, handleError);
+      if (response && callback) {
+        setTimeout(() => {
+          callback(response);
+        });
+      }
+    },
+    *fetchAppRedeploy({ payload, callback, handleError }, { call }) {
+      const response = yield call(getAppRedeploy, payload, handleError);
       if (response && callback) {
         setTimeout(() => {
           callback(response);

@@ -216,6 +216,13 @@ export default [
             title: '动态'
           },
           {
+            path:
+              '/team/:teamName/region/:regionName/apps/:appID/upgrade/:upgradeGroupID/record/:recordID',
+            component: './Upgrade/UpgradeInfo',
+            name: 'UpgradeInfo',
+            authority: ['admin', 'user']
+          },
+          {
             path: '/team/:teamName/region/:regionName/apps/:appID/configgroups',
             component: './Configuration',
             name: 'Configuration',
