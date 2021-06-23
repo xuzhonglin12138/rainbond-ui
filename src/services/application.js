@@ -176,6 +176,10 @@ export async function getGroupDetail(body = {}, handleError) {
   return request(
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups/${body.group_id}`,
     {
+      method: 'get',
+      params: {
+        region_name: body.region_name
+      },
       handleError
     }
   );
