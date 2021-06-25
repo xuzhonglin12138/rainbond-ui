@@ -134,7 +134,8 @@ import {
   updateComponentDeployType,
   updatePluginMemory,
   updateRolling,
-  updateServiceName
+  updateServiceName,
+  upgrade
 } from '../services/app';
 import { getGroupApps } from '../services/application';
 import { addCertificate, getCertificates } from '../services/team';
@@ -261,6 +262,12 @@ export default {
     },
     *putDeploy({ payload, callback, handleError }, { call }) {
       const response = yield call(deploy, payload, handleError);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *putUpgrade({ payload, callback, handleError }, { call }) {
+      const response = yield call(upgrade, payload, handleError);
       if (response && callback) {
         callback(response);
       }
