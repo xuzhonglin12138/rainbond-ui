@@ -24,7 +24,6 @@ import ChangePassword from '../ChangePassword';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
 
-
 const { Header } = Layout;
 @connect(({ user, global, appControl, order }) => ({
   rainbondInfo: global.rainbondInfo,
@@ -255,7 +254,8 @@ export default class GlobalHeader extends PureComponent {
         <Menu selectedKeys={[]} onClick={this.handleMenuClick}>
           {MenuItems('userCenter', handleUserSvg, '个人中心')}
           {MenuItems('cpw', handleEditSvg, '修改密码')}
-          {MenuItems('logout', handleLogoutSvg, '退出登录')}
+          {!rainbondUtil.logoutEnable(rainbondInfo) &&
+            MenuItems('logout', handleLogoutSvg, '退出登录')}
         </Menu>
       </div>
     );
