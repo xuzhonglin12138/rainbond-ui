@@ -6,7 +6,7 @@ import moment from 'moment';
 import cookie from './cookie';
 import styles from './utils.less';
 
-const hash = window.location.pathname || window.location.hash || '';
+const hash = window.location.hash || window.location.pathname || '';
 const global = {
   withoutPermission(dispatch) {
     if (!dispatch) {
