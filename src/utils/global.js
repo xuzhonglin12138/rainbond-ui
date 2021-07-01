@@ -6,7 +6,6 @@ import moment from 'moment';
 import cookie from './cookie';
 import styles from './utils.less';
 
-const hash = window.location.hash || window.location.pathname || '';
 const global = {
   withoutPermission(dispatch) {
     if (!dispatch) {
@@ -123,6 +122,7 @@ const global = {
   },
   getCurrEnterpriseId() {
     const reg = /enterprise\/([^\/]+)/;
+    const hash = window.location.hash || window.location.pathname || '';
     const match = hash.match(reg);
     if (match) {
       return match[1];
@@ -131,6 +131,7 @@ const global = {
   },
   getCurrTeamName() {
     const reg = /team\/([^\/]+)/;
+    const hash = window.location.hash || window.location.pathname || '';
     const match = hash.match(reg);
     if (match) {
       return match[1];
@@ -139,6 +140,7 @@ const global = {
   },
   getComponentID() {
     const reg = /components\/([^\/]+)/;
+    const hash = window.location.hash || window.location.pathname || '';
     const match = hash.match(reg);
     if (match) {
       return match[1];
@@ -147,6 +149,7 @@ const global = {
   },
   getAppID(url) {
     const reg = /apps\/([^\/]+)/;
+    const hash = window.location.hash || window.location.pathname || '';
     const hashs = url || hash;
     const match = hashs.match(reg);
     if (match) {
@@ -156,6 +159,7 @@ const global = {
   },
   getCurrRegionName() {
     const reg = /region\/([^\/]+)/;
+    const hash = window.location.hash || window.location.pathname || '';
     const match = hash.match(reg);
     if (match) {
       return match[1];
