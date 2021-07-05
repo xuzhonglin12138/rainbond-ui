@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import { message } from 'antd';
@@ -146,17 +147,22 @@ export default class ThirdLogin extends Component {
 
   handleError = err => {
     const { dispatch } = this.props;
-    const status = err && err.status;
-    if (err && (status || err.msg_show)) {
+    const status = (err && err.status) || (err.response && err.response.status);
+    let data = null;
+    if (err.response && err.response.data) {
+      data = err.response.data;
+    } else if (err.data) {
+      data = err.data;
+    }
+    if (err && (status || data.msg_show)) {
       message.warning(
-        (status && status === 500 && '第三方认证失败，请重新认证') ||
-          err.msg_show,
-        1,
-        () => {
-          dispatch(routerRedux.push(loginUrl));
-        }
+        ((status === 500 || !data.msg_show) && '第三方认证失败，请重新认证') ||
+          data.msg_show
       );
     }
+    setTimeout(() => {
+      dispatch(routerRedux.push(loginUrl));
+    }, 1000);
   };
   handleSuccess = () => {
     const { dispatch } = this.props;
