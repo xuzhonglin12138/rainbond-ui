@@ -73,7 +73,7 @@ export default class RainbondClusterInit extends PureComponent {
         }
       });
     } else {
-      notification.warning('请阅读并同意注意事项');
+      notification.warning({ message: '请阅读并同意注意事项' });
     }
   };
 
@@ -92,8 +92,14 @@ export default class RainbondClusterInit extends PureComponent {
         clusterID,
         providerName: selectProvider
       },
-      callback: data => {
-        if (data) {
+      callback: res => {
+        if (
+          res &&
+          res.status_code === 200 &&
+          res.response_data &&
+          res.response_data.data
+        ) {
+          const { data } = res.response_data;
           this.setState({ task: data });
           if (data.status === 'inited') {
             if (completeInit) {
