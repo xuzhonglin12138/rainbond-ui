@@ -13,6 +13,7 @@ import { stringify } from 'querystring';
 import React, { Fragment, PureComponent } from 'react';
 import { ContainerQuery } from 'react-container-query';
 import DocumentTitle from 'react-document-title';
+import router from 'umi/router';
 import logo from '../../public/logo.png';
 import { getMenuData } from '../common/enterpriseMenu';
 import AuthCompany from '../components/AuthCompany';
@@ -95,8 +96,27 @@ class EnterpriseLayout extends PureComponent {
   }
 
   componentDidMount() {
-    this.getEnterpriseList();
+    this.fetchLicenses();
   }
+
+  fetchLicenses = () => {
+    const { dispatch } = this.props;
+    if (dispatch) {
+      dispatch({
+        type: 'global/fetchLicenses',
+        callback: info => {
+          if (info && info.is_expired) {
+            router.push(`/authorization/overdue`);
+          } else {
+            this.getEnterpriseList();
+          }
+        },
+        handleError: () => {
+          router.push(`/authorization/overdue`);
+        }
+      });
+    }
+  };
 
   // get enterprise list
   getEnterpriseList = () => {
@@ -256,6 +276,7 @@ class EnterpriseLayout extends PureComponent {
   render() {
     const {
       memoryTip,
+      licenseInfo,
       currentUser,
       collapsed,
       location,
@@ -276,7 +297,7 @@ class EnterpriseLayout extends PureComponent {
     const queryString = stringify({
       redirect: window.location.href
     });
-    if (!ready || !enterpriseInfo) {
+    if (!ready || !enterpriseInfo || !licenseInfo) {
       return <PageLoading />;
     }
     if (!currentUser || !rainbondInfo || enterpriseList.length === 0) {
@@ -415,6 +436,7 @@ class EnterpriseLayout extends PureComponent {
   }
 }
 export default connect(({ user, global, index, loading, order }) => ({
+  licenseInfo: global.licenseInfo,
   currentUser: user.currentUser,
   notifyCount: user.notifyCount,
   collapsed: global.collapsed,

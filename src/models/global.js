@@ -45,6 +45,7 @@ import {
   getGuideState,
   getInternalMessages,
   getJoinTeam,
+  getLicenses,
   getMarketApp,
   getMarketPlugins,
   getPayHistory,
@@ -121,6 +122,8 @@ export default {
     currRegion: '',
     // 云帮平台信息
     rainbondInfo: null,
+    // 平台license信息
+    licenseInfo: null,
     apploadingnum: 0,
     // 显示充值提示
     payTip: false,
@@ -414,6 +417,15 @@ export default {
       const data = yield call(syncMarketApp, payload);
       if (data && callback) {
         callback(data);
+      }
+    },
+    *fetchLicenses({ callback, handleError }, { call, put }) {
+      const data = yield call(getLicenses, handleError);
+      if (data && data.bean) {
+        yield put({ type: 'saveLicenses', payload: data.bean });
+        if (callback) {
+          callback(data.bean);
+        }
       }
     },
     *fetchRainbondInfo({ callback }, { call, put }) {
@@ -922,6 +934,12 @@ export default {
       return {
         ...state,
         payTip: false
+      };
+    },
+    saveLicenses(state, { payload }) {
+      return {
+        ...state,
+        licenseInfo: payload
       };
     },
     saveRainBondInfo(state, { payload }) {

@@ -26,8 +26,8 @@ export default [
     ]
   },
   {
-    path: '/exception/trigger',
-    component: './Exception/triggerException'
+    path: '/authorization/overdue',
+    component: './Overdue'
   },
   // main route config
   {
