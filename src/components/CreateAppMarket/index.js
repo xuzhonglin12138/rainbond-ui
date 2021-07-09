@@ -84,22 +84,6 @@ class CreateAppMarket extends PureComponent {
         onCancel={onCancel}
         confirmLoading={loading || false}
       >
-        <span
-          style={{
-            textAlign: 'center',
-            display: 'block',
-            marginBottom: '16px'
-          }}
-        >
-          开通自己的应用商店？
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://store.goodrain.com/marketregist"
-          >
-            去开通
-          </a>
-        </span>
         <Form onSubmit={this.handleSubmit} layout="horizontal">
           <FormItem {...formItemLayout} label="标识">
             {getFieldDecorator('name', {
@@ -116,7 +100,7 @@ class CreateAppMarket extends PureComponent {
                 }
               ]
             })(<Input placeholder="请输入标识" />)}
-            <div className={styles.conformDesc}>
+            <div className={styles.conformDesc} style={{ height: '30px' }}>
               相同的标识可以帮助用户在删除已有市场后重新添加回来。
             </div>
           </FormItem>

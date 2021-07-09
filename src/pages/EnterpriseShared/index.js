@@ -243,7 +243,6 @@ export default class EnterpriseShared extends PureComponent {
         params: { eid }
       }
     } = this.props;
-    this.setState({ marketTabLoading: true });
     dispatch({
       type: 'market/fetchMarketsTab',
       payload: {
@@ -253,7 +252,6 @@ export default class EnterpriseShared extends PureComponent {
         if (res && res.status_code === 200) {
           this.setState(
             {
-              marketTabLoading: false,
               marketTab: res.list
             },
             () => {
@@ -619,9 +617,14 @@ export default class EnterpriseShared extends PureComponent {
       match: {
         params: { eid }
       },
-      upAppMarketLoading
+      createAppMarketLoading,
+      upAppMarketLoading,
+      enterprise
     } = this.props;
-
+    const isForms =
+      enterprise &&
+      enterprise.add_appstore_mode &&
+      enterprise.add_appstore_mode === 'forms';
     const {
       componentList,
       marketList,
@@ -1173,7 +1176,7 @@ export default class EnterpriseShared extends PureComponent {
           />
         )}
 
-        {this.state.createAppMarket && (
+        {this.state.createAppMarket && !isForms && (
           <AuthCompany
             eid={eid}
             title="添加应用商店"
@@ -1181,7 +1184,7 @@ export default class EnterpriseShared extends PureComponent {
             currStep={1}
           />
         )}
-        {/* {this.state.createAppMarket && (
+        {this.state.createAppMarket && isForms && (
           <CreateAppMarket
             title="添加应用商店"
             eid={eid}
@@ -1189,7 +1192,7 @@ export default class EnterpriseShared extends PureComponent {
             onOk={this.handleCreateAppMarket}
             onCancel={this.handleCancelAppMarket}
           />
-        )} */}
+        )}
         {this.state.upAppMarket && (
           <CreateAppMarket
             title="编辑应用商店连接信息"
@@ -1218,7 +1221,7 @@ export default class EnterpriseShared extends PureComponent {
             onCheckedValues={this.onChangeBounced}
           />
         )}
-        {this.state.showCloudMarketAuth && (
+        {this.state.showCloudMarketAuth && !isForms && (
           <AuthCompany
             eid={eid}
             marketName={marketInfo.name}
