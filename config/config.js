@@ -13,11 +13,11 @@ if (process.env.ALLINONE === 'true') {
 if (process.env.ENABLE_CDN === 'true') {
   publcPath = `https://static.goodrain.com/rainbond-cloud/publish/${dayFormat}/`;
 }
-const isHash = process.env.ROUTE_MODE === 'hash';
+const isHistory = process.env.ROUTE_MODE === 'history';
 export default {
-  history: isHash ? 'hash' : 'browser',
+  history: isHistory ? 'browser' : 'hash',
   publicPath: publcPath,
-  hash: isHash,
+  hash: !isHistory,
   plugins: [
     [
       'umi-plugin-react',
