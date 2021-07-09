@@ -678,7 +678,8 @@ export default class EnterpriseClusters extends PureComponent {
       }
     };
     const region_nums = (licenseInfo && licenseInfo.region_nums) || 0;
-    const isAdd = region_nums <= (clusters && clusters.length);
+    const isAdd =
+      region_nums === -1 ? false : region_nums <= (clusters && clusters.length);
     return (
       <PageHeaderLayout
         title="集群管理"

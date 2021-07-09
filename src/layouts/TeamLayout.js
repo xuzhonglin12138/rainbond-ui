@@ -112,7 +112,10 @@ class TeamLayout extends PureComponent {
             });
             if (licenses && licenses.length > 0) {
               const infos = licenses[0];
-              if (infos.expect_node < infos.actual_node) {
+              if (
+                infos.expect_node !== -1 &&
+                infos.expect_node < infos.actual_node
+              ) {
                 this.setState({
                   nodeInfo: infos
                 });
