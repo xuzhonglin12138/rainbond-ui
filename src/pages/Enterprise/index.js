@@ -39,11 +39,13 @@ import Convenient from '../../components/Convenient';
 import CreateTeam from '../../components/CreateTeam';
 import JoinTeam from '../../components/JoinTeam';
 import Meiqia from '../../layouts/Meiqia';
+import globalUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
 import userUtil from '../../utils/user';
 import styles from '../List/BasicList.less';
 
 @connect(({ user, global, index, loading }) => ({
+  licenseInfo: global.licenseInfo,
   user: user.currentUser,
   rainbondInfo: global.rainbondInfo,
   overviewInfo: index.overviewInfo,
@@ -392,7 +394,7 @@ export default class Enterprise extends PureComponent {
       ...teamBox,
       ...{ height: '68px', padding: '24px', cursor: 'pointer' }
     };
-    const { rainbondInfo } = this.props;
+    const { rainbondInfo, licenseInfo } = this.props;
     const {
       enterpriseInfo,
       overviewInfo,
@@ -482,6 +484,9 @@ export default class Enterprise extends PureComponent {
         )}
       </div>
     );
+    const isExpiring = globalUtil.fetchWeeksExpiring(
+      licenseInfo && licenseInfo.end_time
+    );
     return (
       <div>
         {this.state.joinTeam && (
@@ -557,6 +562,18 @@ export default class Enterprise extends PureComponent {
                       创建时间&nbsp;
                       {enterpriseInfo.create_time}
                     </Tooltip>
+                  </p>
+                </div>
+              )}
+              {licenseInfo && (
+                <div className={styles.enterpriseBox}>
+                  <p>
+                    过期时间：
+                    <span style={{ color: isExpiring && 'red' }}>
+                      {licenseInfo.is_permanent
+                        ? '永久授权'
+                        : licenseInfo.end_time}
+                    </span>
                   </p>
                 </div>
               )}

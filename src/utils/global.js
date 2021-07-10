@@ -993,6 +993,17 @@ const global = {
     }
     return result;
   },
+  fetchWeeksExpiring(endTime) {
+    if (endTime) {
+      const weekTime = moment(endTime)
+        .subtract(7, 'days')
+        .valueOf();
+      const currentTime = moment(new Date()).valueOf();
+      return currentTime > weekTime;
+    }
+
+    return false;
+  },
   fetchInstanceReasons(type) {
     const reasonsType = {
       UnknownContainerStatuses: '未知的容器状态',
