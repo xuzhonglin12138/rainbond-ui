@@ -107,28 +107,24 @@ class TeamLayout extends PureComponent {
             info.region_licenses &&
             info.region_licenses.length > 0
           ) {
-            const licenses = info.region_licenses.filter(item => {
+            const currentRegionLicenses = info.region_licenses.filter(item => {
               return item.region_name === regionName;
             });
-            if (licenses && licenses.length > 0) {
-              const infos = licenses[0];
+            if (currentRegionLicenses && currentRegionLicenses.length > 0) {
+              const licenseInfo = currentRegionLicenses[0];
               if (
-                infos.expect_node !== -1 &&
-                infos.expect_node < infos.actual_node
+                licenseInfo.expect_node !== -1 &&
+                licenseInfo.expect_node < licenseInfo.actual_node
               ) {
                 this.setState({
-                  nodeInfo: infos
+                  nodeInfo: licenseInfo
                 });
               }
             } else {
-              this.setState({
-                isLicenses: true
-              });
+              this.handleLicenses();
             }
           } else {
-            this.setState({
-              isLicenses: true
-            });
+            this.handleLicenses();
           }
           this.getEnterpriseList();
         },
@@ -137,6 +133,11 @@ class TeamLayout extends PureComponent {
         }
       });
     }
+  };
+  handleLicenses = () => {
+    this.setState({
+      isLicenses: true
+    });
   };
 
   // get enterprise list
