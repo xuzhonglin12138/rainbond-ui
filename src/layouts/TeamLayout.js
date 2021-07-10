@@ -77,7 +77,7 @@ class TeamLayout extends PureComponent {
       isMobile,
       enterpriseList: [],
       nodeInfo: false,
-      isLicenses: false,
+      isCurrentRegionLicenses: false,
       ready: false,
       currentTeam: false,
       currentEnterprise: false,
@@ -136,7 +136,7 @@ class TeamLayout extends PureComponent {
   };
   handleLicenses = () => {
     this.setState({
-      isLicenses: true
+      isCurrentRegionLicenses: true
     });
   };
 
@@ -442,7 +442,7 @@ class TeamLayout extends PureComponent {
       teamView,
       joinTeamLoading,
       nodeInfo,
-      isLicenses
+      isCurrentRegionLicenses
     } = this.state;
 
     const { teamName, regionName } = this.props.match.params;
@@ -680,11 +680,11 @@ class TeamLayout extends PureComponent {
                   width: autoWidth
                 }}
               >
-                {(nodeInfo || isLicenses) && (
+                {(nodeInfo || isCurrentRegionLicenses) && (
                   <Alert
                     style={{ textAlign: 'center' }}
                     message={
-                      isLicenses
+                      isCurrentRegionLicenses
                         ? `当前集群没有licenses${' '}请联系好雨商务${' '}获取更多授权`
                         : `当前集群具有${
                             nodeInfo.actual_node
