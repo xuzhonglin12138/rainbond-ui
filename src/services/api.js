@@ -601,10 +601,13 @@ export function getRainbondInfo() {
    获取平台license信息
 */
 export function getLicenses(handleError) {
-  return request(`${apiconfig.baseUrl}/console/licenses`, {
-    method: 'get',
-    handleError
-  });
+  return request(
+    `${apiconfig.baseUrl}/console/proxy/enterprise-server/api/v1/license`,
+    {
+      method: 'get',
+      handleError
+    }
+  );
 }
 /*
    绑定github
