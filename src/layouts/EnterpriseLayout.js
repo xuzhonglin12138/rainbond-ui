@@ -105,8 +105,14 @@ class EnterpriseLayout extends PureComponent {
       dispatch({
         type: 'global/fetchLicenses',
         callback: info => {
-          if (info && info.is_expired) {
-            router.push(`/authorization/overdue`);
+          if (
+            info &&
+            ((!info.is_permanent && info.is_expired) || !info.have_license)
+          ) {
+            router.push({
+              pathname: '/authorization/overdue',
+              query: { isLicense: info.have_license }
+            });
           } else {
             this.getEnterpriseList();
           }

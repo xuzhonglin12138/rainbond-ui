@@ -98,10 +98,17 @@ class TeamLayout extends PureComponent {
       dispatch({
         type: 'global/fetchLicenses',
         callback: info => {
-          if (info && info.is_expired) {
-            router.push(`/authorization/overdue`);
+          if (
+            info &&
+            ((!info.is_permanent && info.is_expired) || !info.have_license)
+          ) {
+            router.push({
+              pathname: '/authorization/overdue',
+              query: { isLicense: info.have_license }
+            });
             return null;
           }
+
           if (
             regionName &&
             info.region_licenses &&
@@ -685,7 +692,7 @@ class TeamLayout extends PureComponent {
                     style={{ textAlign: 'center' }}
                     message={
                       isCurrentRegionLicenses
-                        ? `当前集群没有licenses${' '}请联系好雨商务${' '}获取更多授权`
+                        ? ` 当前集群没有企业版授权${' '}请联系好雨商务${' '}获取授权`
                         : `当前集群具有${
                             nodeInfo.actual_node
                           }个计算节点 超过了最大授权节点数${

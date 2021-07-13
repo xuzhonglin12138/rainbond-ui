@@ -568,7 +568,7 @@ export default class Enterprise extends PureComponent {
               {licenseInfo && (
                 <div className={styles.enterpriseBox}>
                   <p>
-                    过期时间：
+                    授权过期时间：
                     <span style={{ color: isExpiring && 'red' }}>
                       {licenseInfo.is_permanent
                         ? '永久授权'

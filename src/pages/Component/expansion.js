@@ -870,7 +870,7 @@ export default class Index extends PureComponent {
               style={{ marginBottom: '16px' }}
               type="warning"
               closable
-              message="当前产品授权不支持 GPU 调度，需要 GPU 共享调度能力请获取企业版授权。"
+              message="当前集群功能授权不支持 GPU 调度，需要 GPU 共享调度能力请获取更多授权。"
             />
           )}
           <Row gutter={16}>
