@@ -14,7 +14,7 @@ export default class Overdue extends Component {
           description={
             !isLicense
               ? '请获取授权文件并正确配置'
-              : '请联系好雨商务&nbsp;获取更多授权'
+              : '请联系好雨商务 获取更多授权'
           }
         />
       </div>
