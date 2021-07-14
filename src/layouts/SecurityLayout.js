@@ -1,18 +1,47 @@
-import React from 'react';
 import { connect } from 'dva';
-import { Redirect } from 'umi';
-import PageLoading from '../components/PageLoading';
 import { stringify } from 'querystring';
+import React from 'react';
+import { Redirect } from 'umi';
+import router from 'umi/router';
+import PageLoading from '../components/PageLoading';
 import cookie from '../utils/cookie';
 import globalUtil from '../utils/global';
 import ErrorBoundary from './ErrorBoundary';
 
 class SecurityLayout extends React.PureComponent {
   state = {
-    isReady: false,
+    isReady: false
   };
 
   componentDidMount() {
+    this.fetchLicenses();
+  }
+
+  fetchLicenses = () => {
+    const { dispatch } = this.props;
+    if (dispatch) {
+      dispatch({
+        type: 'global/fetchLicenses',
+        callback: info => {
+          if (
+            info &&
+            ((!info.is_permanent && info.is_expired) || !info.have_license)
+          ) {
+            router.push({
+              pathname: '/authorization/overdue',
+              query: { isLicense: info.have_license }
+            });
+          } else {
+            this.fetchRainbondInfo();
+          }
+        },
+        handleError: () => {
+          router.push(`/authorization/overdue`);
+        }
+      });
+    }
+  };
+  fetchRainbondInfo = () => {
     const { dispatch } = this.props;
     if (dispatch) {
       dispatch({
@@ -21,11 +50,10 @@ class SecurityLayout extends React.PureComponent {
           if (info) {
             this.fetchUserInfo();
           }
-        },
+        }
       });
     }
-  }
-
+  };
   fetchUserInfo = () => {
     const { dispatch } = this.props;
     if (dispatch) {
@@ -33,14 +61,14 @@ class SecurityLayout extends React.PureComponent {
         type: 'user/fetchCurrent',
         callback: () => {
           this.setState({
-            isReady: true,
+            isReady: true
           });
         },
         handleError: () => {
           this.setState({
-            isReady: true,
+            isReady: true
           });
-        },
+        }
       });
     }
   };
@@ -52,7 +80,7 @@ class SecurityLayout extends React.PureComponent {
     const token = cookie.get('token');
     const isLogin = token && currentUser;
     const queryString = stringify({
-      redirect: window.location.href,
+      redirect: window.location.href
     });
     if (needLogin) {
       globalUtil.removeCookie();
@@ -73,5 +101,5 @@ class SecurityLayout extends React.PureComponent {
 export default connect(({ user, loading, global }) => ({
   currentUser: user.currentUser,
   loading: loading.models.user,
-  needLogin: global.needLogin,
+  needLogin: global.needLogin
 }))(SecurityLayout);

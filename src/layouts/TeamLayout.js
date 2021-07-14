@@ -4,7 +4,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-nested-ternary */
-import { Icon, Layout, notification, Tooltip } from 'antd';
+import { Alert, Icon, Layout, notification, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { connect } from 'dva';
 import { Redirect, routerRedux } from 'dva/router';
@@ -76,6 +76,8 @@ class TeamLayout extends PureComponent {
     this.state = {
       isMobile,
       enterpriseList: [],
+      nodeInfo: false,
+      isCurrentRegionLicenses: false,
       ready: false,
       currentTeam: false,
       currentEnterprise: false,
@@ -87,8 +89,63 @@ class TeamLayout extends PureComponent {
   }
 
   componentWillMount() {
-    this.getEnterpriseList();
+    this.fetchLicenses();
   }
+  fetchLicenses = () => {
+    const { dispatch } = this.props;
+    const { regionName } = this.props.match.params;
+    if (dispatch) {
+      dispatch({
+        type: 'global/fetchLicenses',
+        callback: info => {
+          if (
+            info &&
+            ((!info.is_permanent && info.is_expired) || !info.have_license)
+          ) {
+            router.push({
+              pathname: '/authorization/overdue',
+              query: { isLicense: info.have_license }
+            });
+            return null;
+          }
+
+          if (
+            regionName &&
+            info.region_licenses &&
+            info.region_licenses.length > 0
+          ) {
+            const currentRegionLicenses = info.region_licenses.filter(item => {
+              return item.region_name === regionName;
+            });
+            if (currentRegionLicenses && currentRegionLicenses.length > 0) {
+              const licenseInfo = currentRegionLicenses[0];
+              if (
+                licenseInfo.expect_node !== -1 &&
+                licenseInfo.expect_node < licenseInfo.actual_node
+              ) {
+                this.setState({
+                  nodeInfo: licenseInfo
+                });
+              }
+            } else {
+              this.handleLicenses();
+            }
+          } else {
+            this.handleLicenses();
+          }
+          this.getEnterpriseList();
+        },
+        handleError: () => {
+          router.push(`/authorization/overdue`);
+        }
+      });
+    }
+  };
+  handleLicenses = () => {
+    this.setState({
+      isCurrentRegionLicenses: true
+    });
+  };
 
   // get enterprise list
   getEnterpriseList = () => {
@@ -368,6 +425,7 @@ class TeamLayout extends PureComponent {
     const {
       memoryTip,
       currentUser,
+      licenseInfo,
       enterpriseServiceInfo,
       collapsed,
       children,
@@ -389,7 +447,9 @@ class TeamLayout extends PureComponent {
       currentRegion,
       currentComponent,
       teamView,
-      joinTeamLoading
+      joinTeamLoading,
+      nodeInfo,
+      isCurrentRegionLicenses
     } = this.state;
 
     const { teamName, regionName } = this.props.match.params;
@@ -401,6 +461,7 @@ class TeamLayout extends PureComponent {
     // The necessary data is loaded
     if (
       !ready ||
+      !licenseInfo ||
       !currentEnterprise ||
       !currentTeam ||
       !currentTeamPermissionsInfo ||
@@ -595,6 +656,7 @@ class TeamLayout extends PureComponent {
               isMobile={this.state.isMobile}
               customHeader={teamView && customHeader}
             />
+
             <Layout style={{ flexDirection: 'row' }}>
               {teamView && (
                 <GlobalRouter
@@ -617,6 +679,7 @@ class TeamLayout extends PureComponent {
                   showMenu={!componentID}
                 />
               )}
+
               <Content
                 style={{
                   height: 'calc(100vh - 64px)',
@@ -624,6 +687,21 @@ class TeamLayout extends PureComponent {
                   width: autoWidth
                 }}
               >
+                {(nodeInfo || isCurrentRegionLicenses) && (
+                  <Alert
+                    style={{ textAlign: 'center' }}
+                    message={
+                      isCurrentRegionLicenses
+                        ? ` 当前集群没有企业版授权${' '}请联系好雨商务${' '}获取授权`
+                        : `当前集群具有${
+                            nodeInfo.actual_node
+                          }个计算节点 超过了最大授权节点数${
+                            nodeInfo.expect_node
+                          }个${' '}请联系好雨商务${' '}获取更多授权`
+                    }
+                    type="warning"
+                  />
+                )}
                 <div
                   style={{
                     margin: '24px 24px 0'
@@ -674,6 +752,7 @@ class TeamLayout extends PureComponent {
 
 export default connect(
   ({ user, global, index, loading, teamControl, order }) => ({
+    licenseInfo: global.licenseInfo,
     currentUser: user.currentUser,
     notifyCount: user.notifyCount,
     collapsed: global.collapsed,

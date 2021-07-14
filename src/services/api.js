@@ -598,6 +598,15 @@ export function getRainbondInfo() {
 }
 
 /*
+   获取平台license信息
+*/
+export function getLicenses(handleError) {
+  return request(`${apiconfig.baseUrl}/console/licenses`, {
+    method: 'get',
+    handleError
+  });
+}
+/*
    绑定github
 */
 export async function bindGithub(body = {}) {

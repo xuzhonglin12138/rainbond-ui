@@ -1,6 +1,7 @@
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import React from 'react';
+import router from 'umi/router';
 import cloud from '../../public/cloud.png';
 import logo from '../../public/logo.png';
 import globalUtil from '../utils/global';
@@ -17,6 +18,34 @@ class UserLayout extends React.PureComponent {
     };
   }
   componentWillMount() {
+    this.fetchLicenses();
+  }
+
+  fetchLicenses = () => {
+    const { dispatch } = this.props;
+    if (dispatch) {
+      dispatch({
+        type: 'global/fetchLicenses',
+        callback: info => {
+          if (
+            info &&
+            ((!info.is_permanent && info.is_expired) || !info.have_license)
+          ) {
+            router.push({
+              pathname: '/authorization/overdue',
+              query: { isLicense: info.have_license }
+            });
+          } else {
+            this.fetchRainbondInfo();
+          }
+        },
+        handleError: () => {
+          router.push(`/authorization/overdue`);
+        }
+      });
+    }
+  };
+  fetchRainbondInfo = () => {
     const { dispatch } = this.props;
     // 初始化 获取RainbondInfo信息
     dispatch({
@@ -62,7 +91,7 @@ class UserLayout extends React.PureComponent {
         }
       }
     });
-  }
+  };
   isRender = isRender => {
     this.setState({
       isRender

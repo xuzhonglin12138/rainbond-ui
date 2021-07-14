@@ -29,6 +29,7 @@ import userUtil from '../../utils/user';
 const { confirm } = Modal;
 
 @connect(({ user, list, loading, global, index }) => ({
+  licenseInfo: global.licenseInfo,
   user: user.currentUser,
   list,
   clusterLoading: loading.effects['region/fetchEnterpriseClusters'],
@@ -49,6 +50,7 @@ export default class EnterpriseClusters extends PureComponent {
       adminer,
       clusters: [],
       editClusterShow: false,
+      clusterLoadings: true,
       regionInfo: false,
       text: '',
       delVisible: false,
@@ -59,7 +61,8 @@ export default class EnterpriseClusters extends PureComponent {
       tenantPage: 1,
       tenantPageSize: 5,
       showTenantListRegion: '',
-      setTenantLimitShow: false
+      setTenantLimitShow: false,
+      isAddClusters: false
     };
   }
   componentWillMount() {
@@ -135,16 +138,16 @@ export default class EnterpriseClusters extends PureComponent {
         name
       },
       callback: res => {
+        const clusters = [];
         if (res && res.list) {
-          const clusters = [];
           res.list.map((item, index) => {
             item.key = `cluster${index}`;
             clusters.push(item);
             return item;
           });
-          this.setState({ clusters });
           globalUtil.putClusterInfoLog(eid, res.list);
         }
+        this.setState({ clusters, clusterLoadings: false });
       }
     });
   };
@@ -341,13 +344,18 @@ export default class EnterpriseClusters extends PureComponent {
     const { dispatch } = this.props;
     dispatch(routerRedux.push(`/team/${team_name}/region/${region}/index`));
   };
-
+  handleIsAddClusters = isAddClusters => {
+    this.setState({
+      isAddClusters
+    });
+  };
   render() {
     const {
       delclusterLongin,
       match: {
         params: { eid }
       },
+      licenseInfo,
       clusterLoading,
       form
     } = this.props;
@@ -366,7 +374,9 @@ export default class EnterpriseClusters extends PureComponent {
       setTenantLimitShow,
       limitTeamName,
       limitSummitLoading,
-      initLimitValue
+      initLimitValue,
+      isAddClusters,
+      clusterLoadings
     } = this.state;
     const { getFieldDecorator } = form;
     const pagination = {
@@ -667,6 +677,9 @@ export default class EnterpriseClusters extends PureComponent {
         sm: { span: 12 }
       }
     };
+    const region_nums = (licenseInfo && licenseInfo.region_nums) || 0;
+    const isAdd =
+      region_nums === -1 ? false : region_nums <= (clusters && clusters.length);
     return (
       <PageHeaderLayout
         title="集群管理"
@@ -674,9 +687,32 @@ export default class EnterpriseClusters extends PureComponent {
       >
         <Row style={{ marginBottom: '20px' }}>
           <Col span={24} style={{ textAlign: 'right' }}>
-            <Link to={`/enterprise/${eid}/addCluster`}>
-              <Button type="primary">添加集群</Button>
-            </Link>
+            <div
+              style={{
+                display: 'inline-block',
+                height: '40px',
+                width: '100px',
+                textAlign: 'center'
+              }}
+              onMouseLeave={() => {
+                this.handleIsAddClusters(false);
+              }}
+              onMouseEnter={() => {
+                this.handleIsAddClusters(isAdd);
+              }}
+            >
+              <Tooltip
+                title={`当前集群数量达到授权的最大值（授权最大${region_nums}个集群），请联系好雨商务获取更多授权`}
+                visible={isAddClusters}
+              >
+                <Link to={`/enterprise/${eid}/addCluster`}>
+                  <Button type="primary" disabled={isAdd || clusterLoadings}>
+                    添加集群
+                  </Button>
+                </Link>
+              </Tooltip>
+            </div>
+
             <Button
               style={{ marginLeft: '16px' }}
               onClick={() => {
