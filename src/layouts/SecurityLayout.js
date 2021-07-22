@@ -1,3 +1,4 @@
+import { notification } from 'antd';
 import { connect } from 'dva';
 import { stringify } from 'querystring';
 import React from 'react';
@@ -42,13 +43,33 @@ class SecurityLayout extends React.PureComponent {
     }
   };
   fetchRainbondInfo = () => {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      location: { query }
+    } = this.props;
     if (dispatch) {
       dispatch({
         type: 'global/fetchRainbondInfo',
         callback: info => {
           if (info) {
-            this.fetchUserInfo();
+            if (info.sso_enable === 'true' && query && query.token) {
+              dispatch({
+                type: 'user/ssologin',
+                payload: {
+                  token: query.token
+                },
+                callback: () => {
+                  this.fetchUserInfo();
+                },
+                handleError: () => {
+                  notification.warning({ message: '单点登录不成功' });
+                  globalUtil.removeCookie();
+                  router.push(`/user/login`);
+                }
+              });
+            } else {
+              this.fetchUserInfo();
+            }
           }
         }
       });
