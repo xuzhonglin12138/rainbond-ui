@@ -21,7 +21,7 @@ export default class ChangeBuildSource extends PureComponent {
     this.state = {
       branch: this.props.branch || [],
       buildSource: this.props.buildSource || null,
-      showUsernameAndPass: false,
+      showUsernameAndPass: this.props.buildSource.user !== '',
       showKey: false,
       gitUrl: this.props.buildSource.git_url,
       serverType: this.props.buildSource.server_type
@@ -32,7 +32,6 @@ export default class ChangeBuildSource extends PureComponent {
     };
   }
   componentDidMount() {
-    // this.changeURL(this.props.buildSource.git_url||null);
     if (appUtil.isCodeAppByBuildSource(this.state.buildSource)) {
       this.loadBranch();
     }
@@ -47,7 +46,10 @@ export default class ChangeBuildSource extends PureComponent {
     return /^(git@|ssh:\/\/|svn:\/\/|http:\/\/|https:\/\/).+$/gi;
   }
   changeServerType = value => {
-    this.setState({ serverType: value, showUsernameAndPass: false });
+    const { form } = this.props;
+    const { getFieldValue } = form;
+    const userName = getFieldValue('user_name');
+    this.setState({ serverType: value, showUsernameAndPass: userName !== '' });
   };
   checkURL = (_rule, value, callback) => {
     const urlCheck = this.getUrlCheck();
@@ -119,10 +121,8 @@ export default class ChangeBuildSource extends PureComponent {
     };
     const gitUrl = getFieldValue('git_url');
     let isHttp = /(http|https):\/\/([\w.]+\/?)\S*/.test(gitUrl || '');
-    let urlCheck = /^(git@|ssh:\/\/|svn:\/\/|http:\/\/|https:\/\/).+$/gi;
-    if (this.state.serverType == 'svn') {
+    if (this.state.serverType !== 'git') {
       isHttp = true;
-      urlCheck = /^(ssh:\/\/|svn:\/\/|http:\/\/|https:\/\/).+$/gi;
     }
     const isSSH = !isHttp;
 
@@ -136,11 +136,12 @@ export default class ChangeBuildSource extends PureComponent {
       >
         <Option value="git">Git</Option>
         <Option value="svn">Svn</Option>
+        <Option value="oss">OSS</Option>
       </Select>
     );
     let codeVersion = this.state.buildSource.code_version;
     let versionType = 'branch';
-    if (codeVersion && codeVersion.indexOf('tag:') == 0) {
+    if (codeVersion && codeVersion.indexOf('tag:') === 0) {
       versionType = 'tag';
       codeVersion = codeVersion.substr(4, codeVersion.length);
     }
@@ -275,7 +276,6 @@ export default class ChangeBuildSource extends PureComponent {
                 onClick={() => {
                   this.setState({ showKey: true });
                 }}
-                href="javascript:;"
               >
                 配置授权Key
               </a>
@@ -283,14 +283,13 @@ export default class ChangeBuildSource extends PureComponent {
           ) : (
             ''
           )}
-          {gitUrl && isHttp ? (
+          {gitUrl && isHttp && !showUsernameAndPass ? (
             <div style={{ textAlign: 'left' }}>
               这是一个私有仓库?
               <a
                 onClick={() => {
                   this.setState({ showUsernameAndPass: true });
                 }}
-                href="javascript:;"
               >
                 填写仓库账号密码
               </a>
