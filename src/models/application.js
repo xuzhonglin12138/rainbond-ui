@@ -1,10 +1,14 @@
 import {
+  AddAssociatedComponents,
   AddCopyTeamApps,
   addGroup,
   backup,
   buildCompose,
+  CheckAppName,
+  CheckHelmApp,
   CheckK8sServiceName,
   completeShare,
+  createAppBatchComponents,
   createShare,
   delBackup,
   deleteCompose,
@@ -14,24 +18,32 @@ import {
   delRestore,
   editAppCreateCompose,
   editGroup,
+  EditHelmApp,
+  getAppAccess,
   getAppDetailState,
   getAppLogs,
   getAppResourcesStatistics,
+  getAssociatedComponents,
   getBackup,
   getBackupStatus,
-  getUpgradeComponentList,
   getGroupApps,
   getGroupDetail,
+  getHelmAppStoresVersions,
+  getHelmComponents,
   getPluginShareEventInShareApp,
   getServiceNameList,
+  getServices,
   getShare,
   getShareEventInfo,
   getShareRecord,
   getShareRecords,
   getShareStatus,
+  getUpgradeComponentList,
   giveupShare,
   groupMonitorData,
+  InstallHelmApp,
   migrateApp,
+  parseChart,
   queryAllBackup,
   queryCopyComponent,
   queryMigrateApp,
@@ -56,6 +68,66 @@ export default {
     plugins: []
   },
   effects: {
+    *fetchHelmComponents({ payload, callback }, { call }) {
+      const response = yield call(getHelmComponents, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *fetchAppAccess({ payload, callback }, { call }) {
+      const response = yield call(getAppAccess, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *CreateAppBatchComponents({ payload, callback }, { call }) {
+      const response = yield call(createAppBatchComponents, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *fetchAssociatedComponents({ payload, callback }, { call }) {
+      const response = yield call(getAssociatedComponents, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *checkAppName({ payload, callback, handleError }, { call }) {
+      const response = yield call(CheckAppName, payload, handleError);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *addAssociatedComponents({ payload, callback }, { call }) {
+      const response = yield call(AddAssociatedComponents, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *installHelmApp({ payload, callback, handleError }, { call }) {
+      const response = yield call(InstallHelmApp, payload, handleError);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *parseChart({ payload, callback }, { call }) {
+      const response = yield call(parseChart, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *editHelmApp({ payload, callback }, { call }) {
+      const response = yield call(EditHelmApp, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *checkHelmApp({ payload, callback }, { call }) {
+      const response = yield call(CheckHelmApp, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
     *fetchServiceNameList({ payload, callback }, { call }) {
       const response = yield call(getServiceNameList, payload);
       if (callback) {
@@ -132,7 +204,11 @@ export default {
       }
     },
     *fetchComponentVersion({ payload, callback, handleError }, { call }) {
-      const response = yield call(getUpgradeComponentList, payload, handleError);
+      const response = yield call(
+        getUpgradeComponentList,
+        payload,
+        handleError
+      );
       if (response && callback) {
         callback(response);
       }
@@ -145,10 +221,18 @@ export default {
     },
     *fetchAppDetailState({ payload, callback }, { call }) {
       const response = yield call(getAppDetailState, payload);
-      if (response) {
-        if (response && callback) {
-          callback(response);
-        }
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *fetchHelmAppStoresVersions({ payload, callback, handleError }, { call }) {
+      const response = yield call(
+        getHelmAppStoresVersions,
+        payload,
+        handleError
+      );
+      if (response && callback) {
+        callback(response);
       }
     },
     *fetchAppResourcesStatistics({ payload, callback }, { call }) {
@@ -176,6 +260,12 @@ export default {
     },
     *deleteCompose({ payload, callback }, { call }) {
       const response = yield call(deleteCompose, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *fetchServices({ payload, callback, handleError }, { call }) {
+      const response = yield call(getServices, payload, handleError);
       if (response && callback) {
         callback(response);
       }

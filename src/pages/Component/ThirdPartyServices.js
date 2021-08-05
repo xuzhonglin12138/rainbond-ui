@@ -68,18 +68,26 @@ export default class Index extends PureComponent {
       is_online: !is_online
     });
   };
+  fetchParameter = () => {
+    const { appAlias } = this.props;
+    return {
+      team_name: globalUtil.getCurrTeamName(),
+      region_name: globalUtil.getCurrRegionName(),
+      app_alias: appAlias
+    };
+  };
+
   showConfirm = () => {
-    const _th = this;
+    const { dispatch } = this.props;
+    const { team_name, region_name, app_alias } = this.fetchParameter();
     confirm({
       title: '端口未开启',
       content: '上线前必须开启端口对内或对外属性',
       okText: '去配置',
       onOk() {
-        _th.props.dispatch(
+        dispatch(
           routerRedux.push(
-            `/team/${globalUtil.getCurrTeamName()}/region/${globalUtil.getCurrRegionName()}/components/${
-              _th.props.appAlias
-            }/port`
+            `/team/${team_name}/region/${region_name}/components/${app_alias}/port`
           )
         );
       },
@@ -90,12 +98,10 @@ export default class Index extends PureComponent {
   };
 
   handleGetList = () => {
-    this.props.dispatch({
+    const { dispatch } = this.props;
+    dispatch({
       type: 'appControl/getInstanceList',
-      payload: {
-        team_name: globalUtil.getCurrTeamName(),
-        app_alias: this.props.appAlias
-      },
+      payload: this.fetchParameter(),
       callback: res => {
         if (res && res.status_code === 200) {
           this.setState({
@@ -118,8 +124,7 @@ export default class Index extends PureComponent {
     this.props.dispatch({
       type: 'appControl/deleteInstanceList',
       payload: {
-        team_name: globalUtil.getCurrTeamName(),
-        app_alias: this.props.appAlias,
+        ...this.fetchParameter(),
         ep_id
       },
       callback: res => {
@@ -135,8 +140,7 @@ export default class Index extends PureComponent {
     this.props.dispatch({
       type: 'appControl/modifyInstanceList',
       payload: {
-        team_name: globalUtil.getCurrTeamName(),
-        app_alias: this.props.appAlias,
+        ...this.fetchParameter(),
         ep_id: status.ep_id,
         is_online: !status.is_online
       },
@@ -157,16 +161,15 @@ export default class Index extends PureComponent {
   };
   handleSubmit = e => {
     e.preventDefault();
-    const { form } = this.props;
+    const { form, dispatch } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) {
         return;
       }
-      this.props.dispatch({
+      dispatch({
         type: 'appControl/addInstanceList',
         payload: {
-          team_name: globalUtil.getCurrTeamName(),
-          app_alias: this.props.appAlias,
+          ...this.fetchParameter(),
           ip: fieldsValue.ip,
           is_online: fieldsValue.is_online
         },
@@ -182,7 +185,7 @@ export default class Index extends PureComponent {
   handleCancel = () => {
     this.setState({ visible: false, is_online: false });
   };
-  validAttrName = (rule, value, callback) => {
+  validAttrName = (_, value, callback) => {
     if (!value || value === '') {
       callback('请输入正确的IP地址');
       return;
@@ -204,16 +207,14 @@ export default class Index extends PureComponent {
     callback();
   };
   handleUpDatekey = () => {
-    this.props.dispatch({
+    const { dispatch } = this.props;
+    dispatch({
       type: 'appControl/editUpDatekey',
-      payload: {
-        team_name: globalUtil.getCurrTeamName(),
-        app_alias: this.props.appAlias
-      },
+      payload: this.fetchParameter(),
       callback: res => {
         if (res && res.status_code === 200) {
           this.setState({
-            api_service_key: res.bean.api_service_key
+            api_service_key: res.bean && res.bean.api_service_key
           });
         }
       }
@@ -221,9 +222,17 @@ export default class Index extends PureComponent {
   };
 
   render() {
-    const { list, endpoint_num, api_service_key, visible } = this.state;
-    const { appDetail } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const {
+      list,
+      endpoint_num,
+      api_service_key,
+      visible,
+      deleteVar
+    } = this.state;
+    const { groupDetail, appDetail, form } = this.props;
+    const { getFieldDecorator } = form;
+    const isHelm =
+      groupDetail && groupDetail.app_type && groupDetail.app_type === 'helm';
     const formItemLayout = {
       labelCol: {
         span: 5
@@ -232,7 +241,6 @@ export default class Index extends PureComponent {
         span: 19
       }
     };
-
     const columns = [
       {
         title: '实例地址',
@@ -242,6 +250,7 @@ export default class Index extends PureComponent {
       {
         title: '健康状态',
         dataIndex: 'status',
+        align: 'center',
         key: '2',
         render: data => {
           return (
@@ -261,8 +270,11 @@ export default class Index extends PureComponent {
             </span>
           );
         }
-      },
-      {
+      }
+    ];
+
+    if (!isHelm) {
+      columns.push({
         title: '操作',
         dataIndex: 'ep_id',
         key: '3',
@@ -282,29 +294,9 @@ export default class Index extends PureComponent {
             )}
           </div>
         )
-      }
-    ];
-
-    let num = 0;
-    if (
-      appDetail &&
-      appDetail.register_way &&
-      appDetail.register_way === 'static' &&
-      appDetail.service &&
-      appDetail.service.service_source &&
-      appDetail.service.service_source === 'third_party' &&
-      list &&
-      list.length > 0
-    ) {
-      list.map(item => {
-        if (
-          !rege.test(item.address) &&
-          (regs.test(item.address) || rega.test(item.address))
-        ) {
-          num++;
-        }
       });
     }
+
     const secret_key =
       api_service_key ||
       (appDetail.api_service_key ? appDetail.api_service_key : '');
@@ -351,35 +343,40 @@ export default class Index extends PureComponent {
             <Card
               title="服务实例"
               extra={
-                <div>
-                  <Button
-                    style={{ marginRight: '5px' }}
-                    onClick={() => {
-                      this.addInstance();
-                    }}
-                  >
-                    新增
-                  </Button>
+                isHelm ? null : (
+                  <div>
+                    {appDetail.register_way !== 'kubernetes' && (
+                      <Button
+                        style={{ marginRight: '5px' }}
+                        onClick={() => {
+                          this.addInstance();
+                        }}
+                      >
+                        新增
+                      </Button>
+                    )}
 
-                  <Button
-                    onClick={() => {
-                      this.handleGetList();
-                    }}
-                  >
-                    刷新
-                  </Button>
-                </div>
+                    <Button
+                      onClick={() => {
+                        this.handleGetList();
+                      }}
+                    >
+                      刷新
+                    </Button>
+                  </div>
+                )
               }
             >
               <Row>
                 <Col span={12}>
                   <p>
-                    注册方式：{' '}
+                    <b style={{ marginRight: 16 }}>注册方式:</b>
                     {appDetail.register_way ? appDetail.register_way : ''}
                   </p>
                   {appDetail.api_url && (
                     <p>
-                      API地址： {appDetail.api_url ? appDetail.api_url : ''}
+                      <b style={{ marginRight: 16 }}>API地址:</b>
+                      {appDetail.api_url ? appDetail.api_url : ''}
                       <div style={{ margin: '5px 0' }}>
                         <span>
                           秘钥： <a>{secret_key}</a>
@@ -406,13 +403,29 @@ export default class Index extends PureComponent {
                     </p>
                   )}
                   {endpoint_num && (
-                    <p>当前实例数: {endpoint_num > 0 ? endpoint_num : ''}</p>
+                    <p>
+                      <b style={{ marginRight: 16 }}>当前实例数:</b>
+                      {endpoint_num > 0 ? endpoint_num : ''}
+                    </p>
+                  )}
+                  {appDetail.endpoints_type === 'kubernetes' && (
+                    <p>
+                      <b style={{ marginRight: 16 }}>Service:</b>
+                      {appDetail.kubernetes.namespace}/
+                      {appDetail.kubernetes.serviceName}
+                    </p>
                   )}
                   {appDetail.discovery_type && (
-                    <p>动态类型: {appDetail.discovery_type}</p>
+                    <p>
+                      <b style={{ marginRight: 16 }}>动态类型:</b>
+                      {appDetail.discovery_type}
+                    </p>
                   )}
                   {appDetail.discovery_key && (
-                    <p>动态key: {appDetail.discovery_key}</p>
+                    <p>
+                      <b style={{ marginRight: 16 }}>动态key:</b>
+                      {appDetail.discovery_key}
+                    </p>
                   )}
                 </Col>
                 {appDetail.api_url && (
@@ -443,7 +456,7 @@ export default class Index extends PureComponent {
             style={{ background: '#fff', margin: '12px -12px 0 -12px' }}
           />
         </Row>
-        {this.state.deleteVar && (
+        {deleteVar && (
           <ConfirmModal
             onOk={this.handleDeleteVar}
             onCancel={this.cancelDeleteVar}

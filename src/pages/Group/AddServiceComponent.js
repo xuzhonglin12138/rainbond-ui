@@ -348,7 +348,7 @@ export default class AddServiceComponent extends PureComponent {
                 <Row>
                   <Market
                     {...MarketParameter}
-                    scope="enterprise"
+                    isHelm={false}
                     handleServiceComponent={scopeMax => {
                       this.handleServiceComponent(
                         false,
@@ -405,7 +405,8 @@ export default class AddServiceComponent extends PureComponent {
           {ServiceComponentTwoPage === 'market' && (
             <Market
               {...MarketParameter}
-              scopeMax="localApplication"
+              isHelm={false}
+              scopeMax={scopeProMax || 'localApplication'}
               handleServiceComponent={() => {
                 this.handleServiceComponent(false, 'market', null);
               }}

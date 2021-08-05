@@ -176,7 +176,6 @@ export default function request(url, options) {
         } catch (e) {
           console.log(e);
         }
-
         const { code = '' } = resData;
         let isNext = false;
         switch (code) {
@@ -249,8 +248,8 @@ export default function request(url, options) {
               );
             }
             const tipMap = {
-              10406: '团队使用内存已超过限额，请联系企业管理员增加限额',
-              10413: '集群资源不足,请联系企业管理员增加资源',
+              10406: '集群资源不足,请联系企业管理员增加资源',
+              10413: '团队使用内存已超过限额，请联系企业管理员增加限额',
               20800: '构建失败,请重新构建'
             };
             handleStoreDispatch('global/showMemoryTip', {
@@ -260,6 +259,9 @@ export default function request(url, options) {
           }
           // cluster request error, ignore it
           if (code === 10421 || code === 10411) {
+            if (newOptions.noModels) {
+              return Promise.reject(error);
+            }
             return;
           }
           if (newOptions.handleError) {
