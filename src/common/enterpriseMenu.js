@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { isUrl } from '../utils/utils';
-import userUtil from '../utils/user';
 import rainbondUtil from '../utils/rainbond';
+import userUtil from '../utils/user';
+import { isUrl } from '../utils/utils';
 
 function menuData(eid, currentUser) {
   const adminer = userUtil.isCompanyAdmin(currentUser);
@@ -85,7 +85,7 @@ function menuData(eid, currentUser) {
     {
       name: '应用市场',
       icon: 'share-alt',
-      path: `/enterprise/${eid}/shared`,
+      path: `/enterprise/${eid}/shared/local`,
       authority: ['admin', 'user']
     }
   ];

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/sort-comp */
 import {
   Alert,
@@ -16,13 +17,17 @@ import {
   setRainbondClusterConfig
 } from '../../../services/cloud';
 import cloud from '../../../utils/cloud';
+import globalUtil from '../../../utils/global';
 import CodeMirrorForm from '../../CodeMirrorForm';
 import styles from '../ACKBuyConfig/index.less';
 import InitRainbondDetail from '../ShowInitRainbondDetail';
 
 const { Paragraph } = Typography;
 
-@connect()
+@connect(({ global }) => ({
+  rainbondInfo: global.rainbondInfo,
+  enterprise: global.enterprise
+}))
 @Form.create()
 export default class RainbondClusterInit extends PureComponent {
   constructor(props) {
@@ -39,7 +44,14 @@ export default class RainbondClusterInit extends PureComponent {
   }
 
   initRainbondCluster = () => {
-    const { dispatch, clusterID, selectProvider, eid } = this.props;
+    const {
+      dispatch,
+      clusterID,
+      selectProvider,
+      eid,
+      rainbondInfo,
+      enterprise
+    } = this.props;
     const { checked, task } = this.state;
     if (checked) {
       this.setState({ loading: true });
@@ -53,6 +65,13 @@ export default class RainbondClusterInit extends PureComponent {
         },
         callback: data => {
           if (data) {
+            globalUtil.putInstallClusterLog(enterprise, rainbondInfo, {
+              eid,
+              taskID: data.taskID,
+              status: 'start',
+              install_step: 'createRainbond',
+              provider: selectProvider
+            });
             this.setState({
               loading: false,
               task: data,
@@ -165,7 +184,6 @@ export default class RainbondClusterInit extends PureComponent {
   render() {
     const { preStep, eid, selectProvider, form } = this.props;
     const {
-      checked,
       showInitDetail,
       loading,
       task,
@@ -283,7 +301,6 @@ export default class RainbondClusterInit extends PureComponent {
               上一步
             </Button>
             <Button
-              disabled={!checked}
               loading={loading}
               onClick={this.initRainbondCluster}
               type="primary"

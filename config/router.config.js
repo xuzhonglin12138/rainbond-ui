@@ -131,6 +131,12 @@ export default [
             authority: ['admin', 'user']
           },
           {
+            path: '/enterprise/:eid/shared/:marketName',
+            component: './EnterpriseShared',
+            name: 'EnterpriseShared',
+            authority: ['admin', 'user']
+          },
+          {
             path: '/enterprise/:eid/addCluster',
             component: './AddCluster',
             name: 'AddCluster',

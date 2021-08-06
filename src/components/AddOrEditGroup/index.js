@@ -1,7 +1,9 @@
+/* eslint-disable no-nested-ternary */
 import { Form, Input, Modal } from 'antd';
 import { connect } from 'dva';
 import React, { PureComponent } from 'react';
 import { addGroup } from '../../services/application';
+import handleAPIError from '../../utils/error';
 import globalUtil from '../../utils/global';
 import styles from '../CreateTeam/index.less';
 
@@ -37,6 +39,7 @@ export default class EditGroupName extends PureComponent {
           addGroup({
             ...parameters,
             ...vals,
+            showMessage: false,
             noModels: true
           })
             .then(res => {
@@ -45,8 +48,8 @@ export default class EditGroupName extends PureComponent {
                 dispatch({
                   type: 'global/fetchGroups',
                   payload: parameters,
-                  callback: () => {
-                    onOk(groupId);
+                  callback: groups => {
+                    onOk(groupId, groups);
                     this.handleLoading(false);
                   },
                   handleError: () => {
@@ -60,7 +63,8 @@ export default class EditGroupName extends PureComponent {
                 this.handleLoading(false);
               }
             })
-            .catch(() => {
+            .catch(errs => {
+              handleAPIError(errs);
               this.handleLoading(false);
             });
         } else {
@@ -81,6 +85,7 @@ export default class EditGroupName extends PureComponent {
       form,
       group_name: groupName,
       note,
+      isNoEditName = false,
       loading = false
     } = this.props;
     const { getFieldDecorator } = form;
@@ -115,7 +120,7 @@ export default class EditGroupName extends PureComponent {
                   message: '最大长度24位'
                 }
               ]
-            })(<Input placeholder="请填写应用名称" />)}
+            })(<Input disabled={isNoEditName} placeholder="请填写应用名称" />)}
           </FormItem>
           <FormItem {...formItemLayout} label="应用备注">
             {getFieldDecorator('note', {

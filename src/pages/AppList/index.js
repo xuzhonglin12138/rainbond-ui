@@ -18,6 +18,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { createEnterprise, createTeam } from '../../utils/breadcrumb';
 import globalUtil from '../../utils/global';
 import roleUtil from '../../utils/role';
+import styles from '../Create/Index.less';
 
 const FormItem = Form.Item;
 /* eslint react/no-array-index-key: 0 */
@@ -211,8 +212,12 @@ export default class AppList extends PureComponent {
                   render: (val, data) => {
                     return (
                       <Link
+                        className={styles.verticalCen}
                         to={`/team/${teamName}/region/${regionName}/apps/${data.group_id}`}
                       >
+                        {globalUtil.fetchSvg(
+                          data.app_type === 'helm' ? 'HelmSvg' : 'localMarket'
+                        )}
                         {val}
                       </Link>
                     );
@@ -302,17 +307,8 @@ export default class AppList extends PureComponent {
                   width: 100,
                   render: val => {
                     return (
-                      <Tooltip title={val} placement="top">
-                        <div
-                          style={{
-                            maxWidth: '74px',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis'
-                          }}
-                        >
-                          {val}
-                        </div>
+                      <Tooltip placement="top" title={val}>
+                        <p className={styles.groupnote}>{val}</p>
                       </Tooltip>
                     );
                   }

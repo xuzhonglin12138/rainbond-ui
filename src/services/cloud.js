@@ -187,7 +187,6 @@ export async function getInitNodeCmd(handleError) {
     handleError
   });
 }
-
 export async function rkeconfig(body) {
   return request(
     `/console/proxy/enterprise-server/api/v1/enterprises/${body.enterprise_id}/kclusters/prune-update-rkeconfig`,

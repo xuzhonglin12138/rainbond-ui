@@ -39,10 +39,12 @@ import {
   getCompanyInfo,
   getConfigurationDetails,
   getConfigurationList,
+  getCreateAppTeams,
   getDomainName,
   getDomainTime,
   getEnterpriseRoles,
   getGuideState,
+  getHelmApplication,
   getInternalMessages,
   getJoinTeam,
   getLicenses,
@@ -62,6 +64,7 @@ import {
   getUpdateRecordsInfo,
   getUpdateRecordsList,
   getUpdateRollback,
+  getUpgradeRecordsHelmList,
   getUserCanJoinTeams,
   getuserMessage,
   getVersion,
@@ -512,6 +515,14 @@ export default {
         });
       }
     },
+    *fetchHelmApplication({ payload, callback, handleError }, { call }) {
+      const response = yield call(getHelmApplication, payload, handleError);
+      if (response && callback) {
+        setTimeout(() => {
+          callback(response);
+        });
+      }
+    },
     *CloudAppUpdatedTasks({ payload, callback, handleError }, { call }) {
       const response = yield call(postUpdatedTasks, payload, handleError);
       if (response && callback) {
@@ -530,6 +541,14 @@ export default {
     },
     *CloudAppUpdateRecordsList({ payload, callback }, { call }) {
       const response = yield call(getUpdateRecordsList, payload);
+      if (response && callback) {
+        setTimeout(() => {
+          callback(response);
+        });
+      }
+    },
+    *fetchUpgradeRecordsHelmList({ payload, callback }, { call }) {
+      const response = yield call(getUpgradeRecordsHelmList, payload);
       if (response && callback) {
         setTimeout(() => {
           callback(response);
@@ -627,6 +646,12 @@ export default {
     },
     *fetchEnterpriseRoles({ payload, callback }, { call }) {
       const response = yield call(getEnterpriseRoles, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *fetchCreateAppTeams({ payload, callback }, { call }) {
+      const response = yield call(getCreateAppTeams, payload);
       if (response && callback) {
         callback(response);
       }

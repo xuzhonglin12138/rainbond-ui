@@ -58,12 +58,7 @@ export async function createThirdPartyServices(body = {}) {
     `${apiconfig.baseUrl}/console/teams/${body.team_name}/apps/third_party`,
     {
       method: 'post',
-      data: {
-        group_id: body.group_id,
-        service_cname: body.service_cname,
-        endpoints_type: body.endpoints_type,
-        endpoints: body.endpoints ? body.endpoints : ''
-      }
+      data: body
     }
   );
 }
@@ -253,7 +248,20 @@ export async function installApp(body = {}) {
           ? body.install_from_cloud
           : false,
         market_name: body.marketName
+      },
+      params: {
+        region_name: body.region_name
       }
+    }
+  );
+}
+
+export async function installHelmApp(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/teams/${body.team_name}/groups`,
+    {
+      method: 'post',
+      data: body
     }
   );
 }
