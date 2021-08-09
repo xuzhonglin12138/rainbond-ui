@@ -516,73 +516,79 @@ export default class Enterprise extends PureComponent {
           />
         )}
 
-        <Card
-          style={{
-            marginBottom: 24
-          }}
-          style={{ marginBottom: '20px' }}
-          loading={enterpriseInfoLoading}
-          bordered={false}
-        >
-          <div className={styles.eidbox}>
-            <div>
-              <div className={styles.enterpriseInfo}>
-                <img src={EnterpriseInfo} alt="" />
-                <span>企业信息</span>
+        {enterpriseInfo && enterpriseInfo.show_info !== 'false' && (
+          <Card
+            style={{
+              marginBottom: 24
+            }}
+            style={{ marginBottom: '20px' }}
+            loading={enterpriseInfoLoading}
+            bordered={false}
+          >
+            <div className={styles.eidbox}>
+              <div>
+                <div className={styles.enterpriseInfo}>
+                  <img src={EnterpriseInfo} alt="" />
+                  <span>企业信息</span>
+                </div>
+                {enterpriseInfo && (
+                  <div className={styles.enterpriseName}>
+                    企业名称：{enterpriseInfo.enterprise_alias}
+                    {!enterpriseEdition && enterpriseVersion !== 'cloud' && (
+                      <a
+                        style={{ marginLeft: 32 }}
+                        onClick={this.handelConsulting}
+                      >
+                        获取商业解决方案
+                      </a>
+                    )}
+                  </div>
+                )}
+                {enterpriseInfo && (
+                  <div className={styles.enterpriseBox}>
+                    <p>
+                      <Tooltip title={enterpriseInfo.enterprise_id}>
+                        联合云ID&nbsp;
+                        {enterpriseInfo.enterprise_id}
+                      </Tooltip>
+                    </p>
+                    <p>
+                      <Tooltip title={enterpriseVersion}>
+                        平台版本&nbsp;
+                        {enterpriseVersion}
+                      </Tooltip>
+                    </p>
+                    <p>
+                      <Tooltip title={enterpriseInfo.create_time}>
+                        创建时间&nbsp;
+                        {enterpriseInfo.create_time}
+                      </Tooltip>
+                    </p>
+                  </div>
+                )}
+                {licenseInfo && (
+                  <div className={styles.enterpriseBox}>
+                    <p>
+                      授权过期时间：
+                      <span style={{ color: isExpiring && 'red' }}>
+                        {licenseInfo.is_permanent
+                          ? '永久授权'
+                          : licenseInfo.end_time}
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
-              {enterpriseInfo && (
-                <div className={styles.enterpriseName}>
-                  企业名称：{enterpriseInfo.enterprise_alias}
-                  {!enterpriseEdition && enterpriseVersion !== 'cloud' && (
-                    <a
-                      style={{ marginLeft: 32 }}
-                      onClick={this.handelConsulting}
-                    >
-                      获取商业解决方案
-                    </a>
-                  )}
-                </div>
-              )}
-              {enterpriseInfo && (
-                <div className={styles.enterpriseBox}>
-                  <p>
-                    <Tooltip title={enterpriseInfo.enterprise_id}>
-                      联合云ID&nbsp;
-                      {enterpriseInfo.enterprise_id}
-                    </Tooltip>
-                  </p>
-                  <p>
-                    <Tooltip title={enterpriseVersion}>
-                      平台版本&nbsp;
-                      {enterpriseVersion}
-                    </Tooltip>
-                  </p>
-                  <p>
-                    <Tooltip title={enterpriseInfo.create_time}>
-                      创建时间&nbsp;
-                      {enterpriseInfo.create_time}
-                    </Tooltip>
-                  </p>
-                </div>
-              )}
-              {licenseInfo && (
-                <div className={styles.enterpriseBox}>
-                  <p>
-                    授权过期时间：
-                    <span style={{ color: isExpiring && 'red' }}>
-                      {licenseInfo.is_permanent
-                        ? '永久授权'
-                        : licenseInfo.end_time}
-                    </span>
-                  </p>
-                </div>
-              )}
+              <div>
+                <img
+                  src={EnterpriseBj}
+                  alt=""
+                  style={{ marginRight: '54px' }}
+                />
+              </div>
             </div>
-            <div>
-              <img src={EnterpriseBj} alt="" style={{ marginRight: '54px' }} />
-            </div>
-          </div>
-        </Card>
+          </Card>
+        )}
 
         <div>
           {this.state.adminer && (

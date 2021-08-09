@@ -1,4 +1,15 @@
-import { Button, Card, Col, Form, Input, notification, Row, Table } from 'antd';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Form,
+  Icon,
+  Input,
+  notification,
+  Row,
+  Table
+} from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
@@ -7,6 +18,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import CreatUser from '../../components/CreatUserForm';
 import CurrentTeams from '../../components/CurrentTeams';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { syncUserList } from '../../services/user';
 import cloud from '../../utils/cloud';
 import userUtil from '../../utils/user';
 
@@ -39,7 +51,8 @@ export default class EnterpriseUsers extends PureComponent {
       text: '',
       delVisible: false,
       name: '',
-      Loading: false
+      Loading: false,
+      syncLoading: false
     };
   }
   componentWillMount() {
@@ -219,6 +232,21 @@ export default class EnterpriseUsers extends PureComponent {
       currentUserInfo
     });
   };
+  syncUserList = () => {
+    this.setState({ syncLoading: true });
+    const {
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    syncUserList({ enterprise_id: eid })
+      .then(() => {
+        this.loadUser();
+      })
+      .finally(() => {
+        this.setState({ syncLoading: false });
+      });
+  };
 
   render() {
     const {
@@ -232,9 +260,10 @@ export default class EnterpriseUsers extends PureComponent {
       pageSize,
       total,
       Loading,
-      currentUserInfo
+      currentUserInfo,
+      syncLoading
     } = this.state;
-
+    const { enterprise } = this.props;
     const {
       match: {
         params: { eid }
@@ -351,15 +380,44 @@ export default class EnterpriseUsers extends PureComponent {
             </Form>
           </Col>
           <Col span={12} style={{ textAlign: 'right' }}>
-            {adminer && (
+            <Button
+              style={{ float: 'right', marginLeft: '32px' }}
+              onClick={this.loadUser}
+            >
+              <Icon type="reload" />
+            </Button>
+            {adminer && enterprise && enterprise.sso_enable === 'true' && (
               <Button
                 type="primary"
-                icon="plus"
-                style={{ float: 'right' }}
-                onClick={this.addUser}
+                loading={syncLoading}
+                style={{ float: 'right', marginLeft: '32px' }}
+                onClick={this.syncUserList}
               >
-                新增用户
+                同步用户列表
               </Button>
+            )}
+            {adminer &&
+              enterprise &&
+              (!enterprise.sso_enable || enterprise.sso_enable === 'false') && (
+                <Button
+                  type="primary"
+                  icon="plus"
+                  style={{ float: 'right' }}
+                  onClick={this.addUser}
+                >
+                  新增用户
+                </Button>
+              )}
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8} style={{ marginBottom: 16 }}>
+            {adminer && enterprise && enterprise.sso_enable === 'true' && (
+              <Alert
+                showIcon
+                message="用户信息与单点登录服务同步，添加用户请前往单点登录服务。"
+                type="warning"
+              />
             )}
           </Col>
         </Row>
@@ -394,6 +452,7 @@ export default class EnterpriseUsers extends PureComponent {
             />
           )}
           <Table
+            loading={Loading}
             pagination={{
               current: page,
               pageSize,

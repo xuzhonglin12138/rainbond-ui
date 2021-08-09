@@ -460,17 +460,21 @@ export default class EnterpriseShared extends PureComponent {
       },
       callback: res => {
         if (res && res.status_code === 200 && res.bean.remind) {
-          Modal.confirm({
-            title: '配置提醒',
-            cancelText: '已了解',
-            okText: '去配置',
-            onCancel: () => {},
-            onOk: () => {
-              dispatch(routerRedux.push(`/enterprise/${eid}/setting`));
-            },
-            content:
-              '该平台已对接多个集群，但本地组件库暂未配置多集群可用的镜像仓库，将导致应用无法跨集群安装。'
-          });
+          const { user } = this.props;
+          const enterpriseAdmin = userUtil.isCompanyAdmin(user);
+          if (enterpriseAdmin) {
+            Modal.confirm({
+              title: '配置提醒',
+              cancelText: '已了解',
+              okText: '去配置',
+              onCancel: () => {},
+              onOk: () => {
+                dispatch(routerRedux.push(`/enterprise/${eid}/setting`));
+              },
+              content:
+                '该平台已对接多个集群，但本地组件库暂未配置多集群可用的镜像仓库，将导致应用无法跨集群安装。'
+            });
+          }
         }
       }
     });

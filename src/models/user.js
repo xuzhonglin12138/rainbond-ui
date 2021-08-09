@@ -25,6 +25,7 @@ import {
   queryThirdInfo,
   queryThirdLoginBinding,
   register,
+  ssologin,
   upDataUserRoles
 } from '../services/user';
 import { setAuthority } from '../utils/authority';
@@ -178,6 +179,16 @@ export default {
 
     *login({ payload, callback }, { call, put }) {
       const response = yield call(login, payload);
+      if (response) {
+        yield put({ type: 'changeLoginStatus', payload: response });
+        cookie.set('token', response.bean.token);
+        if (callback) {
+          callback();
+        }
+      }
+    },
+    *ssologin({ payload, callback, handleError }, { call, put }) {
+      const response = yield call(ssologin, payload, handleError);
       if (response) {
         yield put({ type: 'changeLoginStatus', payload: response });
         cookie.set('token', response.bean.token);

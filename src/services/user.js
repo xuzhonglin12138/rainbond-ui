@@ -220,6 +220,15 @@ export async function login(
   });
 }
 
+export async function ssologin(body = {}, handleError) {
+  return request(`${apiconfig.baseUrl}/console/users/ssologin`, {
+    method: 'post',
+    data: body,
+    showMessage: true,
+    handleError
+  });
+}
+
 /* 退出登录 */
 export async function logout() {
   return request(`${apiconfig.baseUrl}/console/users/logout`, {
@@ -356,6 +365,22 @@ export async function createGitlabProject(
       data: {
         project_name: body.project_name
       }
+    }
+  );
+}
+
+/*
+  从SSO同步用户列表
+*/
+export async function syncUserList(
+  body = {
+    enterprise_id
+  }
+) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/syncusers`,
+    {
+      method: 'post'
     }
   );
 }
