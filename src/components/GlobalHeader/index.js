@@ -13,6 +13,7 @@ import {
   Layout,
   Menu,
   notification,
+  Popconfirm,
   Spin
 } from 'antd';
 import { connect } from 'dva';
@@ -20,6 +21,7 @@ import { routerRedux } from 'dva/router';
 import Debounce from 'lodash-decorators/debounce';
 import React, { PureComponent } from 'react';
 import userIcon from '../../../public/images/user-icon-small.png';
+import { setNewbieGuide } from '../../services/api';
 import ChangePassword from '../ChangePassword';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
@@ -40,7 +42,9 @@ const { Header } = Layout;
 export default class GlobalHeader extends PureComponent {
   constructor(props) {
     super(props);
+    const { enterprise } = this.props;
     this.state = {
+      isNewbieGuide: false && rainbondUtil.isEnableNewbieGuide(enterprise),
       showChangePassword: false,
       systemLoading: true,
       alertLoading: true
@@ -132,12 +136,38 @@ export default class GlobalHeader extends PureComponent {
     const { dispatch, eid } = this.props;
     dispatch(routerRedux.push(`/enterprise/${eid}/orders/overviewService`));
   };
-
+  handlIsOpenNewbieGuide = () => {
+    const { eid, dispatch } = this.props;
+    setNewbieGuide({
+      enterprise_id: eid,
+      data: {
+        NEWBIE_GUIDE: { enable: false, value: '' }
+      }
+    }).then(() => {
+      notification.success({
+        message: '关闭成功'
+      });
+      dispatch({
+        type: 'global/fetchEnterpriseInfo',
+        payload: {
+          enterprise_id: eid
+        },
+        callback: info => {
+          if (info && info.bean) {
+            this.setState({
+              isNewbieGuide: rainbondUtil.isEnableNewbieGuide(info.bean)
+            });
+          }
+        }
+      });
+    });
+  };
   handleJump = tabType => {
     const { dispatch } = this.props;
     const type = tabType.indexOf('alertInfo') > -1 ? 'alarm' : 'notice';
     dispatch(routerRedux.push(`/information/management/${type}/all`));
   };
+
   render() {
     const {
       currentUser,
@@ -150,7 +180,7 @@ export default class GlobalHeader extends PureComponent {
       systemTotal,
       enterpriseServiceInfo
     } = this.props;
-    const { systemLoading, alertLoading } = this.state;
+    const { systemLoading, alertLoading, isNewbieGuide } = this.state;
     const total = alertTotal + systemTotal;
     if (!currentUser) {
       return null;
@@ -269,6 +299,7 @@ export default class GlobalHeader extends PureComponent {
           style={{ color: '#ffffff', float: 'left' }}
           onClick={this.toggle}
         />
+
         {customHeader && customHeader()}
         <div className={styles.right}>
           {rainbondUtil.isEnableBillingFunction() &&
@@ -283,6 +314,23 @@ export default class GlobalHeader extends PureComponent {
             <span className={styles.action} style={{ color: '#fff' }}>
               企业版
             </span>
+          )}
+          {isNewbieGuide && (
+            <Popconfirm
+              title="是否要关闭新手引导功能、关闭后并无法开启此功能?"
+              onConfirm={this.handlIsOpenNewbieGuide}
+              okText="关闭"
+              cancelText="取消"
+            >
+              <a
+                className={styles.action}
+                style={{ color: '#fff' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                新手引导
+              </a>
+            </Popconfirm>
           )}
           {platformUrl && (
             <a

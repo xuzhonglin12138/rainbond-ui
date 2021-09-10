@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/sort-comp */
 /* eslint-disable no-underscore-dangle */
+import NewbieGuiding from '@/components/NewbieGuiding';
 import {
   Alert,
   Badge,
@@ -22,8 +23,10 @@ import { Link, routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import EditClusterInfo from '../../components/Cluster/EditClusterInfo';
 import ConfirmModal from '../../components/ConfirmModal';
+import ClusterIntroduced from '../../components/Introduced/ClusterIntroduced';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import globalUtil from '../../utils/global';
+import rainbondUtil from '../../utils/rainbond';
 import userUtil from '../../utils/user';
 
 const { confirm } = Modal;
@@ -38,15 +41,17 @@ const { confirm } = Modal;
   isRegist: global.isRegist,
   oauthLongin: loading.effects['global/creatOauth'],
   delclusterLongin: loading.effects['region/deleteEnterpriseCluster'],
-  overviewInfo: index.overviewInfo
+  overviewInfo: index.overviewInfo,
+  novices: global.novices
 }))
 @Form.create()
 export default class EnterpriseClusters extends PureComponent {
   constructor(props) {
     super(props);
-    const { user } = this.props;
+    const { user, novices, enterprise } = this.props;
     const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
+      isNewbieGuide: rainbondUtil.isEnableNewbieGuide(enterprise),
       adminer,
       clusters: [],
       editClusterShow: false,
@@ -61,8 +66,13 @@ export default class EnterpriseClusters extends PureComponent {
       tenantPage: 1,
       tenantPageSize: 5,
       showTenantListRegion: '',
+      isAddClusters: false,
+      showClusterIntroduced: rainbondUtil.handleNewbie(
+        novices,
+        'successInstallClusters'
+      ),
       setTenantLimitShow: false,
-      isAddClusters: false
+      guideStep: 1
     };
   }
   componentWillMount() {
@@ -75,7 +85,6 @@ export default class EnterpriseClusters extends PureComponent {
   componentDidMount() {
     this.loadClusters();
   }
-
   handleMandatoryDelete = () => {
     const th = this;
     confirm({
@@ -151,9 +160,6 @@ export default class EnterpriseClusters extends PureComponent {
       }
     });
   };
-
-  // 添加集群
-  addClusterShow = () => {};
 
   cancelEditClusters = () => {
     this.loadClusters();
@@ -324,7 +330,35 @@ export default class EnterpriseClusters extends PureComponent {
   handleTenantPageChange = page => {
     this.setState({ tenantPage: page }, this.loadRegionTenants);
   };
-
+  handleNewbieGuiding = info => {
+    const { nextStep } = info;
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    return (
+      <NewbieGuiding
+        {...info}
+        totals={14}
+        handleClose={() => {
+          this.handleGuideStep('close');
+        }}
+        handleNext={() => {
+          if (nextStep) {
+            this.handleGuideStep(nextStep);
+            dispatch(routerRedux.push(`/enterprise/${eid}/addCluster`));
+          }
+        }}
+      />
+    );
+  };
+  handleGuideStep = guideStep => {
+    this.setState({
+      guideStep
+    });
+  };
   handleJoinTeams = teamName => {
     const { regionName } = this.state;
     const { dispatch } = this.props;
@@ -349,6 +383,21 @@ export default class EnterpriseClusters extends PureComponent {
       isAddClusters
     });
   };
+  handleClusterIntroduced = () => {
+    this.putNewbieGuideConfig('successInstallClusters');
+    this.setState({
+      showClusterIntroduced: false
+    });
+  };
+  putNewbieGuideConfig = configName => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/putNewbieGuideConfig',
+      payload: {
+        arr: [{ key: configName, value: true }]
+      }
+    });
+  };
   render() {
     const {
       delclusterLongin,
@@ -357,7 +406,8 @@ export default class EnterpriseClusters extends PureComponent {
       },
       licenseInfo,
       clusterLoading,
-      form
+      form,
+      dispatch
     } = this.props;
     const {
       clusters,
@@ -376,7 +426,10 @@ export default class EnterpriseClusters extends PureComponent {
       limitSummitLoading,
       initLimitValue,
       isAddClusters,
-      clusterLoadings
+      clusterLoadings,
+      guideStep,
+      isNewbieGuide,
+      showClusterIntroduced
     } = this.state;
     const { getFieldDecorator } = form;
     const pagination = {
@@ -685,6 +738,25 @@ export default class EnterpriseClusters extends PureComponent {
         title="集群管理"
         content="集群是资源的集合，以Kubernetes集群为基础，部署平台Region服务即可成为平台集群资源。"
       >
+        {isNewbieGuide &&
+        showClusterIntroduced &&
+        !clusterLoading &&
+        clusters &&
+        clusters.length &&
+        clusters[0].status === '1' ? (
+          <ClusterIntroduced
+            onOk={() => {
+              this.handleClusterIntroduced();
+              dispatch(
+                routerRedux.push(`/enterprise/${eid}/shared/local?init=true`)
+              );
+            }}
+            onCancel={this.handleClusterIntroduced}
+          />
+        ) : (
+          ''
+        )}
+
         <Row style={{ marginBottom: '20px' }}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <div
@@ -721,6 +793,16 @@ export default class EnterpriseClusters extends PureComponent {
             >
               <Icon type="reload" />
             </Button>
+            {guideStep === 1 &&
+              this.handleNewbieGuiding({
+                tit: '去添加集群',
+                desc: '支持添加多个计算集群，请按照向导进行第一个集群的添加',
+                nextStep: 2,
+                configName: 'addCluster',
+                isSuccess: false,
+                conPosition: { right: 0, bottom: '-180px' },
+                svgPosition: { right: '50px', marginTop: '-11px' }
+              })}
           </Col>
         </Row>
         <Card>

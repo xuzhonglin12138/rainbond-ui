@@ -166,15 +166,10 @@ class EnterpriseLayout extends PureComponent {
       },
       callback: res => {
         const adminer = userUtil.isCompanyAdmin(currentUser);
-        const currentAddress = window.location.href;
-        if (
-          res &&
-          res.list &&
-          res.list.length === 0 &&
-          adminer &&
-          currentAddress.indexOf(`/enterprise/${eid}/provider/`) === -1
-        ) {
-          dispatch(routerRedux.push(`/enterprise/${eid}/addCluster?init=true`));
+        if (res && res.list && res.list.length === 0 && adminer) {
+          dispatch(
+            routerRedux.push(`/enterprise/${eid}/shared/local?init=true`)
+          );
         }
       }
     });
@@ -259,6 +254,18 @@ class EnterpriseLayout extends PureComponent {
   handlePutLog = (rainbondInfo, item) => {
     globalUtil.putLog(Object.assign(rainbondInfo, item));
   };
+  getNewbieGuideConfig = eid => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchNewbieGuideConfig',
+      callback: res => {
+        const isNext = rainbondUtil.handleNewbie(res && res.list, 'welcome');
+        if (isNext) {
+          this.loadClusters(eid);
+        }
+      }
+    });
+  };
   fetchEnterpriseInfo = eid => {
     if (!eid) {
       return null;
@@ -272,6 +279,14 @@ class EnterpriseLayout extends PureComponent {
       type: 'global/fetchEnterpriseInfo',
       payload: {
         enterprise_id: eid
+      },
+      callback: res => {
+        if (res && res.bean) {
+          const isNewbieGuide = rainbondUtil.isEnableNewbieGuide(res.bean);
+          if (isNewbieGuide) {
+            this.getNewbieGuideConfig(eid);
+          }
+        }
       }
     });
   };
@@ -379,7 +394,7 @@ class EnterpriseLayout extends PureComponent {
                 }
                 currentUser={currentUser}
                 Authorized={Authorized}
-                menuData={getMenuData(eid, currentUser)}
+                menuData={getMenuData(eid, currentUser, enterprise)}
                 showMenu
                 pathname={pathname}
                 location={location}

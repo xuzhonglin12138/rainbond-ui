@@ -9,6 +9,7 @@ import CertificateForm from '../../components/CertificateForm';
 import CloudBackupForm from '../../components/CloudBackupForm';
 import ConfirmModal from '../../components/ConfirmModal';
 import ImageHubForm from '../../components/ImageHubForm';
+import MonitoringForm from '../../components/MonitoringForm';
 import PlatformBasicInformationForm from '../../components/PlatformBasicInformationForm';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './index.less';
@@ -24,6 +25,7 @@ import OauthTable from './oauthTable';
   oauthLongin: loading.effects['global/creatOauth'],
   certificateLongin: loading.effects['global/putCertificateType'],
   imageHubLongin: loading.effects['global/editImageHub'],
+  monitoringLongin: loading.effects['global/editImageHub'],
   objectStorageLongin: loading.effects['global/editCloudBackup'],
   overviewInfo: index.overviewInfo
 }))
@@ -37,7 +39,9 @@ class Infrastructure extends PureComponent {
       openCertificate: false,
       closeCertificate: false,
       closeImageHub: false,
+      closeMonitoring: false,
       openImageHub: false,
+      openEnableMonitoring: false,
       openCloudBackup: false,
       closeCloudBackup: false,
       openBasicInformation: false,
@@ -47,7 +51,10 @@ class Infrastructure extends PureComponent {
       ),
       AppstoreImageHubValue: rainbondUtil.fetchAppstoreImageHub(enterprise),
       isEnableObjectStorage: rainbondUtil.isEnableObjectStorage(enterprise),
+      MonitoringValue: rainbondUtil.fetchMonitoring(enterprise),
+      isEnableMonitoring: rainbondUtil.isEnableMonitoring(enterprise),
       ObjectStorageValue: rainbondUtil.fetchObjectStorage(enterprise),
+
       providers: [
         { key: 'alioss', name: '阿里云对象存储' },
         { key: 's3', name: 'S3' }
@@ -135,6 +142,39 @@ class Infrastructure extends PureComponent {
     });
   };
 
+  handelIsOpenMonitorin = (enable, value) => {
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    const { MonitoringValue, isEnableMonitoring } = this.state;
+    const params = value || MonitoringValue || {};
+    dispatch({
+      type: 'global/editMonitorin',
+      payload: {
+        enterprise_id: eid,
+        enable,
+        ...params
+      },
+
+      callback: res => {
+        if (res && res.status_code === 200) {
+          notification.success({
+            message: !isEnableMonitoring
+              ? '开通成功'
+              : enable && value
+              ? '修改成功'
+              : '关闭成功'
+          });
+          this.fetchEnterpriseInfo();
+          this.handelCloseMonitoring();
+        }
+      }
+    });
+  };
+
   handelIsOpenCloudBackup = (enable, value) => {
     const {
       dispatch,
@@ -192,12 +232,14 @@ class Infrastructure extends PureComponent {
             isEnableAppstoreImageHub: rainbondUtil.isEnableAppstoreImageHub(
               info.bean
             ),
+            isEnableMonitoring: rainbondUtil.isEnableMonitoring(info.bean),
             isEnableObjectStorage: rainbondUtil.isEnableObjectStorage(
               info.bean
             ),
             AppstoreImageHubValue: rainbondUtil.fetchAppstoreImageHub(
               info.bean
             ),
+            MonitoringValue: rainbondUtil.fetchMonitoring(info.bean),
             ObjectStorageValue: rainbondUtil.fetchObjectStorage(info.bean)
           });
         }
@@ -240,6 +282,15 @@ class Infrastructure extends PureComponent {
   };
   handelOpenCloseCloudBackup = () => {
     this.setState({ closeCloudBackup: true });
+  };
+  handelOpenCloseCloudMonitoring = () => {
+    this.setState({ closeMonitoring: true });
+  };
+  handelOpenisEnableMonitoring = () => {
+    this.setState({ openEnableMonitoring: true });
+  };
+  handelCloseMonitoring = () => {
+    this.setState({ closeMonitoring: false, openEnableMonitoring: false });
   };
   handelCloseCloudBackup = () => {
     this.setState({ closeCloudBackup: false, openCloudBackup: false });
@@ -356,6 +407,7 @@ class Infrastructure extends PureComponent {
       oauthLongin,
       certificateLongin,
       imageHubLongin,
+      monitoringLongin,
       objectStorageLongin,
       rainbondInfo,
       match: {
@@ -394,13 +446,17 @@ class Infrastructure extends PureComponent {
       israinbondTird,
       isEnableAppstoreImageHub,
       AppstoreImageHubValue,
+      MonitoringValue,
       isEnableObjectStorage,
+      isEnableMonitoring,
       ObjectStorageValue,
       openCertificate,
       closeCertificate,
       openOauthTable,
       openImageHub,
+      openEnableMonitoring,
       closeImageHub,
+      closeMonitoring,
       openCloudBackup,
       closeCloudBackup,
       providers,
@@ -569,7 +625,38 @@ class Infrastructure extends PureComponent {
         </Row>
       </Card>
     );
+    const Monitoring = (
+      <Card hoverable bordered={false} style={{ borderTop: '1px solid  #ccc' }}>
+        <Row type="flex" align="middle">
+          <Col span={3}>监控</Col>
+          <Col span={17}>
+            <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>
+              用于监控：集群、节点、组件、服务数据。
+            </span>
+          </Col>
+          <Col span={4} style={{ textAlign: 'right' }}>
+            {isEnableMonitoring && (
+              <a
+                onClick={this.handelOpenisEnableMonitoring}
+                style={{ marginRight: '10px' }}
+              >
+                查看配置
+              </a>
+            )}
 
+            <Switch
+              onChange={() => {
+                isEnableMonitoring
+                  ? this.handelOpenCloseCloudMonitoring()
+                  : this.handelOpenisEnableMonitoring();
+              }}
+              checked={isEnableMonitoring}
+              className={styles.automaTictelescopingSwitch}
+            />
+          </Col>
+        </Row>
+      </Card>
+    );
     const BasicInformation = (
       <Card style={{ marginTop: '10px' }} hoverable bordered={false}>
         <Row type="flex" align="middle">
@@ -620,6 +707,18 @@ class Infrastructure extends PureComponent {
             }}
           />
         )}
+        {openEnableMonitoring && (
+          <MonitoringForm
+            eid={eid}
+            title="监控配置"
+            loading={monitoringLongin}
+            onCancel={this.handelCloseMonitoring}
+            data={MonitoringValue}
+            onOk={values => {
+              this.handelIsOpenMonitorin(true, values);
+            }}
+          />
+        )}
         {openCloudBackup && (
           <CloudBackupForm
             eid={eid}
@@ -644,13 +743,16 @@ class Infrastructure extends PureComponent {
           />
         )}
 
-        {(closeImageHub ||
+        {(closeMonitoring ||
+          closeImageHub ||
           closeCertificate ||
           showDeleteDomain ||
           closeCloudBackup) && (
           <ConfirmModal
             loading={
-              closeImageHub
+              closeMonitoring
+                ? monitoringLongin
+                : closeImageHub
                 ? imageHubLongin
                 : closeCertificate
                 ? certificateLongin
@@ -662,7 +764,9 @@ class Infrastructure extends PureComponent {
             }
             title="关闭"
             desc={
-              closeImageHub
+              closeMonitoring
+                ? '确定要关闭监控？'
+                : closeImageHub
                 ? '确定要关闭组件库镜像仓库？'
                 : closeCertificate
                 ? '确定要关闭自动签发证书？'
@@ -673,7 +777,9 @@ class Infrastructure extends PureComponent {
                 : ''
             }
             onOk={() => {
-              closeImageHub
+              closeMonitoring
+                ? this.handelIsOpenMonitorin(false)
+                : closeImageHub
                 ? this.handelIsOpenImageHub(false)
                 : closeCertificate
                 ? this.createClusters(false)
@@ -684,7 +790,9 @@ class Infrastructure extends PureComponent {
                 : '';
             }}
             onCancel={() => {
-              closeImageHub
+              closeMonitoring
+                ? this.handelCloseMonitoring()
+                : closeImageHub
                 ? this.handelCloseImageHub()
                 : closeCertificate
                 ? this.handelCloseCertificate()
@@ -719,6 +827,7 @@ class Infrastructure extends PureComponent {
             {Oauth}
             {MirrorWarehouseInformation}
             {CloudBackup}
+            {Monitoring}
           </div>
         )}
       </Fragment>

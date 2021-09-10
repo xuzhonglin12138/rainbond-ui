@@ -653,6 +653,7 @@ export function getAllRegion(param) {
     `${apiconfig.baseUrl}/console/enterprise/${param.enterprise_id}/regions`,
     {
       method: 'get',
+      noModels: true,
       params: {
         status: param.status
       }
@@ -831,6 +832,16 @@ export async function getCreateAppTeams(param) {
       params: {
         name: param.name
       }
+    }
+  );
+}
+
+export async function setNewbieGuide(body = {}) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/info?key=NEWBIE_GUIDE`,
+    {
+      method: 'put',
+      data: body.data
     }
   );
 }
@@ -1043,6 +1054,19 @@ export async function fetchEnterpriseList(handleError) {
     handleError
   });
 }
+export async function fetchNewbieGuideConfig(handleError) {
+  return request(`${apiconfig.baseUrl}/console/custom_configs`, {
+    method: 'get',
+    handleError
+  });
+}
+export async function putNewbieGuideConfig(body, handleError) {
+  return request(`${apiconfig.baseUrl}/console/custom_configs`, {
+    method: 'put',
+    data: body.arr,
+    handleError
+  });
+}
 
 /* 查询企业下组件 应用下信息 */
 export async function fetchOverviewApp(param) {
@@ -1158,6 +1182,24 @@ export async function toEditImageHub(params) {
     }
   );
 }
+/** 修改监控信息 */
+export async function toEditMonitorin(params) {
+  return request(
+    `${apiconfig.baseUrl}/console/enterprise/${params.enterprise_id}/visualmonitor`,
+    {
+      method: 'put',
+      data: {
+        enable: params.enable,
+        home_url: params.home_url,
+        cluster_monitor_suffix: params.cluster_monitor_suffix,
+        component_monitor_suffix: params.component_monitor_suffix,
+        slo_monitor_suffix: params.slo_monitor_suffix,
+        node_monitor_suffix: params.node_monitor_suffix
+      }
+    }
+  );
+}
+
 /** 修改云端备份配置 */
 export async function toEditCloudBackup(params) {
   return request(

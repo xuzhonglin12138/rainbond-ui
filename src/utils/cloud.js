@@ -171,6 +171,11 @@ const updateKubernetesSteps = {
     Description: '初始化配置集群所需要的配置数据',
     Status: ''
   },
+  InstallKubernetes: {
+    Title: '安装集群',
+    Description: '连接所有节点安装 Kubernetes 集群，耗时取决于网络状况。',
+    Status: ''
+  },
   UpdateKubernetes: {
     Title: '配置集群',
     Description: '连接所有节点完成节点的配置，耗时取决于网络状况。',
@@ -496,9 +501,6 @@ const cloud = {
       case 3002:
         noticeWarning('用户不存在');
         break;
-      case 2003:
-        notification.warning({ message: '用户手机号已注册' });
-        break;
       case 3003:
         noticeWarning('邮箱已存在');
         break;
@@ -588,17 +590,21 @@ const cloud = {
     };
     let complete = false;
     const steps = [];
-    events.map(item => {
+    (events || []).map(item => {
       let step = createKubernetesSteps[item.type];
       if (step === undefined) {
         step = {
           Title: item.type,
           Description: item.type,
-          Status: ''
+          Type: '',
+          Status: '',
+          reason: ''
         };
       }
+      step.Type = item.type;
       step.Status = item.status;
       step.Message = item.message;
+      step.reason = item.reason;
       step.Color = colorMap[item.status];
       steps.push(step);
       if (
@@ -627,11 +633,15 @@ const cloud = {
         step = {
           Title: item.type,
           Description: item.type,
-          Status: ''
+          Type: '',
+          Status: '',
+          reason: ''
         };
       }
+      step.Type = item.type;
       step.Status = item.status;
       step.Message = item.message;
+      step.reason = item.reason;
       step.Color = colorMap[item.status];
       steps.push(step);
       if (
@@ -658,12 +668,16 @@ const cloud = {
         step = {
           Title: item.type,
           Description: item.type,
-          Status: ''
+          Type: '',
+          Status: '',
+          reason: ''
         };
       }
+      step.Type = item.type;
       step.Status = item.status;
       step.Message = item.message;
       step.Color = colorMap[item.status];
+      step.reason = item.reason;
       steps.push(step);
       if (
         item.status === 'failure' ||

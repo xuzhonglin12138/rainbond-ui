@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-assign */
@@ -43,6 +44,7 @@ const { Option } = Select;
 export default class Index extends PureComponent {
   constructor(post) {
     super(post);
+    this.iframe = null;
     this.state = {
       currStep: this.props.currStep || 0,
       loading: false,
@@ -51,7 +53,10 @@ export default class Index extends PureComponent {
       accessKey: '',
       activeKeyStore: 'rainbondStore',
       marketList: [],
-      checkedValues: []
+      checkedValues: [],
+      enterprise_alias: this.props.rainbondInfo.enterprise_alias || '',
+      enterprise_id: this.props.rainbondInfo.enterprise_id || '',
+      real_name: this.props.currUser.real_name || ''
     };
   }
   componentWillMount() {
@@ -159,6 +164,17 @@ export default class Index extends PureComponent {
       }
     });
   };
+  handleSendIframe = () => {
+    const { enterprise_alias, enterprise_id, real_name } = this.state;
+    this.iframe.onload = () => {
+      setTimeout(() => {
+        this.iframe.contentWindow.postMessage(
+          { enterprise_alias, enterprise_id, real_name },
+          '*'
+        );
+      }, 2000);
+    };
+  };
   handleIsCloudAppStoreUrl = url => {
     const { dispatch } = this.props;
     axios
@@ -171,6 +187,7 @@ export default class Index extends PureComponent {
             loading: false,
             alertText: false
           });
+          this.handleSendIframe();
         } else {
           this.handleNoCloudAppStoreUrl();
         }
@@ -377,6 +394,7 @@ export default class Index extends PureComponent {
                   style={{ marginBottom: '16px' }}
                 />
                 <iframe
+                  ref={node => (this.iframe = node)}
                   src={`${marketUrl}/certification/login`}
                   style={{
                     width: '100%',
