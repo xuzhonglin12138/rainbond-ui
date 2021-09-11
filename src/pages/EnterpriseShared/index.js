@@ -1062,13 +1062,7 @@ export default class EnterpriseShared extends PureComponent {
                   style={{ background: '#fff' }}
                   onClick={e => {
                     e.stopPropagation();
-                    if (isReadInstall) {
-                      this.installHelmApp(item, types);
-                    } else {
-                      this.setState({
-                        showCloudMarketAuth: true
-                      });
-                    }
+                    this.installHelmApp(item, types);
                   }}
                 >
                   {globalUtil.fetchSvg('InstallApp')}
