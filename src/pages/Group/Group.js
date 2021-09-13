@@ -385,7 +385,8 @@ export default class Index extends PureComponent {
         group_id: this.getGroupId(),
         group_name: vals.group_name,
         note: vals.note,
-        username: vals.username
+        username: vals.username,
+        logo: vals.logo
       },
       callback: res => {
         if (res && res.status_code === 200) {
@@ -980,6 +981,7 @@ export default class Index extends PureComponent {
           <EditGroupName
             isAddGroup={false}
             group_name={groupDetail.group_name}
+            logo={groupDetail.logo}
             note={groupDetail.note}
             loading={editGroupLoading}
             title="修改应用信息"

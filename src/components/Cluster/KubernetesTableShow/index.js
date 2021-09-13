@@ -25,6 +25,7 @@ import {
 } from '../../../services/cloud';
 import cloud from '../../../utils/cloud';
 import styles from '../ACKBuyConfig/index.less';
+import ClusterComponents from '../ClusterComponents';
 import ClusterCreationLog from '../ClusterCreationLog';
 import RKEClusterUpdate from '../RKEClusterAdd';
 import styless from '../RKEClusterAdd/index.less';
@@ -43,7 +44,8 @@ export default class KubernetesClusterShow extends PureComponent {
       clusterID: '',
       showCreateLog: false,
       isInstallRemind: false,
-      installLoading: false
+      installLoading: false,
+      isComponents: false
     };
   }
   componentDidMount() {
@@ -214,7 +216,11 @@ export default class KubernetesClusterShow extends PureComponent {
       }
     });
   };
-
+  handleIsComponents = isComponents => {
+    this.setState({
+      isComponents
+    });
+  };
   render() {
     const { selectProvider, linkedClusters, eid, selectCluster } = this.props;
     const { selectClusterName } = this.state;
@@ -244,7 +250,11 @@ export default class KubernetesClusterShow extends PureComponent {
                       selectCluster({
                         clusterID,
                         name: recordName,
-                        can_init: record.can_init
+                        can_init: record.can_init,
+                        rainbond_init:
+                          record.state &&
+                          record.state === 'running' &&
+                          record.rainbond_init
                       });
                     }
                   }
@@ -271,6 +281,7 @@ export default class KubernetesClusterShow extends PureComponent {
       },
       {
         title: '类型',
+        width: 180,
         dataIndex: 'cluster_type',
         render: text => {
           return cloud.getAliyunClusterName(text);
@@ -292,19 +303,23 @@ export default class KubernetesClusterShow extends PureComponent {
     } else {
       columns.push({
         title: 'API地址',
+        width: 300,
         dataIndex: 'master_url.api_server_endpoint'
       });
     }
     columns.push({
       title: '节点数量',
+      width: 100,
       dataIndex: 'size'
     });
     columns.push({
       title: '版本',
+      width: 250,
       dataIndex: 'current_version'
     });
     columns.push({
       title: '状态',
+      width: 150,
       dataIndex: 'state',
       render: (text, row) => {
         return cloud.getAliyunClusterStatus(text, row, linkedClusters);
@@ -338,19 +353,25 @@ export default class KubernetesClusterShow extends PureComponent {
                   对接
                 </Link>
               )}
-            {selectProvider !== 'custom' && (
+            {selectProvider !== 'rke' &&
+              row.create_log_path &&
+              row.create_log_path.startsWith('http') && (
+                <Button
+                  type="link"
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    window.open(row.create_log_path, '_blank');
+                  }}
+                >
+                  查看日志
+                </Button>
+              )}
+            {selectProvider === 'rke' && (
               <Button
                 type="link"
                 style={{ padding: 0 }}
                 onClick={() => {
-                  if (
-                    row.create_log_path &&
-                    row.create_log_path.startsWith('http')
-                  ) {
-                    window.open(row.create_log_path, '_blank');
-                  } else {
-                    this.queryCreateLog(row);
-                  }
+                  this.queryCreateLog(row);
                 }}
               >
                 查看日志
@@ -375,7 +396,12 @@ export default class KubernetesClusterShow extends PureComponent {
                 集群配置
               </a>
             )}
-
+            {row.state === 'running' &&
+              (selectProvider === 'rke' || selectProvider === 'custom') && (
+                <a onClick={() => this.handleIsComponents(row.cluster_id)}>
+                  查看组件
+                </a>
+              )}
             {row.rainbond_init === true && (
               <Popconfirm
                 placement="top"
@@ -413,6 +439,7 @@ export default class KubernetesClusterShow extends PureComponent {
       updateTask,
       showCreateLog,
       installLoading,
+      isComponents,
       isInstallRemind
     } = this.state;
     const delK8sConfigurationFile = `docker rm -vf $(docker ps -a | grep 'rke-tools\\|hyperkube\\|coreos-etcd\\|k8s' | awk '{print $1}')`;
@@ -494,6 +521,7 @@ export default class KubernetesClusterShow extends PureComponent {
           </Col>
         </Row>
         <Table
+          scroll={{ x: window.innerWidth > 1500 ? false : 1500 }}
           loading={loading}
           pagination={false}
           columns={columns}
@@ -596,6 +624,16 @@ export default class KubernetesClusterShow extends PureComponent {
             task={updateTask}
             selectProvider={selectProvider}
             onCancel={this.cancelShowUpdateKubernetes}
+          />
+        )}
+        {isComponents && (
+          <ClusterComponents
+            eid={eid}
+            clusterID={isComponents}
+            providerName={selectProvider}
+            onCancel={() => {
+              this.handleIsComponents(false);
+            }}
           />
         )}
       </div>

@@ -83,7 +83,8 @@ export default class Enterprise extends PureComponent {
       page: 1,
       total: 0,
       showMarketCloudAuth: false,
-      marketName: ''
+      marketName: '',
+      guideStep: 1
     };
   }
   componentDidMount() {
@@ -374,6 +375,11 @@ export default class Enterprise extends PureComponent {
       editorConvenient: false
     });
   };
+  handleGuideStep = guideStep => {
+    this.setState({
+      guideStep
+    });
+  };
 
   renderContent = () => {
     const teamBox = {
@@ -414,7 +420,8 @@ export default class Enterprise extends PureComponent {
       eid,
       total,
       page_size,
-      page
+      page,
+      guideStep
     } = this.state;
 
     const new_join_team =
@@ -432,27 +439,29 @@ export default class Enterprise extends PureComponent {
       collectionList && collectionList.length > 0 && collectionList;
     const colors = { color: '#3D54C4', cursor: 'pointer' };
     const memoryInfo = overviewMonitorInfo && overviewMonitorInfo.memory;
-    const memoryUsed = memoryInfo && this.handlUnit(memoryInfo.used);
-    const memoryUsedUnit = memoryInfo && this.handlUnit(memoryInfo.used, 'MB');
-    const memoryTotal = memoryInfo && this.handlUnit(memoryInfo.total);
-    const cpuInfo = overviewMonitorInfo && overviewMonitorInfo.cpu;
-    const cpuUsed = cpuInfo && cpuInfo.used && parseInt(cpuInfo.used);
-    const cpuTotal = cpuInfo && cpuInfo.total && parseInt(cpuInfo.total);
+    const memoryUsed = (memoryInfo && this.handlUnit(memoryInfo.used)) || 0;
+    const memoryUsedUnit =
+      (memoryInfo && this.handlUnit(memoryInfo.used, 'MB')) || 'MB';
+    const memoryTotal = (memoryInfo && this.handlUnit(memoryInfo.total)) || 0;
+    const cpuInfo = (overviewMonitorInfo && overviewMonitorInfo.cpu) || 0;
+    const cpuUsed = (cpuInfo && cpuInfo.used && parseInt(cpuInfo.used)) || 0;
+    const cpuTotal = (cpuInfo && cpuInfo.total && parseInt(cpuInfo.total)) || 0;
     const AppNumInfo = overviewAppInfo && overviewAppInfo.service_groups;
-    const runApp = AppNumInfo && AppNumInfo.running;
-    const appTotal = AppNumInfo && AppNumInfo.total;
-    const appClosed = AppNumInfo && AppNumInfo.closed;
+    const runApp = (AppNumInfo && AppNumInfo.running) || 0;
+    const appTotal = (AppNumInfo && AppNumInfo.total) || 0;
+    const appClosed = (AppNumInfo && AppNumInfo.closed) || 0;
+
     const comInfo = overviewAppInfo && overviewAppInfo.components;
-    const runCom = comInfo && comInfo.running;
-    const comTotal = comInfo && comInfo.total;
-    const comClosed = comInfo && comInfo.closed;
+    const runCom = (comInfo && comInfo.running) || 0;
+    const comTotal = (comInfo && comInfo.total) || 0;
+    const comClosed = (comInfo && comInfo.closed) || 0;
     const enterpriseVersion =
       rainbondInfo && rainbondInfo.version && rainbondInfo.version.enable
         ? rainbondInfo.version.value
         : '';
     const enterpriseEdition = rainbondUtil.isEnterpriseEdition(rainbondInfo);
     const memoryTotalUnit =
-      memoryInfo && this.handlUnit(memoryInfo.total, 'MB');
+      (memoryInfo && this.handlUnit(memoryInfo.total, 'MB')) || 'MB';
     const teamOperation = (
       <div
         style={{
@@ -601,7 +610,10 @@ export default class Enterprise extends PureComponent {
                 <Card
                   bordered={false}
                   loading={overviewAppInfoLoading}
-                  style={{ height: '243px', marginRight: '25px' }}
+                  style={{
+                    height: '243px',
+                    marginRight: '25px'
+                  }}
                 >
                   <Row style={{ marginBottom: '6px' }}>
                     <Col className={styles.grays} span={12}>
@@ -611,113 +623,111 @@ export default class Enterprise extends PureComponent {
                       组件数量
                     </Col>
                   </Row>
-                  {AppNumInfo && comInfo && (
-                    <Row>
-                      <Col span={8}>
+                  <Row>
+                    <Col span={8}>
+                      <Pie
+                        percent={
+                          Math.round((runApp / appTotal) * 10000) / 100.0
+                        }
+                        types="app"
+                        lineWidth={18}
+                        color="#3D58DA"
+                        subTitle={
+                          <div className={styles.appContent}>
+                            <h6>{runApp}个</h6>
+                            <div>
+                              共{appTotal}
+                              个应用数量
+                            </div>
+                          </div>
+                        }
+                        height={168}
+                      />
+                    </Col>
+
+                    <Col span={4}>
+                      <div>
+                        <div>
+                          <div className={styles.appnumno}>运行中应用</div>
+                          <div className={styles.nums}>
+                            <span>{runApp}个</span>
+                            <span>|</span>
+                            <span>{appTotal}个</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            className={styles.appnums}
+                            style={{ marginTop: '26px' }}
+                          >
+                            未运行应用
+                          </div>
+                          <div className={styles.nums}>
+                            <span>{appClosed}个</span>
+                            <span>|</span>
+                            <span>{appTotal}个</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col span={8}>
+                      <div style={{ marginTop: '10px' }}>
                         <Pie
                           percent={
-                            Math.round((runApp / appTotal) * 10000) / 100.0
+                            Math.round((runCom / comTotal) * 10000) / 100.0
                           }
-                          types="app"
-                          lineWidth={18}
+                          types="component"
                           color="#3D58DA"
                           subTitle={
-                            <div className={styles.appContent}>
-                              <h6>{runApp}个</h6>
+                            <div className={styles.elements}>
                               <div>
-                                共{appTotal}
-                                个应用数量
+                                <div>{comClosed}</div>
+                                <div>未运行</div>
+                              </div>
+                              <div />
+                              <div>
+                                <div>{runCom}</div>
+                                <div>运行中</div>
                               </div>
                             </div>
                           }
-                          height={168}
+                          height={156}
                         />
-                      </Col>
-
-                      <Col span={4}>
+                      </div>
+                    </Col>
+                    <Col span={4}>
+                      <div>
                         <div>
-                          <div>
-                            <div className={styles.appnumno}>运行中应用</div>
-                            <div className={styles.nums}>
-                              <span>{runApp}个</span>
-                              <span>|</span>
-                              <span>{appTotal}个</span>
-                            </div>
-                          </div>
-                          <div>
-                            <div
-                              className={styles.appnums}
-                              style={{ marginTop: '26px' }}
-                            >
-                              未运行应用
-                            </div>
-                            <div className={styles.nums}>
-                              <span>{appClosed}个</span>
-                              <span>|</span>
-                              <span>{appTotal}个</span>
-                            </div>
+                          <div className={styles.appnumno}>运行中组件</div>
+                          <div className={styles.nums}>
+                            <span>{runCom}个</span>
+                            <span>|</span>
+                            <span>{comTotal}个</span>
                           </div>
                         </div>
-                      </Col>
-                      <Col span={8}>
-                        <div style={{ marginTop: '10px' }}>
-                          <Pie
-                            percent={
-                              Math.round((runCom / comTotal) * 10000) / 100.0
-                            }
-                            types="component"
-                            color="#3D58DA"
-                            subTitle={
-                              <div className={styles.elements}>
-                                <div>
-                                  <div>{comClosed}</div>
-                                  <div>未运行</div>
-                                </div>
-                                <div />
-                                <div>
-                                  <div>{runCom}</div>
-                                  <div>运行中</div>
-                                </div>
-                              </div>
-                            }
-                            height={156}
-                          />
-                        </div>
-                      </Col>
-                      <Col span={4}>
                         <div>
-                          <div>
-                            <div className={styles.appnumno}>运行中组件</div>
-                            <div className={styles.nums}>
-                              <span>{runCom}个</span>
-                              <span>|</span>
-                              <span>{comTotal}个</span>
-                            </div>
+                          <div
+                            className={styles.appnums}
+                            style={{ marginTop: '26px' }}
+                          >
+                            未运行组件
                           </div>
-                          <div>
-                            <div
-                              className={styles.appnums}
-                              style={{ marginTop: '26px' }}
-                            >
-                              未运行组件
-                            </div>
-                            <div className={styles.nums}>
-                              <span>{comClosed}个</span>
-                              <span>|</span>
-                              <span>{comTotal}个</span>
-                            </div>
+                          <div className={styles.nums}>
+                            <span>{comClosed}个</span>
+                            <span>|</span>
+                            <span>{comTotal}个</span>
                           </div>
                         </div>
-                      </Col>
-                    </Row>
-                  )}
+                      </div>
+                    </Col>
+                  </Row>
                 </Card>
               </Col>
 
               <Col span={11}>
                 <Card
-                  loading={overviewInfoLoading}
                   bordered={false}
+                  loading={overviewInfoLoading}
                   style={{ height: '243px' }}
                 >
                   <Row>
