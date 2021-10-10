@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Form, Button, Row, Col } from 'antd';
+/* eslint-disable jsx-a11y/alt-text */
+import { Col, Form, Row } from 'antd';
 import omit from 'omit.js';
-import styles from './index.less';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import apiconfig from '../../../config/api.config';
 import map from './map';
 
 const FormItem = Form.Item;
 
 function generator({ defaultProps, defaultRules, type }) {
-  return (WrappedComponent) => {
+  return WrappedComponent => {
     return class BasicComponent extends Component {
       static contextTypes = {
         form: PropTypes.object,
@@ -17,7 +18,8 @@ function generator({ defaultProps, defaultRules, type }) {
       constructor(props) {
         super(props);
         this.state = {
-          count: 0
+          count: 0,
+          time: Date.now()
         };
       }
       componentDidMount() {
@@ -28,19 +30,24 @@ function generator({ defaultProps, defaultRules, type }) {
       componentWillUnmount() {
         clearInterval(this.interval);
       }
-      onGetCaptcha = () => {
-        let count = 59;
-        this.setState({ count });
-        if (this.props.onGetCaptcha) {
-          this.props.onGetCaptcha();
-        }
-        this.interval = setInterval(() => {
-          count -= 1;
-          this.setState({ count });
-          if (count === 0) {
-            clearInterval(this.interval);
-          }
-        }, 1000);
+      // onGetCaptcha = () => {
+      //   let count = 59;
+      //   this.setState({ count });
+      //   if (this.props.onGetCaptcha) {
+      //     this.props.onGetCaptcha();
+      //   }
+      //   this.interval = setInterval(() => {
+      //     count -= 1;
+      //     this.setState({ count });
+      //     if (count === 0) {
+      //       clearInterval(this.interval);
+      //     }
+      //   }, 1000);
+      // };
+      changeTime = () => {
+        this.setState({
+          time: Date.now()
+        });
       };
       render() {
         const { getFieldDecorator } = this.context.form;
@@ -53,7 +60,7 @@ function generator({ defaultProps, defaultRules, type }) {
           name,
           ...restProps
         } = this.props;
-        const { count } = this.state;
+        const { count, time } = this.state;
         options.rules = rules || defaultRules;
         if (onChange) {
           options.onChange = onChange;
@@ -74,14 +81,14 @@ function generator({ defaultProps, defaultRules, type }) {
                   )(<WrappedComponent {...defaultProps} {...inputProps} />)}
                 </Col>
                 <Col span={8}>
-                  <Button
-                    disabled={count}
-                    className={styles.getCaptcha}
-                    size="large"
-                    onClick={this.onGetCaptcha}
-                  >
-                    {count ? `${count} s` : '获取验证码'}
-                  </Button>
+                  <img
+                    onClick={this.changeTime}
+                    src={`${apiconfig.baseUrl}/console/captcha?_=${time}`}
+                    style={{
+                      width: '100%',
+                      height: 40
+                    }}
+                  />
                 </Col>
               </Row>
             </FormItem>
@@ -101,7 +108,7 @@ function generator({ defaultProps, defaultRules, type }) {
 }
 
 const LoginItem = {};
-Object.keys(map).forEach((item) => {
+Object.keys(map).forEach(item => {
   LoginItem[item] = generator({
     defaultProps: map[item].props,
     defaultRules: map[item].rules,

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-unused-vars */
 import ConfirmModal from '@/components/ConfirmModal';
 import {
@@ -248,9 +249,13 @@ export default class TcpTable extends PureComponent {
           tcp_rule_id: editInfo.tcp_rule_id
         },
         callback: data => {
-          data
-            ? notification.success({ message: data.msg_show || '编辑成功' })
-            : notification.warning({ message: '编辑失败' });
+          if (data && data.business_code) {
+            data.business_code === 200
+              ? notification.success({ message: data.msg_show })
+              : notification.warning({ message: data.msg_show });
+          } else {
+            notification.warning({ message: '编辑失败' });
+          }
           this.setState({
             TcpDrawerVisible: false,
             editInfo: false

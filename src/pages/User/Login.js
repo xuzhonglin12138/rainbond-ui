@@ -2,6 +2,7 @@
 /* eslint-disable compat/compat */
 /* eslint-disable camelcase */
 import { Divider, Row, Tooltip } from 'antd';
+import Base64 from 'base-64';
 import { connect } from 'dva';
 import React, { Component } from 'react';
 import globalUtil from '../../utils/global';
@@ -9,7 +10,6 @@ import oauthUtil from '../../utils/oauth';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Login.less';
 import LoginComponent from './loginComponent';
-
 @connect(({ global }) => ({
   isRegist: global.isRegist,
   rainbondInfo: global.rainbondInfo
@@ -25,6 +25,7 @@ export default class LoginPage extends Component {
     globalUtil.removeCookie();
   }
   handleSubmit = values => {
+    values.password = Base64.encode(values.password);
     const { dispatch, location } = this.props;
     const query_params = new URLSearchParams(location.search);
     const redirect = query_params.get('redirect');
