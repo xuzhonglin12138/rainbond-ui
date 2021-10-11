@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable compat/compat */
 /* eslint-disable camelcase */
-import { Divider, Row, Tooltip } from 'antd';
+import { Divider, notification, Row, Tooltip } from 'antd';
 import Base64 from 'base-64';
 import { connect } from 'dva';
 import React, { Component } from 'react';
@@ -10,6 +11,7 @@ import oauthUtil from '../../utils/oauth';
 import rainbondUtil from '../../utils/rainbond';
 import styles from './Login.less';
 import LoginComponent from './loginComponent';
+
 @connect(({ global }) => ({
   isRegist: global.isRegist,
   rainbondInfo: global.rainbondInfo
@@ -23,6 +25,9 @@ export default class LoginPage extends Component {
     const { dispatch } = this.props;
     dispatch({ type: 'global/hideNeedLogin' });
     globalUtil.removeCookie();
+  }
+  componentDidMount() {
+    window.config = false;
   }
   handleSubmit = values => {
     values.password = Base64.encode(values.password);
@@ -40,6 +45,12 @@ export default class LoginPage extends Component {
           url = redirect;
         }
         window.location.href = url;
+      },
+      handleError: err => {
+        window.config = true;
+        if (err && err.data && err.data.msg_show) {
+          notification.warning({ message: err.data.msg_show });
+        }
       }
     });
   };

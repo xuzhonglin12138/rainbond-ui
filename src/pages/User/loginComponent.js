@@ -15,10 +15,8 @@ export default class LoginComponent extends Component {
   componentDidMount() {
     userUtil.removeCookie();
   }
-
   handleSubmit = (err, values) => {
     const { onSubmit } = this.props;
-    console.log('版本11-25：21：00');
     if (!err && onSubmit) {
       userUtil.removeCookie();
       onSubmit(values);

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable react/sort-comp */
 /* eslint-disable jsx-a11y/alt-text */
 import { Col, Form, Row } from 'antd';
 import omit from 'omit.js';
@@ -27,6 +29,11 @@ function generator({ defaultProps, defaultRules, type }) {
           this.context.updateActive(this.props.name);
         }
       }
+      componentDidUpdate() {
+        if (window.config) {
+          this.changeTime();
+        }
+      }
       componentWillUnmount() {
         clearInterval(this.interval);
       }
@@ -45,9 +52,14 @@ function generator({ defaultProps, defaultRules, type }) {
       //   }, 1000);
       // };
       changeTime = () => {
-        this.setState({
-          time: Date.now()
-        });
+        this.setState(
+          {
+            time: Date.now()
+          },
+          () => {
+            window.config = false;
+          }
+        );
       };
       render() {
         const { getFieldDecorator } = this.context.form;
