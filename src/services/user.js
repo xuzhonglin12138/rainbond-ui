@@ -200,7 +200,8 @@ export async function login(
   body = {
     nick_name,
     password
-  }
+  },
+  handleError
 ) {
   return request(`${apiconfig.baseUrl}/console/users/login`, {
     method: 'post',
@@ -216,7 +217,8 @@ export async function login(
         }
         return ret;
       }
-    ]
+    ],
+    handleError
   });
 }
 

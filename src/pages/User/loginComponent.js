@@ -5,8 +5,7 @@ import Login from '../../components/Login';
 import userUtil from '../../utils/global';
 import styles from './Login.less';
 
-const { UserName, Password, Submit } = Login;
-
+const { UserName, Password, Submit, Captcha } = Login;
 @connect(({ loading, global }) => ({
   isRegist: global.isRegist,
   thirdLogin: loading.effects['user/thirdLogin'],
@@ -16,10 +15,8 @@ export default class LoginComponent extends Component {
   componentDidMount() {
     userUtil.removeCookie();
   }
-
   handleSubmit = (err, values) => {
     const { onSubmit } = this.props;
-    console.log('版本11-25：21：00');
     if (!err && onSubmit) {
       userUtil.removeCookie();
       onSubmit(values);
@@ -33,6 +30,7 @@ export default class LoginComponent extends Component {
         <Login defaultActiveKey="account" onSubmit={this.handleSubmit}>
           <UserName name="nick_name" placeholder="用户名/邮箱" />
           <Password name="password" placeholder="密码" />
+          <Captcha name="captcha_code" placeholder="验证码" />
           <Submit loading={type !== 'thirdLogin' ? userLogin : thirdLogin}>
             {type === 'thirdLogin' ? '登录并绑定' : '登录'}
           </Submit>
