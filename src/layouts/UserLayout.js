@@ -67,7 +67,16 @@ class UserLayout extends React.PureComponent {
             rainbondUtil.OauthEnterpriseEnable(info);
           let oauthInfo =
             info.enterprise_center_oauth && info.enterprise_center_oauth.value;
-          if (!oauthInfo && info.oauth_services && info.oauth_services.value) {
+          // 判断外层的开关是否打开
+          const isOauthEnterpriseEnable = rainbondUtil.OauthEnterpriseEnable(
+            info
+          );
+          if (
+            !oauthInfo &&
+            isOauthEnterpriseEnable &&
+            info.oauth_services &&
+            info.oauth_services.value
+          ) {
             info.oauth_services.value.map(item => {
               if (item.is_auto_login) {
                 oauthInfo = item;
@@ -84,6 +93,7 @@ class UserLayout extends React.PureComponent {
             isDisableAutoLogin !== 'true'
           ) {
             globalUtil.removeCookie();
+            console.log('打开了oauth登录');
             window.location.href = oauthUtil.getAuthredictURL(oauthInfo);
           } else {
             this.isRender(true);

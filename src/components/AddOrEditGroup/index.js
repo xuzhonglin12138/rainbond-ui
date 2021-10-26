@@ -35,7 +35,8 @@ export default class EditGroupName extends PureComponent {
       regionName,
       dispatch,
       isAddGroup = true,
-      isGetGroups = true
+      isGetGroups = true,
+      handleAppLoading = false
     } = this.props;
     form.validateFields({ force: true }, (err, vals) => {
       vals.logo = this.state.paramsSrc || '';
@@ -59,6 +60,7 @@ export default class EditGroupName extends PureComponent {
                   payload: parameters,
                   callback: groups => {
                     onOk(groupId, groups);
+                    handleAppLoading && handleAppLoading();
                     this.handleLoading(false);
                   },
                   handleError: () => {
