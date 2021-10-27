@@ -843,10 +843,10 @@ export default class Index extends PureComponent {
     const regionName = globalUtil.getCurrRegionName();
     const highlighted = {
       position: 'relative',
-      zIndex: 1000
-      // padding: '0 16px',
-      // margin: '0 -16px',
-      // background: '#fff'
+      zIndex: 1000,
+      padding: '0 16px',
+      margin: '0 -16px',
+      background: '#fff'
     };
     const isScrollDiv = rainbondUtil.handleNewbie(novices, 'applicationInfo');
     return (
@@ -1012,6 +1012,7 @@ export default class Index extends PureComponent {
             nextStep: 3,
             conPosition: { bottom: '-16px', left: '45%' }
           })}
+        {console.log(isScrollDiv, 'isScrollDiv')}
         {isScrollDiv && <div id="scroll_div" style={{ marginTop: '180px' }} />}
 
         {toDelete && (
