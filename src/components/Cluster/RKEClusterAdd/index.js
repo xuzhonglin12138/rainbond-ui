@@ -746,7 +746,7 @@ export default class RKEClusterConfig extends PureComponent {
         width: 80,
         align: 'center',
         render: (_, record) => {
-          return dataSource.length > 1 ? (
+          return dataSource && dataSource.length > 1 ? (
             <Popconfirm
               title="确定要删除吗?"
               onConfirm={() => this.handleDelete(record.key)}
@@ -789,9 +789,7 @@ export default class RKEClusterConfig extends PureComponent {
     return (
       <Modal
         visible
-        title={
-          clusterID ? '配置 Kubernetes 集群' : '基于主机安装 Kubernetes 集群'
-        }
+        title={clusterID ? '配置集群' : '基于主机安装集群'}
         className={styles.TelescopicModal}
         width={900}
         destroyOnClose
@@ -908,9 +906,7 @@ export default class RKEClusterConfig extends PureComponent {
               >
                 <ul>
                   <li>
-                    <span>
-                      采用 RKE 方案基于提供的主机安装 Kubernetes 集群。
-                    </span>
+                    <span>基于提供的主机安装集群。</span>
                   </li>
                   <li>
                     <span>

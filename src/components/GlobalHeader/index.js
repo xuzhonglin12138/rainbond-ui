@@ -332,6 +332,23 @@ export default class GlobalHeader extends PureComponent {
               </a>
             </Popconfirm>
           )}
+          {isNewbieGuide && (
+            <Popconfirm
+              title="是否要关闭新手引导功能、关闭后并无法开启此功能?"
+              onConfirm={this.handlIsOpenNewbieGuide}
+              okText="关闭"
+              cancelText="取消"
+            >
+              <a
+                className={styles.action}
+                style={{ color: '#fff' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                新手引导
+              </a>
+            </Popconfirm>
+          )}
           {platformUrl && (
             <a
               target="_blank"

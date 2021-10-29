@@ -177,8 +177,8 @@ export default {
       }
     },
 
-    *login({ payload, callback }, { call, put }) {
-      const response = yield call(login, payload);
+    *login({ payload, callback, handleError }, { call, put }) {
+      const response = yield call(login, payload, handleError);
       if (response) {
         yield put({ type: 'changeLoginStatus', payload: response });
         cookie.set('token', response.bean.token);

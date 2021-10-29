@@ -289,8 +289,8 @@ export default {
         callback(data);
       }
     },
-    *getTeamAppList({ payload, callback }, { call }) {
-      const data = yield call(getTeamAppList, payload);
+    *getTeamAppList({ payload, callback, handleError }, { call }) {
+      const data = yield call(getTeamAppList, payload, handleError);
       if (data && callback) {
         callback(data);
       }
@@ -784,7 +784,7 @@ export default {
       }
       yield put({
         type: 'saveNewbieGuideConfig',
-        payload: response.list || []
+        payload: (response && response.list) || []
       });
     },
     *putNewbieGuideConfig({ payload, callback, handleError }, { call }) {

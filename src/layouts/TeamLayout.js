@@ -93,6 +93,8 @@ class TeamLayout extends PureComponent {
 
   componentWillMount() {
     this.fetchLicenses();
+    this.getNewbieGuideConfig();
+    this.getEnterpriseList();
   }
   fetchLicenses = () => {
     const { dispatch } = this.props;
@@ -165,6 +167,12 @@ class TeamLayout extends PureComponent {
       );
     }
   }
+  getNewbieGuideConfig = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchNewbieGuideConfig'
+    });
+  };
   // get enterprise list
   getEnterpriseList = () => {
     const { dispatch, currentUser } = this.props;

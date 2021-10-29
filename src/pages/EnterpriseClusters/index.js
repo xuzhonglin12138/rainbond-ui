@@ -23,7 +23,7 @@ import { Link, routerRedux } from 'dva/router';
 import React, { PureComponent } from 'react';
 import EditClusterInfo from '../../components/Cluster/EditClusterInfo';
 import ConfirmModal from '../../components/ConfirmModal';
-import ClusterIntroduced from '../../components/Introduced/ClusterIntroduced';
+import InstallStep from '../../components/Introduced/InstallStep';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import globalUtil from '../../utils/global';
 import rainbondUtil from '../../utils/rainbond';
@@ -48,7 +48,7 @@ const { confirm } = Modal;
 export default class EnterpriseClusters extends PureComponent {
   constructor(props) {
     super(props);
-    const { user, novices, enterprise } = this.props;
+    const { user, rainbondInfo, novices, enterprise } = this.props;
     const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
       isNewbieGuide: rainbondUtil.isEnableNewbieGuide(enterprise),
@@ -398,6 +398,103 @@ export default class EnterpriseClusters extends PureComponent {
       }
     });
   };
+
+  // 开始应用安装回调
+  onStartInstall = type => {
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    this.handleClusterIntroduced();
+    // 从应用商店安装应用
+    if (type == 1) {
+      dispatch(routerRedux.push(`/enterprise/${eid}/shared/local?init=true`));
+    } else {
+      // 自定义安装
+      this.fetchMyTeams();
+    }
+  };
+
+  // 查看应用实例
+  onViewInstance = () => {
+    this.fetchMyTeams(true);
+  };
+
+  fetchMyTeams = (isNext = false) => {
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    const { clusters } = this.state;
+    dispatch({
+      type: 'global/fetchMyTeams',
+      payload: {
+        enterprise_id: eid,
+        page: 1,
+        page_size: 1
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          if (res && res.list.length > 0) {
+            const teamName = res.list[0].team_name;
+            if (isNext && teamName) {
+              this.fetchApps(teamName, true);
+            } else if (teamName) {
+              dispatch(
+                routerRedux.push(
+                  `/team/${teamName}/region/${clusters[0].region_name}/create/code`
+                )
+              );
+            }
+          } else {
+            return notification.warn({
+              message: '请先创建团队！'
+            });
+          }
+        }
+      }
+    });
+  };
+
+  fetchApps = (teamName = '', isNext = false) => {
+    const {
+      dispatch,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    const { clusters } = this.state;
+    dispatch({
+      type: 'global/fetchEnterpriseApps',
+      payload: {
+        enterprise_id: eid,
+        page: 1,
+        page_size: 1
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          if (res && res.list.length > 0) {
+            const groupId = res.list[0].ID;
+            if (isNext && groupId && teamName) {
+              dispatch(
+                routerRedux.push(
+                  `/team/${teamName}/region/${clusters[0].region_name}/apps/${groupId}`
+                )
+              );
+            }
+          } else {
+            return notification.warn({
+              message: '请先创建应用！'
+            });
+          }
+        }
+      }
+    });
+  };
   render() {
     const {
       delclusterLongin,
@@ -744,19 +841,16 @@ export default class EnterpriseClusters extends PureComponent {
         clusters &&
         clusters.length &&
         clusters[0].status === '1' ? (
-          <ClusterIntroduced
-            onOk={() => {
-              this.handleClusterIntroduced();
-              dispatch(
-                routerRedux.push(`/enterprise/${eid}/shared/local?init=true`)
-              );
-            }}
+          <InstallStep
             onCancel={this.handleClusterIntroduced}
+            isCluster
+            eid={eid}
+            onStartInstall={this.onStartInstall}
+            onViewInstance={this.onViewInstance}
           />
         ) : (
           ''
         )}
-
         <Row style={{ marginBottom: '20px' }}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <div

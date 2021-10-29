@@ -5,22 +5,33 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/sort-comp */
-import { Button, Form, Input, notification, Pagination, Spin } from 'antd';
+import {
+  Button,
+  Empty,
+  Form,
+  Input,
+  notification,
+  Pagination,
+  Spin
+} from 'antd';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import React, { Fragment, PureComponent } from 'react';
 import EditGroupName from '../../components/AddOrEditGroup';
+import AppState from '../../components/ApplicationState';
 import Result from '../../components/Result';
 import VisterBtn from '../../components/visitBtnForAlllink';
 import globalUtil from '../../utils/global';
 import userUtil from '../../utils/user';
 import styles from './Index.less';
+
 const { Search } = Input;
 const echarts = require('echarts');
 const appLogo = require('@/assets/teamAppLogo.svg');
 const defaultAppLogo = require('@/assets/application.png');
 const componentLogo = require('@/assets/teamComponentLogo.svg');
+
 @connect(({ user, index, loading, global, teamControl, enterprise }) => ({
   currUser: user.currentUser,
   index,
@@ -66,9 +77,11 @@ export default class Index extends PureComponent {
       query: '',
       // 热门应用列表
       teamHotAppList: [],
-      pageSizeOptions: [12, 16, 20, 24, 28],
+      pageSizeOptions: ['12', '16', '20', '24', '28'],
       // 新建应用显示与隐藏
-      createAppVisible: false
+      createAppVisible: false,
+      emptyConfig: false,
+      searchVisible: false
     };
   }
   componentDidMount() {
@@ -106,16 +119,15 @@ export default class Index extends PureComponent {
         show: true,
         position: [50, 0],
         fontSize: 10,
-        formatter: function(params) {
+        formatter(params) {
           if (params.data.name === '已用') {
             return `
            <div>运行:${params.data.value}个</div>
           `;
-          } else {
-            return `
+          }
+          return `
            <div>未运行:${params.data.value}个</div>
           `;
-          }
         }
       },
       // 标题
@@ -166,7 +178,7 @@ export default class Index extends PureComponent {
           // hoverAnimation: false,
           data: [
             {
-              value: index.overviewInfo.running_app_num,
+              value: index.overviewInfo.running_app_num || 0,
               name: '已用',
               itemStyle: {
                 normal: {
@@ -187,7 +199,7 @@ export default class Index extends PureComponent {
               name: '未用',
               value:
                 index.overviewInfo.team_app_num -
-                index.overviewInfo.running_app_num
+                (index.overviewInfo.running_app_num || 0)
             }
           ]
         }
@@ -199,16 +211,15 @@ export default class Index extends PureComponent {
         show: true,
         position: [50, 0],
         fontSize: 10,
-        formatter: function(params) {
+        formatter(params) {
           if (params.data.name === '已用') {
             return `
            <div>运行:${params.data.value}个</div>
           `;
-          } else {
-            return `
+          }
+          return `
            <div>未运行:${params.data.value}个</div>
           `;
-          }
         }
       },
       // 标题
@@ -259,7 +270,7 @@ export default class Index extends PureComponent {
           // hoverAnimation: false,
           data: [
             {
-              value: index.overviewInfo.running_component_num,
+              value: index.overviewInfo.running_component_num || 0,
               name: '已用',
               itemStyle: {
                 normal: {
@@ -280,7 +291,7 @@ export default class Index extends PureComponent {
               name: '未用',
               value:
                 index.overviewInfo.team_service_num -
-                index.overviewInfo.running_component_num
+                (index.overviewInfo.running_component_num || 0)
             }
           ]
         }
@@ -300,7 +311,10 @@ export default class Index extends PureComponent {
   onSearch = value => {
     this.setState(
       {
-        query: value
+        query: value,
+        loadingOfApp: true,
+        page: 1,
+        searchVisible: true
       },
       () => {
         this.loadHotApp();
@@ -311,7 +325,8 @@ export default class Index extends PureComponent {
   handleChangePageSize = (current, size) => {
     this.setState(
       {
-        page_size: size
+        page_size: size,
+        loadingOfApp: true
       },
       () => {
         this.loadHotApp();
@@ -322,7 +337,8 @@ export default class Index extends PureComponent {
   handleChangePage = (page, pageSize) => {
     this.setState(
       {
-        page
+        page,
+        loadingOfApp: true
       },
       () => {
         this.loadHotApp();
@@ -347,7 +363,7 @@ export default class Index extends PureComponent {
               // 加载echarts图表
               this.loadTeamAppEcharts();
               // 加载热门应用模块
-              if (!this['loadHotAppTimer']) {
+              if (!this.loadHotAppTimer) {
                 this.loadHotApp();
               }
             }
@@ -371,7 +387,7 @@ export default class Index extends PureComponent {
   };
   // 加载热门应用数据源
   loadHotApp = () => {
-    const { page, page_size, query } = this.state;
+    const { page, page_size, query, emptyConfig } = this.state;
     this.props.dispatch({
       type: 'global/getTeamAppList',
       payload: {
@@ -386,7 +402,9 @@ export default class Index extends PureComponent {
           this.setState({
             teamHotAppList: res.list,
             total: res.bean && res.bean.total,
-            loadingOfApp: false
+            loadingOfApp: false,
+            emptyConfig: false,
+            searchVisible: false
           });
           // 每隔10s获取最新的列表数据
           this.handleTimers(
@@ -395,6 +413,23 @@ export default class Index extends PureComponent {
               this.loadHotApp();
             },
             10000
+          );
+        }
+        if (res && res.list && res.list.length === 0 && query) {
+          this.setState({
+            emptyConfig: true
+          });
+        }
+      },
+      handleError: err => {
+        if (err && err.data && err.data.code === 10401) {
+          this.setState(
+            {
+              page: 1
+            },
+            () => {
+              this.loadHotApp();
+            }
           );
         }
       }
@@ -455,6 +490,12 @@ export default class Index extends PureComponent {
       createAppVisible: false
     });
   };
+  // 新建应用时的loading优化
+  handleAppLoading = () => {
+    this.setState({
+      loadingOfApp: true
+    });
+  };
   render() {
     const {
       loadingOverview,
@@ -463,9 +504,20 @@ export default class Index extends PureComponent {
       total,
       pageSizeOptions,
       createAppVisible,
-      loadingOfApp
+      loadingOfApp,
+      page,
+      page_size,
+      query,
+      emptyConfig,
+      searchVisible
     } = this.state;
-    const { index, dispatch } = this.props;
+    const {
+      index,
+      dispatch,
+      location: {
+        query: { team_alias }
+      }
+    } = this.props;
     // 当前团队名称
     const teamName = globalUtil.getCurrTeamName();
     // 当前集群名称
@@ -473,17 +525,21 @@ export default class Index extends PureComponent {
     // 团队应用
     return (
       <Fragment>
-        <div className={styles.teamAppTitle}>
-          <span>{globalUtil.fetchSvg('teamViewTitle')}</span>
-          <h2 className={styles.topContainerTitle}>好雨科技Sass交付</h2>
-        </div>
-
+        {index.overviewInfo.region_health && (
+          <div className={styles.teamAppTitle}>
+            <span>{globalUtil.fetchSvg('teamViewTitle')}</span>
+            <h2 className={styles.topContainerTitle}>
+              {index.overviewInfo.team_alias}
+            </h2>
+          </div>
+        )}
         {/* 页面loading */}
-        {loadingOverview && (
+        {loadingOverview && index.overviewInfo.region_health && (
           <div style={{ textAlign: 'center', marginTop: '100px' }}>
             <Spin tip="Loading..." size="large" />
           </div>
         )}
+        {/* page top */}
         {!loadingOverview && index.overviewInfo.region_health && (
           <div className={styles.topContainer}>
             {/* 应用 */}
@@ -492,7 +548,7 @@ export default class Index extends PureComponent {
                 <h3 className={styles.teamAppTitle}>应用</h3>
                 <div className={styles.teamAppContent}>
                   {/* 图表 */}
-                  <div id="appEcharts" className={styles.appEcharts}></div>
+                  <div id="appEcharts" className={styles.appEcharts} />
                   {/* 描述 */}
                   <div className={styles.desc}>
                     <div className={styles.activeApp}>
@@ -546,10 +602,7 @@ export default class Index extends PureComponent {
                 <h3 className={styles.teamAppTitle}>组件</h3>
                 <div className={styles.teamAppContent}>
                   {/* 图表 */}
-                  <div
-                    id="componmentEcharts"
-                    className={styles.appEcharts}
-                  ></div>
+                  <div id="componmentEcharts" className={styles.appEcharts} />
                   {/* 描述 */}
                   <div className={styles.desc}>
                     <div className={styles.activeApp}>
@@ -619,7 +672,7 @@ export default class Index extends PureComponent {
                       </div>
                       <p style={{ marginBottom: '0px' }}>内存使用量</p>
                     </div>
-                    <span className={styles.useLine}></span>
+                    <span className={styles.useLine} />
                     <div className={styles.disk}>
                       <div>
                         <p style={{ marginBottom: '0px' }}>
@@ -642,7 +695,17 @@ export default class Index extends PureComponent {
             </div>
             {/* 用户数量 */}
             <div>
-              <div className={styles.teamDisk}>
+              <div
+                className={`${styles.teamDisk} ${styles.hoverPointer}`}
+                onClick={() => {
+                  dispatch(
+                    routerRedux.push({
+                      pathname: `/team/${teamName}/region/${regionName}/team`,
+                      state: { config: 'member' }
+                    })
+                  );
+                }}
+              >
                 <h3 className={styles.teamDiskTitle}>用户数量</h3>
                 <div className={styles.teamDiskContent}>
                   <div className={styles.userNum}>
@@ -657,40 +720,42 @@ export default class Index extends PureComponent {
             </div>
           </div>
         )}
-
         {/* 热门应用标题 */}
-        <div className={styles.teamHotAppTitle}>
-          <div className={styles.teamHotAppTitleLeft}>
-            <span>{globalUtil.fetchSvg('teamViewHotsvg')}</span>
-            <h2>应用列表</h2>
-          </div>
-          {!loadingOfApp && (
-            <div className={styles.teamHotAppTitleSearch}>
-              <Search
-                placeholder="请输入应用名称进行搜索"
-                onSearch={this.onSearch}
-                allowClear
-                style={{ width: 400 }}
-              />
-              <span
-                onClick={() => {
-                  this.setState({ createAppVisible: true });
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                新建应用
-              </span>
+        {index.overviewInfo.region_health && (
+          <div className={styles.teamHotAppTitle}>
+            <div className={styles.teamHotAppTitleLeft}>
+              <span>{globalUtil.fetchSvg('teamViewHotsvg')}</span>
+              <h2>应用列表</h2>
             </div>
-          )}
-        </div>
-        {/* app list */}
-        {loadingOfApp && (
+            {(!loadingOfApp || searchVisible) && (
+              <div className={styles.teamHotAppTitleSearch}>
+                <Search
+                  placeholder="请输入应用名称进行搜索"
+                  onSearch={this.onSearch}
+                  defaultValue={query}
+                  allowClear
+                  style={{ width: 400 }}
+                />
+                <span
+                  onClick={() => {
+                    this.setState({ createAppVisible: true });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  新建应用
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+        {/* app list Loading */}
+        {loadingOfApp && index.overviewInfo.region_health && (
           <div style={{ textAlign: 'center', marginTop: '100px' }}>
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-
-        {!loadingOfApp && (
+        {/* appList */}
+        {!loadingOfApp && !emptyConfig && (
           <div>
             <div className={styles.teamHotAppList}>
               {/* 1 */}
@@ -700,7 +765,7 @@ export default class Index extends PureComponent {
                   return (
                     <div key={item.group_id}>
                       <div
-                        className={styles.teamHotAppItem}
+                        className={`${styles.teamHotAppItem} ${styles.hoverPointer}`}
                         onClick={() => {
                           dispatch(
                             routerRedux.push(
@@ -757,41 +822,21 @@ export default class Index extends PureComponent {
                             </div>
                           </div>
                           {/* 访问 */}
-                          <div className={styles.visit}>
-                            {item.accesses.length > 0 && (
-                              <VisterBtn
-                                linkList={item.accesses}
-                                type={'link'}
-                              />
-                            )}
-                          </div>
+                          {item.status === 'RUNNING' && (
+                            <div className={styles.visit}>
+                              {item.accesses.length > 0 && (
+                                <VisterBtn
+                                  linkList={item.accesses}
+                                  type="link"
+                                />
+                              )}
+                            </div>
+                          )}
                         </div>
-                        {/* running */}
-                        {item.status === 'RUNNING' && (
-                          <div className={styles.running}>
-                            <span style={{ paddingTop: '1px' }}>
-                              {globalUtil.fetchSvg(
-                                'teamAppActive',
-                                '#57c32d',
-                                '12'
-                              )}
-                            </span>
-                            <span>运行中</span>
-                          </div>
-                        )}
-                        {/* no running */}
-                        {item.status !== 'RUNNING' && (
-                          <div className={styles.running}>
-                            <span>
-                              {globalUtil.fetchSvg(
-                                'teamAppActive',
-                                '#cccccc',
-                                '12'
-                              )}
-                            </span>
-                            <span>关闭</span>
-                          </div>
-                        )}
+                        {/* App status */}
+                        <div className={styles.running}>
+                          <AppState AppStatus={item.status} />
+                        </div>
                       </div>
                     </div>
                   );
@@ -802,8 +847,8 @@ export default class Index extends PureComponent {
               <Pagination
                 showSizeChanger
                 onShowSizeChange={this.handleChangePageSize}
-                current={1}
-                defaultPageSize={12}
+                current={page}
+                pageSize={page_size}
                 total={total}
                 pageSizeOptions={pageSizeOptions}
                 onChange={this.handleChangePage}
@@ -811,13 +856,15 @@ export default class Index extends PureComponent {
             </div>
           </div>
         )}
-
+        {/* 搜索为空时的状态 */}
+        {emptyConfig && !loadingOfApp && <Empty />}
         {/* 新建应用 */}
         {createAppVisible && (
           <EditGroupName
             title="新建应用"
             onCancel={this.handleCancelApplication}
             onOk={this.handleOkApplication}
+            handleAppLoading={this.handleAppLoading}
           />
         )}
         {/* 集群不健康的情况 */}

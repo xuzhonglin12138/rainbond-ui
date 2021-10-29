@@ -1,7 +1,9 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable compat/compat */
 /* eslint-disable camelcase */
-import { Divider, Row, Tooltip } from 'antd';
+import { Divider, notification, Row, Tooltip } from 'antd';
+import Base64 from 'base-64';
 import { connect } from 'dva';
 import React, { Component } from 'react';
 import globalUtil from '../../utils/global';
@@ -24,7 +26,11 @@ export default class LoginPage extends Component {
     dispatch({ type: 'global/hideNeedLogin' });
     globalUtil.removeCookie();
   }
+  componentDidMount() {
+    window.config = false;
+  }
   handleSubmit = values => {
+    values.password = Base64.encode(values.password);
     const { dispatch, location } = this.props;
     const query_params = new URLSearchParams(location.search);
     const redirect = query_params.get('redirect');
@@ -39,6 +45,12 @@ export default class LoginPage extends Component {
           url = redirect;
         }
         window.location.href = url;
+      },
+      handleError: err => {
+        window.config = true;
+        if (err && err.data && err.data.msg_show) {
+          notification.warning({ message: err.data.msg_show });
+        }
       }
     });
   };
