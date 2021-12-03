@@ -1195,7 +1195,9 @@ export async function toEditMonitorin(params) {
         cluster_monitor_suffix: params.cluster_monitor_suffix,
         component_monitor_suffix: params.component_monitor_suffix,
         slo_monitor_suffix: params.slo_monitor_suffix,
-        node_monitor_suffix: params.node_monitor_suffix
+        node_monitor_suffix: params.node_monitor_suffix,
+        application_monitor: params.application_monitor
+        // system_monitor: params.system_monitor
       }
     }
   );
