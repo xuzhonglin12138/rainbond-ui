@@ -1,4 +1,7 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-param-reassign */
 import { Alert, Col, message, Row } from 'antd';
+import Base64 from 'base-64';
 import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
 import React, { Component } from 'react';
@@ -40,6 +43,7 @@ export default class LoginPage extends Component {
   }
   handleSubmit = values => {
     const { dispatch } = this.props;
+    values.password = Base64.encode(values.password);
     if (code && service_id && oauth_user_id) {
       dispatch({
         type: 'user/thirdLogin',
@@ -69,7 +73,7 @@ export default class LoginPage extends Component {
                     if (!redirect || redirect == '') {
                       redirect = '/';
                     }
-                    console.log(`third login success, redirect to ${redirect}`);
+
                     if (redirect.startsWith('/')) {
                       dispatch(routerRedux.push(redirect));
                     } else {
