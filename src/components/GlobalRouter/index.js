@@ -1,9 +1,12 @@
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable no-console */
 import { Icon, Menu } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import React, { PureComponent } from 'react';
 import { formatMessage } from 'umi-plugin-locale';
 import globalUtil from '../../utils/global';
+import rainbondUtil from '../../utils/rainbond';
 import userUtil from '../../utils/user';
 import CollectionView from '../SiderMenu/CollectionView';
 import styles from './index.less';
@@ -22,8 +25,9 @@ const getIcon = icon => {
   return icon;
 };
 
-@connect(({ loading }) => ({
-  viewLoading: loading.effects['user/addCollectionView']
+@connect(({ loading, global }) => ({
+  viewLoading: loading.effects['user/addCollectionView'],
+  enterprise: global.enterprise
 }))
 export default class GlobalRouter extends PureComponent {
   constructor(props) {
@@ -134,10 +138,10 @@ export default class GlobalRouter extends PureComponent {
   getSelectedMenuKeys = path => {
     const flatMenuKeys = this.getFlatMenuKeys(this.props.menuData);
     return flatMenuKeys.filter(item => {
-      if (item == path) {
+      if (item === path) {
         return true;
       }
-      return `/${item}` == path;
+      return `/${item}` === path;
     });
   };
   /**
@@ -146,10 +150,20 @@ export default class GlobalRouter extends PureComponent {
    * @memberof SiderMenu
    */
   getMenuItemPath = item => {
+    const { enterprise } = this.props;
+    const monitoringObj = rainbondUtil.fetchMonitoring(enterprise);
     const itemPath = this.conversionPath(item.path);
+    const appIndex = itemPath.indexOf('application_monitor');
+    const appMonitor = itemPath.substr(appIndex, 19);
+    const systemIndex = itemPath.indexOf('system_monitor');
+    const systemMonitor = itemPath.substr(systemIndex, 14);
+    const appMonitorPath =
+      appMonitor === 'application_monitor' && monitoringObj[appMonitor];
+    const systemMonitorPath =
+      systemMonitor === 'system_monitor' && monitoringObj[systemMonitor];
     const icon = getIcon(item.icon);
     const { target, name } = item;
-    // Is it a http link
+    // Is it a http <link rel="stylesheet" href="" />
     if (/^https?:\/\//.test(itemPath)) {
       return (
         <a href={itemPath} target={target}>
@@ -158,7 +172,12 @@ export default class GlobalRouter extends PureComponent {
         </a>
       );
     }
-    return (
+    return appMonitorPath || systemMonitorPath ? (
+      <a href={appMonitorPath || systemMonitorPath} target="_blank">
+        {icon}
+        <span>{name}</span>
+      </a>
+    ) : (
       <Link
         to={itemPath}
         target={target}
@@ -176,6 +195,7 @@ export default class GlobalRouter extends PureComponent {
       </Link>
     );
   };
+
   /**
    * get SubMenu or Item
    */
@@ -203,7 +223,6 @@ export default class GlobalRouter extends PureComponent {
    * @memberof SiderMenu
    */
   getNavMenuItems = menusData => {
-    // console.log(menusData, 'menusData菜单项');
     if (!menusData) {
       return [];
     }
