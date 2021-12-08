@@ -144,8 +144,8 @@ function menuData(eid, currentUser, enterprise) {
         cluster_monitor_suffix: '集群监控',
         node_monitor_suffix: '节点监控',
         component_monitor_suffix: '组件监控',
-        system_monitor: '系统监控',
-        application_monitor: '应用监控'
+        system_monitor: '系统大屏',
+        application_monitor: '应用大屏'
       };
       const monitoringObj = rainbondUtil.fetchMonitoring(enterprise);
       const seChildren = [];

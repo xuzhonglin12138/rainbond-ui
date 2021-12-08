@@ -125,7 +125,7 @@ export default class MonitoringForm extends PureComponent {
             })(<Input placeholder="请输入服务监控" />)}
           </FormItem>
           {/* 应用监控 */}
-          <FormItem style={monitoringObj} {...formItemLayout} label="应用监控">
+          <FormItem style={monitoringObj} {...formItemLayout} label="应用大屏">
             {getFieldDecorator('application_monitor', {
               initialValue: data.application_monitor || '',
               rules: [
@@ -134,10 +134,10 @@ export default class MonitoringForm extends PureComponent {
                   message: '最大长度255位'
                 }
               ]
-            })(<Input placeholder="请输入应用监控" />)}
+            })(<Input placeholder="请输入应用大屏" />)}
           </FormItem>
           {/* 系统监控 */}
-          <FormItem style={monitoringObj} {...formItemLayout} label="系统监控">
+          <FormItem style={monitoringObj} {...formItemLayout} label="系统大屏">
             {getFieldDecorator('system_monitor', {
               initialValue: data.system_monitor || '',
               rules: [
@@ -146,7 +146,7 @@ export default class MonitoringForm extends PureComponent {
                   message: '最大长度255位'
                 }
               ]
-            })(<Input placeholder="请输入系统监控" />)}
+            })(<Input placeholder="请输入系统大屏" />)}
           </FormItem>
           {advancedConfiguration && (
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
