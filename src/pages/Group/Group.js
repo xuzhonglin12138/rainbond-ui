@@ -1030,9 +1030,11 @@ export default class Index extends PureComponent {
             logo={groupDetail.logo}
             note={groupDetail.note}
             loading={editGroupLoading}
+            k8s_app={groupDetail.k8s_app}
             title="修改应用信息"
             onCancel={this.cancelEdit}
             onOk={this.handleEdit}
+            isEditEnglishName={currApp.can_edit}
           />
         )}
         {toEditAppDirector && (

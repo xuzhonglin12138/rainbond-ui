@@ -152,6 +152,7 @@ export default class EditGroupName extends PureComponent {
     }
   }
   handleValiateNameSpace = (_, value, callback) => {
+    console.log(value,'value')
     if (!value) {
       return callback(new Error('请输入应用英文名称'));
     }
