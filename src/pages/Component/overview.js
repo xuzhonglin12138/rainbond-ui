@@ -4,7 +4,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable camelcase */
 /* eslint-disable react/sort-comp */
-import { Card, notification } from 'antd';
+import { Button, Card, notification } from 'antd';
 import { connect } from 'dva';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';

@@ -137,11 +137,19 @@ export default class EnterpriseShared extends PureComponent {
     };
   }
   componentDidMount() {
-    const { user } = this.props;
+    const {
+      user,
+      match: {
+        params: { eid }
+      }
+    } = this.props;
+    eid && this.handleLoadEnterpriseClusters(eid);
     if (user) {
       this.load();
+      this.hideInitShow();
     }
   }
+
   onChangeRadio = e => {
     this.setState(
       {

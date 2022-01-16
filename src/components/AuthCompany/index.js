@@ -38,7 +38,7 @@ const { Option } = Select;
 
 @connect(({ user, global }) => ({
   currUser: user.currentUser,
-  rainbondInfo: global.rainbondInfo
+  enterprise: global.enterprise
 }))
 @Form.create()
 export default class Index extends PureComponent {
@@ -174,6 +174,7 @@ export default class Index extends PureComponent {
       }
     });
   };
+
   handleIsCloudAppStoreUrl = url => {
     const { dispatch } = this.props;
     axios

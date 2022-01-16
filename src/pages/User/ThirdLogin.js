@@ -73,7 +73,6 @@ export default class LoginPage extends Component {
                     if (!redirect || redirect == '') {
                       redirect = '/';
                     }
-
                     if (redirect.startsWith('/')) {
                       dispatch(routerRedux.push(redirect));
                     } else {

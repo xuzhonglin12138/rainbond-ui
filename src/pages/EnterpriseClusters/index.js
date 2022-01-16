@@ -133,7 +133,7 @@ export default class EnterpriseClusters extends PureComponent {
     });
   };
 
-  loadClusters = name => {
+  loadClusters = () => {
     const {
       dispatch,
       match: {
@@ -143,8 +143,7 @@ export default class EnterpriseClusters extends PureComponent {
     dispatch({
       type: 'region/fetchEnterpriseClusters',
       payload: {
-        enterprise_id: eid,
-        name
+        enterprise_id: eid
       },
       callback: res => {
         const clusters = [];

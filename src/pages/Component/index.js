@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-unused-state */
 /* eslint-disable react/sort-comp */
@@ -144,9 +145,36 @@ class EditName extends PureComponent {
       this.props.onOk(fieldsValue);
     });
   };
-
+  handleValiateNameSpace = (_, value, callback) => {
+    if (!value) {
+      return callback(new Error('请输入组件英文名称'));
+    }
+    if (value && value.length <= 32) {
+      const Reg = /^[a-z]([-a-z0-9]*[a-z0-9])?$/;
+      if (!Reg.test(value)) {
+        return callback(
+          new Error(
+            '只支持小写字母、数字或“-”，并且必须以字母开始、以数字或字母结尾'
+          )
+        );
+      }
+      callback();
+    }
+    if (value.length > 32) {
+      return callback(new Error('不能大于32个字符'));
+    }
+  };
   render() {
-    const { title, name, loading = false, form } = this.props;
+    const {
+      title,
+      name,
+      loading = false,
+      form,
+      k8sComponentName,
+      isEditEnglishName
+    } = this.props;
+    const isDisabled =
+      isEditEnglishName === 'closed' || isEditEnglishName === 'undeploy';
     const { getFieldDecorator } = form;
     return (
       <Modal
@@ -158,7 +186,7 @@ class EditName extends PureComponent {
         onCancel={this.onCancel}
       >
         <Form onSubmit={this.handleSubmit}>
-          <FormItem label="">
+          <FormItem label="组件名称">
             {getFieldDecorator('service_cname', {
               initialValue: name || '',
               rules: [
@@ -178,6 +206,21 @@ class EditName extends PureComponent {
                 }
               />
             )}
+          </FormItem>
+          {/* 集群组件名称 */}
+          <FormItem
+            label="组件英文名称"
+            extra="关闭当前组件方可修改组件英文名称"
+          >
+            {getFieldDecorator('k8s_component_name', {
+              initialValue: k8sComponentName || '',
+              rules: [
+                {
+                  required: true,
+                  validator: this.handleValiateNameSpace
+                }
+              ]
+            })(<Input placeholder="组件的英文名称" disabled={!isDisabled} />)}
           </FormItem>
         </Form>
       </Modal>
@@ -463,11 +506,12 @@ class Main extends PureComponent {
           ) {
             this.getStatus(false);
           } else if (!appUtil.isCreateFromCompose(appDetail)) {
-            dispatch(
-              routerRedux.replace(
-                `${prefixUrl}create/create-check/${serviceAlias}`
-              )
-            );
+            serviceAlias &&
+              dispatch(
+                routerRedux.replace(
+                  `${prefixUrl}create/create-check/${serviceAlias}`
+                )
+              );
           } else {
             dispatch(
               routerRedux.replace(
@@ -503,7 +547,8 @@ class Main extends PureComponent {
       serviceAlias: service && service.service_alias,
       group_id: service && service.group_id,
       group_name: service && service.group_name,
-      service_cname: service && service.service_cname
+      service_cname: service && service.service_cname,
+      k8s_component_name: service && service.k8s_component_name
     };
   };
   // 应用详情
@@ -694,7 +739,7 @@ class Main extends PureComponent {
     this.setState({ showEditName: false });
   };
   handleEditName = data => {
-    const { team_name, serviceAlias } = this.fetchParameter();
+    const { team_name, serviceAlias, group_id } = this.fetchParameter();
     const { dispatch } = this.props;
     dispatch({
       type: 'appControl/editName',
@@ -704,6 +749,16 @@ class Main extends PureComponent {
         ...data
       },
       callback: () => {
+        dispatch({
+          type: 'application/editGroups',
+          payload: {
+            team_name,
+            group_id
+          },
+          callback: res => {
+            notification.success({ message: '重启应用后生效' });
+          }
+        });
         this.handleUpDataHeader();
         this.loadDetail();
         this.hideEditName();
@@ -929,7 +984,6 @@ class Main extends PureComponent {
                 />
               )}
             </div>
-
             <div className={styles.content_Box}>
               {!appDetail.is_third && isRestart && (
                 <a
@@ -1082,7 +1136,8 @@ class Main extends PureComponent {
       app_alias: appAlias,
       group_id,
       group_name: appName,
-      service_cname: componentName
+      service_cname: componentName,
+      k8s_component_name: k8sComponentName
     } = this.fetchParameter();
     const visitBtns = (
       <VisitBtn
@@ -1506,6 +1561,8 @@ class Main extends PureComponent {
             onOk={this.handleEditName}
             onCancel={this.hideEditName}
             title="修改组件名称"
+            k8sComponentName={k8sComponentName}
+            isEditEnglishName={status.status}
           />
         )}
         {showMoveGroup && (

@@ -7,6 +7,7 @@ import {
   CheckAppName,
   CheckHelmApp,
   CheckK8sServiceName,
+  checkoutGovernanceModel,
   completeShare,
   createAppBatchComponents,
   createShare,
@@ -272,6 +273,12 @@ export default {
     },
     *editGroup({ payload, callback }, { call }) {
       const response = yield call(editGroup, payload);
+      if (response && callback) {
+        callback(response);
+      }
+    },
+    *editGroups({ payload, callback }, { call }) {
+      const response = yield call(editGroups, payload);
       if (response && callback) {
         callback(response);
       }

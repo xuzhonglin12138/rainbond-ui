@@ -196,7 +196,11 @@ export default class RKEClusterConfig extends PureComponent {
       initNodeCmd: '',
       activeKey: '1',
       helpError: '',
-      helpType: ''
+      helpType: '',
+      forbiddenConfig: true,
+      countConfig: true,
+      countNum: 15,
+      countContent: null
     };
     this.clusters = [];
   }
@@ -353,117 +357,6 @@ export default class RKEClusterConfig extends PureComponent {
     const { dataSource, yamlVal } = this.state;
     if (dataSource && dataSource.length === 0) {
       message.warning('请定义集群节点');
-    }
-    form.validateFields((error, values) => {
-      if (!error) {
-        this.setState({ loading: true });
-        dispatch({
-          type: 'cloud/updateKubernetesCluster',
-          payload: {
-            enterprise_id: eid,
-            clusterID,
-            provider: 'rke',
-            encodedRKEConfig: this.encodeBase64Content(values.yamls || yamlVal)
-          },
-          callback: data => {
-            this.handleOk(data && data.response_data);
-          },
-          handleError: res => {
-            this.handleError(res);
-          }
-        });
-      }
-    });
-  };
-  fetchRkeconfig = (obj = {}, isNext) => {
-    const { form, eid } = this.props;
-    const { activeKey } = this.state;
-    const { setFieldsValue } = form;
-    const info = Object.assign({}, obj, { enterprise_id: eid });
-    rkeconfig(info)
-      .then(res => {
-        if (res && res.status_code === 200 && res.response_data) {
-          const data = res.response_data || {};
-          const { encodeRKEConfig, nodes } = data;
-          const val = this.decodeBase64Content(encodeRKEConfig);
-          setFieldsValue({
-            yamls: val
-          });
-          let helpError = '';
-          let helpType = '';
-          if (nodes) {
-            if (nodes && nodes.length) {
-              nodes.map(item => {
-                item.key = Math.random();
-                if (isNext) {
-                  if (!ipRegs.test(item.ip || '')) {
-                    helpError = '请输入正确的IP地址';
-                    helpType = 'ip';
-                  } else if (!ipRegs.test(item.internalIP || '')) {
-                    helpError = '请输入正确的IP地址';
-                    helpType = 'internalIP';
-                  } else if (!portRegs.test(item.sshPort || '')) {
-                    helpError = '请输入正确的端口号';
-                    helpType = 'sshPort';
-                  } else if (item.sshPort > 65536) {
-                    helpType = 'sshPort';
-                    helpError = '端口号最大65536';
-                  } else if (!item.roles) {
-                    helpType = 'roles';
-                    helpError = '节点类型是必须的';
-                  }
-                }
-              });
-            }
-            if (helpError) {
-              this.handleCheck(false);
-            }
-            this.setState({
-              helpType,
-              helpError,
-              dataSource: nodes
-            });
-          }
-          this.setState({
-            yamlVal: val
-          });
-          if (activeKey === '1' && isNext && helpError) {
-            notification.warning({ message: helpError });
-          }
-          if (isNext && !helpError) {
-            this.handleStartCheck(isNext);
-          }
-        }
-      })
-      .catch(err => {
-        if (err) {
-          const code = err.data ? err.data.code : err.code;
-
-          if (!code) {
-            if (isNext) {
-              this.setState({
-                activeKey: '2'
-              });
-            }
-            this.setState({
-              isCheck: false,
-              helpType: 'RKE',
-              helpError: 'RKE集群配置不合格、请重新配置'
-            });
-            return null;
-          }
-        }
-        this.handleCheck(false);
-        cloud.handleCloudAPIError(err);
-      });
-  };
-
-  updateCluster = () => {
-    const { dispatch, eid, clusterID, form } = this.props;
-    const { dataSource, yamlVal } = this.state;
-    if (dataSource && dataSource.length === 0) {
-      message.warning('请定义集群节点');
-      return;
     }
     form.validateFields((error, values) => {
       if (!error) {
@@ -649,9 +542,27 @@ export default class RKEClusterConfig extends PureComponent {
     }
   };
   handleCheck = isCheck => {
-    this.setState({
-      isCheck
+    this.setState(
+      {
+        isCheck,
+        forbiddenConfig: true,
+        countNum: 15,
+        countConfig: true,
+        countContent: null
+      },
+
+      () => {
+        const { guideStep } = this.props;
+        isCheck && guideStep !== 7 && this.handleCountDown();
+        !isCheck && clearInterval(this.timerId);
+      
+      if (!err && next) {
+        this.handleCheck(next);
+      }
     });
+    if (next && isNext) {
+      this.createCluster();
+    }
   };
   handleActiveKey = activeKey => {
     this.setState({
@@ -677,6 +588,25 @@ export default class RKEClusterConfig extends PureComponent {
       this.handleActiveKey(`${key}`);
     }
   };
+  // 倒计时处理
+  handleCountDown = () => {
+    let { countNum } = this.state;
+    this.setState({
+      countConfig: false,
+      countContent: `${countNum}s`
+    });
+    this.timerId = setInterval(() => {
+      this.setState({ countNum: countNum--, countContent: `${countNum}s` });
+      if (countNum < 0) {
+        clearInterval(this.timerId);
+        this.setState(() => ({
+          forbiddenConfig: false,
+          countConfig: true
+        }));
+        return null;
+      }
+    }, 1000);
+  };
   render() {
     const {
       onCancel,
@@ -694,7 +624,10 @@ export default class RKEClusterConfig extends PureComponent {
       initNodeCmd,
       isCheck,
       activeKey,
-      yamlVal
+      yamlVal,
+      forbiddenConfig,
+      countContent,
+      countConfig
     } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -836,19 +769,35 @@ export default class RKEClusterConfig extends PureComponent {
             className={styles.TelescopicModal}
             width={900}
             visible
-            onOk={() => {
-              this.setState(
-                {
-                  loading: true
-                },
-                () => {
-                  this.handleTabs(activeKey === '1' ? '2' : '1', true);
-                }
-              );
-            }}
-            onCancel={() => {
-              this.handleCheck(false);
-            }}
+            footer={[
+              <Button
+                key="back"
+                onClick={() => {
+                  this.handleCheck(false);
+                }}
+              >
+                取消
+              </Button>,
+              <Button
+                key="link"
+                type="primary"
+                onClick={() => {
+                  this.setState(
+                    {
+                      loading: true
+                    },
+                    () => {
+                      this.handleTabs(activeKey === '1' ? '2' : '1', true);
+                    }
+                  );
+                }}
+                disabled={forbiddenConfig}
+              >
+                {(!countConfig &&
+                  `我已在所有节点执行上述命令,开始安装(${countContent})`) ||
+                  ' 我已在所有节点执行上述命令,开始安装'}
+              </Button>
+            ]}
           >
             <Row style={{ padding: '0 16px' }}>
               <span style={{ fontWeight: 600, color: 'red' }}>
@@ -874,10 +823,13 @@ export default class RKEClusterConfig extends PureComponent {
                       configName: 'nodeInitialization',
                       handleClick: () => {
                         copy(initNodeCmd);
-                        notification.success({ message: '复制成功' });
+                        this.handleCountDown();
+                      },
+                      handleClosed: () => {
+                        this.handleCountDown();
                       },
                       desc:
-                        '请复制上诉命令完成所有节点的初始化,点击确定、请等待 RKE 集群安装完成。',
+                        '请复制上述命令完成所有节点的初始化,点击确定、请等待 RKE 集群安装完成。',
                       prevStep: false,
                       btnText: '复制命令',
                       nextStep: 8,

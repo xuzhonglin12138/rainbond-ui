@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import AddTeam from '../../../public/images/addTeam.png';
 import Arrow from '../../../public/images/arrow.png';
 import Cpus from '../../../public/images/cpus.png';
@@ -31,12 +31,13 @@ import Records from '../../../public/images/records.png';
 import Team from '../../../public/images/team.png';
 import TeamCrew from '../../../public/images/teamCrew.png';
 import User from '../../../public/images/user.png';
-import AuthCompany from '../../components/AuthCompany';
+// import AuthCompany from '../../components/AuthCompany';
 import { Pie } from '../../components/Charts';
 import ConfirmModal from '../../components/ConfirmModal';
 import Consulting from '../../components/Consulting';
 import Convenient from '../../components/Convenient';
 import CreateTeam from '../../components/CreateTeam';
+import InstallStep from '../../components/Introduced/InstallStep';
 import JoinTeam from '../../components/JoinTeam';
 import Meiqia from '../../layouts/Meiqia';
 import globalUtil from '../../utils/global';
@@ -59,6 +60,7 @@ export default class Enterprise extends PureComponent {
     const params = this.getParam();
     const adminer = userUtil.isCompanyAdmin(user);
     this.state = {
+      isNewbieGuide: false,
       showAddTeam: false,
       consulting: false,
       eid: params ? params.eid : '',
@@ -90,6 +92,139 @@ export default class Enterprise extends PureComponent {
   componentDidMount() {
     this.loading();
   }
+  // 获取新手引导的配置
+  handleLoadNewGuideConfig = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/fetchNewbieGuideConfig',
+      callback: res => {
+        this.setState({
+          showClusterIntroduced: rainbondUtil.handleNewbie(
+            res.list || [],
+            'successInstallClusters'
+          )
+        });
+      },
+      handleError: error => {}
+    });
+  };
+  // 获取企业的集群信息
+  handleLoadEnterpriseClusters = eid => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'region/fetchEnterpriseClusters',
+      payload: {
+        enterprise_id: eid
+      },
+      callback: res => {
+        if (res && res.list) {
+          const clusters = [];
+          res.list.map((item, index) => {
+            item.key = `cluster${index}`;
+            clusters.push(item);
+            return item;
+          });
+          this.setState({ clusters });
+          globalUtil.putClusterInfoLog(eid, res.list);
+        }
+      }
+    });
+  };
+  handleClusterIntroduced = () => {
+    this.putNewbieGuideConfig('successInstallClusters');
+    this.setState({
+      showClusterIntroduced: false
+    });
+  };
+  putNewbieGuideConfig = configName => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/putNewbieGuideConfig',
+      payload: {
+        arr: [{ key: configName, value: true }]
+      }
+    });
+  };
+  // 开始安装
+  onStartInstall = type => {
+    const { dispatch } = this.props;
+    const { eid } = this.state;
+    this.handleClusterIntroduced();
+    // 从应用商店安装应用
+    if (type === '2' && eid) {
+      dispatch(routerRedux.push(`/enterprise/${eid}/shared/local?init=true`));
+    } else {
+      // 自定义安装
+      this.fetchMyTeams();
+    }
+  };
+  // 查看演示示例
+  onViewInstance = () => {
+    this.fetchMyTeams(true);
+  };
+  fetchMyTeams = (isNext = false) => {
+    const { dispatch } = this.props;
+    const { clusters, eid } = this.state;
+    dispatch({
+      type: 'global/fetchMyTeams',
+      payload: {
+        enterprise_id: eid,
+        page: 1,
+        page_size: 1
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          if (res && res.list.length > 0) {
+            const teamName = res.list[0].team_name;
+            if (isNext && teamName) {
+              this.fetchApps(teamName, true);
+            } else if (teamName) {
+              dispatch(
+                routerRedux.push(
+                  `/team/${teamName}/region/${clusters[0].region_name}/create/code`
+                )
+              );
+            }
+          } else {
+            return notification.warn({
+              message: '请先创建团队！'
+            });
+          }
+        }
+      }
+    });
+  };
+  fetchApps = (teamName = '', isNext = false) => {
+    const { dispatch } = this.props;
+    const { clusters, eid } = this.state;
+    dispatch({
+      type: 'global/fetchEnterpriseApps',
+      payload: {
+        enterprise_id: eid,
+        page: 1,
+        page_size: 1
+      },
+      callback: res => {
+        if (res && res.status_code === 200) {
+          if (res && res.list.length > 0) {
+            const groupId = res.list[0].ID;
+            if (isNext && groupId && teamName) {
+              dispatch(
+                routerRedux.push(
+                  `/team/${teamName}/region/${clusters[0].region_name}/apps/${groupId}`
+                )
+              );
+            }
+          } else {
+            return notification.warn({
+              message: '请先创建应用！'
+            });
+          }
+        }
+      }
+    });
+  };
+
   onPageChangeCollectionView = (page, pageSize) => {
     this.setState({ page, pageSize }, () => {
       this.fetchCollectionViewInfo();
@@ -127,7 +262,6 @@ export default class Enterprise extends PureComponent {
   getOverviewTeam = () => {
     const { dispatch } = this.props;
     const { eid } = this.state;
-
     dispatch({
       type: 'global/fetchOverviewTeam',
       payload: {
@@ -198,7 +332,8 @@ export default class Enterprise extends PureComponent {
         if (res && res.status_code === 200) {
           this.setState({
             enterpriseInfo: res.bean,
-            enterpriseInfoLoading: false
+            enterpriseInfoLoading: false,
+            isNewbieGuide: rainbondUtil.isEnableNewbieGuide(res.bean)
           });
         }
       }
@@ -210,6 +345,8 @@ export default class Enterprise extends PureComponent {
     if (eid) {
       this.getEnterpriseInfo();
       this.getOverviewTeam();
+      this.handleLoadNewGuideConfig();
+      this.handleLoadEnterpriseClusters(eid);
       if (adminer) {
         this.getOverviewApp();
         this.getOverview();
@@ -274,8 +411,15 @@ export default class Enterprise extends PureComponent {
     this.props.dispatch({
       type: 'teamControl/createTeam',
       payload: values,
-      callback: () => {
-        notification.success({ message: '添加成功' });
+      callback: res => {
+        const { response_data } = res;
+        if (response_data && response_data.code) {
+          if (response_data.code === 400) {
+            notification.warning({ message: response_data.msg_show });
+          } else {
+            notification.success({ message: response_data.msg_show });
+          }
+        }
         this.cancelCreateTeam();
         this.getOverviewTeam();
         this.props.dispatch({ type: 'user/fetchCurrent' });
@@ -1164,8 +1308,9 @@ export default class Enterprise extends PureComponent {
       consulting,
       enterpriseInfo,
       eid,
-      showMarketCloudAuth,
-      marketName
+      isNewbieGuide,
+      showClusterIntroduced,
+      clusters
     } = this.state;
     const { rainbondInfo } = this.props;
     return (
@@ -1201,17 +1346,21 @@ export default class Enterprise extends PureComponent {
             onCancel={this.cancelConsulting}
           />
         )}
-        {showMarketCloudAuth && (
-          <AuthCompany
-            eid={eid}
-            marketName={marketName}
-            title="欢迎使用该平台，请先完成连接云应用商店授权"
-            onCancel={() => {
-              this.setState({ showMarketCloudAuth: false });
-            }}
-            currStep={2}
-          />
-        )}
+        {/* 安装集群成功的弹窗 */}
+        {eid &&
+          isNewbieGuide &&
+          showClusterIntroduced &&
+          clusters &&
+          clusters.length &&
+          clusters[0].status === '1' && (
+            <InstallStep
+              isCluster
+              onCancel={this.handleClusterIntroduced}
+              eid={eid}
+              onStartInstall={this.onStartInstall}
+              onViewInstance={this.onViewInstance}
+            />
+          )}
       </div>
     );
   }

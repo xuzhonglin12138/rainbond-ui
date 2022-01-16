@@ -93,7 +93,6 @@ class UserLayout extends React.PureComponent {
             isDisableAutoLogin !== 'true'
           ) {
             globalUtil.removeCookie();
-            console.log('打开了oauth登录');
             window.location.href = oauthUtil.getAuthredictURL(oauthInfo);
           } else {
             this.isRender(true);

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 /* eslint-disable react/sort-comp */
 import {
   Button,
@@ -45,13 +46,26 @@ export default class KubernetesClusterShow extends PureComponent {
       showCreateLog: false,
       isInstallRemind: false,
       installLoading: false,
-      isComponents: false
+      isComponents: false,
+      initCmd: null
     };
   }
   componentDidMount() {
     this.autoPage();
+    this.handleLoadInitNodeCmd();
   }
 
+  handleLoadInitNodeCmd = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'cloud/getInitNodeCmd',
+      callback: res => {
+        this.setState({
+          initCmd: (res && res.response_data && res.response_data.cmd) || ''
+        });
+      }
+    });
+  };
   autoPage = () => {
     const { updateKubernetes, updateKubernetesClusterID } = this.props;
     if (updateKubernetes && updateKubernetesClusterID) {
@@ -223,7 +237,7 @@ export default class KubernetesClusterShow extends PureComponent {
   };
   render() {
     const { selectProvider, linkedClusters, eid, selectCluster } = this.props;
-    const { selectClusterName } = this.state;
+    const { selectClusterName, initCmd } = this.state;
     const columns = [
       {
         width: 50,
@@ -551,6 +565,7 @@ export default class KubernetesClusterShow extends PureComponent {
               </span>
               {this.handleCommandBox(delK8sConfigurationFile)}
               {this.handleCommandBox(removek8sAssociatedContainer)}
+              {this.handleCommandBox(initCmd)}
             </Row>
           </Modal>
         )}

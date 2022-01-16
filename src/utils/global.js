@@ -1108,7 +1108,8 @@ const global = {
   fetchGovernanceMode(state) {
     const GovernanceMode = {
       KUBERNETES_NATIVE_SERVICE: '原生 service 模式',
-      BUILD_IN_SERVICE_MESH: '内置 ServiceMesh 模式'
+      BUILD_IN_SERVICE_MESH: '内置 ServiceMesh 模式',
+      ISTIO_SERVICE_MESH: 'Istio治理模式'
     };
     return GovernanceMode[state] || '-';
   },

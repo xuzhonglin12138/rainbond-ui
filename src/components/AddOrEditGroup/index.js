@@ -33,6 +33,7 @@ export default class EditGroupName extends PureComponent {
       onOk,
       teamName,
       regionName,
+      teamId,
       dispatch,
       isAddGroup = true,
       isGetGroups = true,
@@ -42,7 +43,12 @@ export default class EditGroupName extends PureComponent {
       vals.logo = this.state.paramsSrc || '';
       const setTeamName = teamName || globalUtil.getCurrTeamName();
       const setRegionName = regionName || globalUtil.getCurrRegionName();
-      const parameters = { team_name: setTeamName, region_name: setRegionName };
+      const setAppId = teamId || globalUtil.getAppID();
+      const parameters = {
+        team_name: setTeamName,
+        region_name: setRegionName,
+        app_id: setAppId
+      };
       if (!err && onOk) {
         if (isAddGroup) {
           this.handleLoading(true);
@@ -145,6 +151,25 @@ export default class EditGroupName extends PureComponent {
       });
     }
   }
+  handleValiateNameSpace = (_, value, callback) => {
+    if (!value) {
+      return callback(new Error('请输入应用英文名称'));
+    }
+    if (value && value.length <= 32) {
+      const Reg = /^[a-z]([-a-z0-9]*[a-z0-9])?$/;
+      if (!Reg.test(value)) {
+        return callback(
+          new Error(
+            '只支持小写字母、数字或“-”，并且必须以字母开始、以数字或字母结尾'
+          )
+        );
+      }
+      callback();
+    }
+    if (value.length > 32) {
+      return callback(new Error('不能大于32个字符'));
+    }
+  };
   render() {
     const {
       title,
@@ -154,8 +179,12 @@ export default class EditGroupName extends PureComponent {
       note,
       logo,
       isNoEditName = false,
-      loading = false
+      loading = false,
+      k8s_app: k8sApp,
+      isEditEnglishName,
+      isAddGroup = true
     } = this.props;
+    const isDisabled = isAddGroup ? true : isEditEnglishName;
     const { getFieldDecorator } = form;
     const {
       appLoading,
@@ -202,7 +231,21 @@ export default class EditGroupName extends PureComponent {
               ]
             })(<Input disabled={isNoEditName} placeholder="请填写应用名称" />)}
           </FormItem>
-
+          <FormItem
+            {...formItemLayout}
+            label="应用英文名称"
+            extra="需关闭应用下所有组件方可修改应用英文名称"
+          >
+            {getFieldDecorator('k8s_app', {
+              initialValue: k8sApp || '',
+              rules: [
+                {
+                  required: true,
+                  validator: this.handleValiateNameSpace
+                }
+              ]
+            })(<Input placeholder="应用的英文名称" disabled={!isDisabled} />)}
+          </FormItem>
           {/* 应用Logo */}
           <FormItem
             {...formItemLayout}

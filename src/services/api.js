@@ -610,10 +610,11 @@ export async function syncMarketApp(body = {}) {
 /*
    获取云帮的公共信息、配置信息
 */
-export function getRainbondInfo() {
+export function getRainbondInfo(handleError) {
   //
   return request(`${apiconfig.baseUrl}/console/config/info`, {
-    passAuthorization: false
+    passAuthorization: false,
+    handleError
   });
 }
 
@@ -837,6 +838,7 @@ export async function getCreateAppTeams(param) {
   );
 }
 
+
 export async function setNewbieGuide(body = {}) {
   return request(
     `${apiconfig.baseUrl}/console/enterprise/${body.enterprise_id}/info?key=NEWBIE_GUIDE`,
@@ -846,6 +848,7 @@ export async function setNewbieGuide(body = {}) {
     }
   );
 }
+
 
 /* save log */
 export async function saveLog(body = {}) {

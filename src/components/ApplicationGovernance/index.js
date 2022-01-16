@@ -27,7 +27,8 @@ export default class ApplicationGovernance extends PureComponent {
     super(props);
     this.state = {
       step: false,
-      ServiceNameList: []
+      ServiceNameList: [],
+      btnConfig: false
     };
   }
 
@@ -187,11 +188,39 @@ export default class ApplicationGovernance extends PureComponent {
     }
     onCancel();
   };
-
+  // 切换治理模式
+  handleChange = value => {
+    const { dispatch, appID } = this.props;
+    dispatch({
+      type: 'application/checkoutGovernanceModel',
+      payload: {
+        team_name: globalUtil.getCurrTeamName(),
+        app_id: appID,
+        governance_mode: value
+      },
+      callback: res => {
+        res &&
+          this.setState({
+            btnConfig: false
+          });
+      },
+      handleError: err => {
+        if (err && err.data && err.data.code === 11009) {
+          notification.warning({
+            message: '未安装控制平面，无法切换'
+          });
+          this.setState({
+            btnConfig: true
+          });
+        }
+      }
+    });
+  };
   render() {
     const list = [
       { key: 'KUBERNETES_NATIVE_SERVICE', name: 'Kubernetes原生 service 模式' },
-      { key: 'BUILD_IN_SERVICE_MESH', name: '内置 ServiceMesh 模式' }
+      { key: 'BUILD_IN_SERVICE_MESH', name: '内置 ServiceMesh 模式' },
+      { key: 'ISTIO_SERVICE_MESH', name: 'Istio治理模式' }
     ];
     const {
       loading = false,
@@ -200,7 +229,7 @@ export default class ApplicationGovernance extends PureComponent {
       governanceLoading,
       mode
     } = this.props;
-    const { step, ServiceNameList } = this.state;
+    const { step, ServiceNameList, btnConfig } = this.state;
     const { getFieldDecorator, getFieldValue } = form;
     const type =
       getFieldValue('governance_mode') || mode || 'KUBERNETES_NATIVE_SERVICE';
@@ -217,6 +246,7 @@ export default class ApplicationGovernance extends PureComponent {
           <Button onClick={this.handleOnCancel}> 取消 </Button>,
           <Button
             type="primary"
+            disabled={btnConfig}
             loading={loading || checkK8sLoading || governanceLoading}
             onClick={this.handleSubmit}
           >
@@ -226,7 +256,7 @@ export default class ApplicationGovernance extends PureComponent {
       >
         <Alert
           style={{ marginBottom: '20px' }}
-          message="应用治理模式主要指组件间通信模式的治理，目前支持内置ServiceMesh模式和Kubernetes原生Service模式"
+          message="应用治理模式主要指组件间通信模式的治理，目前支持内置ServiceMesh模式,Istio治理模式和Kubernetes原生Service模式"
           type="info"
           showIcon
         />
@@ -329,6 +359,7 @@ export default class ApplicationGovernance extends PureComponent {
                 })(
                   <Select
                     style={{ width: '357px' }}
+                    onChange={this.handleChange}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
                   >
                     {list.map(item => {
@@ -360,8 +391,10 @@ export default class ApplicationGovernance extends PureComponent {
 
                 <div style={{ marginTop: '10px' }}>
                   {type === 'KUBERNETES_NATIVE_SERVICE'
-                    ? '该模式组件间使用Kubernetes service名称域名进行通信，用户需要配置每个组件端口注册的service名称，治理能力有限。'
-                    : '内置ServiceMesh模式需要用户显示的配置组件间的依赖关系，平台会在下游组件中自动注入sidecar容器组成ServiceMesh微服务架构，业务间通信地址统一为localhost模式'}
+                    ? '该模式组件间使用Kubernetes service名称域名进行通信，用户需要配置每个组件端口注册的service名称，治理能力有限.'
+                    : type === 'BUILD_IN_SERVICE_MESH'
+                    ? '内置ServiceMesh模式需要用户显示的配置组件间的依赖关系，平台会在下游组件中自动注入sidecar容器组成ServiceMesh微服务架构，业务间通信地址统一为localhost模式'
+                    : '该模式组件间使用Kubernetes service名称域名进行通信，用户需要配置每个组件端口注册的service名称，且安装Istio  control plane ，通过Istio进行治理。'}
                 </div>
               </div>
             </div>

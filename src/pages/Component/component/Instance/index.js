@@ -204,6 +204,10 @@ class Index extends PureComponent {
                         )}
                       </span>
                     </li>
+                    <li>
+                      <span>命名空间:</span>
+                      <span>{instanceInfo.namespace || ''}</span>
+                    </li>
                     {instanceInfo.status.reason && (
                       <li style={{ width: '100%' }}>
                         <span>原因:</span>
@@ -269,8 +273,8 @@ class Index extends PureComponent {
                       },
                       {
                         title: '内存',
-                        dataIndex: 'limit_memory',
-                        key: 'limit_memory',
+                        dataIndex: 'request_memory',
+                        key: 'request_memory',
                         width: '10%',
                         render: limitMemory => (
                           <Tooltip title={limitMemory || '不限制'}>

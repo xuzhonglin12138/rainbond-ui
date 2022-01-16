@@ -577,7 +577,6 @@ export default class Index extends PureComponent {
       stop: '停用',
       deploy: '构建'
     };
-
     const BtnDisabled = !(jsonDataLength > 0);
     const MR = { marginRight: '10px' };
     const pageHeaderContent = (
@@ -1012,7 +1011,6 @@ export default class Index extends PureComponent {
             nextStep: 3,
             conPosition: { bottom: '-16px', left: '45%' }
           })}
-        {console.log(isScrollDiv, 'isScrollDiv')}
         {isScrollDiv && <div id="scroll_div" style={{ marginTop: '180px' }} />}
 
         {toDelete && (

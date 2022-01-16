@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-shadow */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable react/sort-comp */
 import { Layout, Tooltip } from 'antd';
@@ -91,13 +93,22 @@ class EnterpriseLayout extends PureComponent {
       isMobile,
       enterpriseList: [],
       enterpriseInfo: false,
-      ready: false
+      ready: false,
+      offLineDisNew: [
+        {
+          key: 'welcome',
+          value: true
+        },
+        { key: 'applicationInfo', value: true },
+        { key: 'installApp', value: true }
+      ]
     };
   }
 
   componentDidMount() {
     this.fetchLicenses();
   }
+  // 获取执行的步骤
 
   fetchLicenses = () => {
     const { dispatch } = this.props;

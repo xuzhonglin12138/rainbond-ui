@@ -46,7 +46,6 @@ export default class InstallStep extends PureComponent {
       }
     });
   }
-
   // Tab标签页切换
   onTabChange = value => {
     this.setState({ installType: value });
