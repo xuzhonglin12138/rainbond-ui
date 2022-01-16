@@ -1206,6 +1206,28 @@ export default class EnterpriseShared extends PureComponent {
   onCloseLogin = () => {
     this.setState({ isInStallShow: true, isAuthorize: true });
   };
+  // 获取企业的集群信息
+  handleLoadEnterpriseClusters = eid => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'region/fetchEnterpriseClusters',
+      payload: {
+        enterprise_id: eid
+      },
+      callback: res => {
+        if (res && res.list) {
+          const clusters = [];
+          res.list.map((item, index) => {
+            item.key = `cluster${index}`;
+            clusters.push(item);
+            return item;
+          });
+          this.setState({ clusters });
+          globalUtil.putClusterInfoLog(eid, res.list);
+        }
+      }
+    });
+  };
   render() {
     const {
       match: {
