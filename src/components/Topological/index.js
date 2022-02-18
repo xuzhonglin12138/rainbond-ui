@@ -26,6 +26,7 @@ import teamUtil from '../../utils/team';
 import userUtil from '../../utils/user';
 import list from '@/models/list';
 import styless from '../../components/CreateTeam/index.less';
+import styles from './index.less'
 @connect(
   ({ user, appControl, global, teamControl, enterprise, loading }) => ({
     currUser: user.currentUser,
@@ -61,7 +62,7 @@ class Index extends React.Component {
     updated: false,
     actionIng: false,
     keyes: false,
-    srcUrl: `/static/www/weavescope/index.html`,
+    srcUrl: `/static/www/weavescope-topolog/index.html`,
     teamName: '',
     regionName: '',
     build:false
@@ -110,13 +111,13 @@ class Index extends React.Component {
       };
       // 拓扑图点击服务事件
       window.handleClickService = function (nodeDetails) {
-        dispatch(
-          routerRedux.push(
-            `/team/${teamName}/region/${regionName}/components/${nodeDetails.service_alias}/overview`
-          )
-        );
+          dispatch(
+            // 跳转组件
+            routerRedux.push(
+              `/team/${teamName}/region/${regionName}/components/${nodeDetails.service_alias}/overview`
+            )
+          );
       };
-
       // 拓扑图点击依赖服务事件
       window.handleClickRelation = function (relation) {
         dispatch(
@@ -137,7 +138,6 @@ class Index extends React.Component {
 
       // 拓扑图点击构建事件
       window.handleClickBuild = function (relation, detailes) {
-        console.log('点击构建', relation)
         if(relation == 'build'){
           that.setState({
             closes: false,
@@ -334,7 +334,7 @@ class Index extends React.Component {
     });
   };
   render() {
-    const { deleteAppLoading, reStartLoading, stopLoading, startLoading, updateRollingLoading } = this.props
+    const { deleteAppLoading, reStartLoading, stopLoading, startLoading, updateRollingLoading , flagHeight} = this.props
     const { flag, promptModal, closes, start, updated, keyes, srcUrl, teamName, regionName, appAlias, build } = this.state
     const codeObj = {
       start: '启动',
@@ -344,7 +344,7 @@ class Index extends React.Component {
     };
     return (
       // eslint-disable-next-line jsx-a11y/iframe-has-title
-      <div key={keyes}>
+      <div key={keyes} className={styles.antd_card_body}>
         {flag && (
           <ConfirmModal
             onOk={this.handleDeleteApp}
@@ -383,11 +383,11 @@ class Index extends React.Component {
           target="_blank"
         >
         </Link>
-        <iframe
+          <iframe
           src={`${apiconfig.baseUrl}${srcUrl}`}
           style={{
             width: '100%',
-            height: '500px',
+            height: '700px',
           }}
           id="myframe"
           key={keyes}
@@ -398,7 +398,7 @@ class Index extends React.Component {
           marginWidth="0"
           marginHeight="0"
         />
-      </div>
+      </div> 
     );
   }
 }
