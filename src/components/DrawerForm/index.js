@@ -50,8 +50,9 @@ class DrawerForm extends PureComponent {
       licenseList: [],
       isAddLicense: false,
       page: 1,
-      page_size: 10,
+      page_size: 99999,
       group_name: '',
+      is_httptohttps: true,
       descriptionVisible: false,
       rule_extensions_visible: false,
       automaticCertificateVisible: (editInfo && editInfo.auto_ssl) || false,
@@ -267,6 +268,10 @@ class DrawerForm extends PureComponent {
       this.setState({
         rule_extensions_visible: true
       });
+    }else{
+      this.setState({
+        is_httptohttps: false
+      })
     }
     this.setState({
       automaticCertificateVisible: value === 'auto_ssl'
@@ -403,7 +408,8 @@ class DrawerForm extends PureComponent {
       componentLoading,
       portLoading,
       portList,
-      rewrite
+      rewrite,
+      is_httptohttps
     } = this.state;
     const dividers = <Divider style={{ margin: '4px 0' }} />;
     const serviceId = editInfo && editInfo.service_id && editInfo.service_id;
@@ -549,7 +555,7 @@ class DrawerForm extends PureComponent {
                         dropdownRender={menu => (
                           <div>
                             {menu}
-                            {isAddLicense && (
+                            {/* {isAddLicense && (
                               <div>
                                 {dividers}
                                 <div
@@ -563,7 +569,7 @@ class DrawerForm extends PureComponent {
                                   <Icon type="plus" /> 加载更多
                                 </div>
                               </div>
-                            )}
+                            )} */}
                           </div>
                         )}
                       >
@@ -623,7 +629,8 @@ class DrawerForm extends PureComponent {
 
                 <FormItem {...formItemLayout} label="扩展功能">
                   {(this.state.rule_extensions_visible ||
-                    (editInfo.certificate_id && rule_http)) &&
+                    (editInfo.certificate_id && is_httptohttps)||
+                    (editInfo.auto_ssl && is_httptohttps)) &&
                     getFieldDecorator('rule_extensions_http', {
                       initialValue: [rule_http]
                     })(
