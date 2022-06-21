@@ -151,6 +151,7 @@ export default class ClusterLink extends PureComponent {
 
       if (values) {
         dataObj.gatewayIngressIPs = values.gatewayIngressIPs || '';
+        dataObj.nodesForGateway.nodes = values.nodesForGateway || [];
         // 镜像仓库
         dataObj.imageHub.enable = true;
         dataObj.imageHub.domain = values.domain || '';
