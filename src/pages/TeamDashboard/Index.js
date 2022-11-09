@@ -373,7 +373,7 @@ export default class Index extends PureComponent {
               this.loadTeamAppEcharts();
               // // 加载热门应用模块
               // if (!this.loadHotAppTimer) {
-              //   this.loadHotApp();
+                this.loadHotApp();
               // }
             }
           );
@@ -1183,6 +1183,9 @@ export default class Index extends PureComponent {
           </div>
         {/* )} */}
         {/* app list Loading */}
+       { console.log(loadingOfApp) }
+       { console.log(index.overviewInfo.region_health,"index.overviewInfo.region_health") }
+
         {loadingOfApp && index.overviewInfo.region_health && (
           <div style={{ textAlign: 'center', marginTop: '100px' }}>
             <Spin tip="Loading..." size="large" />
