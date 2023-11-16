@@ -1243,7 +1243,8 @@ class Main extends PureComponent {
         {
           method == 'vm' && <Button onClick={this.handleVm}>{status.status == 'paused' ? "恢复":'挂起'}</Button>
         }
-        {isVisitWebTerminal && !isShowThirdParty && (
+        {method != 'vm' ? (
+        isVisitWebTerminal && !isShowThirdParty && (
           <Button>
             <Link
               to={`${this.fetchPrefixUrl()}components/${serviceAlias}/webconsole`}
@@ -1253,7 +1254,14 @@ class Main extends PureComponent {
               <FormattedMessage id='componentOverview.header.right.web'/>
             </Link>
           </Button>
+        )
+        ) :(
+          appDetail.vm_url &&
+          <Button>
+            <a href={appDetail.vm_url} target='_blank'><FormattedMessage id='componentOverview.header.right.web'/></a>
+          </Button>
         )}
+
         {method != 'vm' ? (
           isShowThirdParty ? (
             ''
