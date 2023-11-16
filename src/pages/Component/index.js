@@ -1261,7 +1261,6 @@ class Main extends PureComponent {
             <a href={appDetail.vm_url} target='_blank'><FormattedMessage id='componentOverview.header.right.web'/></a>
           </Button>
         )}
-
         {method != 'vm' ? (
           isShowThirdParty ? (
             ''
